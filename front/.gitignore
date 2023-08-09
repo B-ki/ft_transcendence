@@ -4,9 +4,16 @@ dist
 dist-ssr
 *.local
 node_modules/*
-.vscode/
 *.swp
-.idea
 .cache
 .env
 .env.*
+
+# IDE - VSCode
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
