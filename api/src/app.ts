@@ -3,13 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppModule } from './app.module';
+import { middleware } from './app.middleware';
 
 async function bootstrap(): Promise<string> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
 
-  // middleware(app);
+  middleware(app);
 
   app.enableShutdownHooks();
   await app.listen(process.env.PORT || 8081);

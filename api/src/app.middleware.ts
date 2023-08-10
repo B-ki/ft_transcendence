@@ -1,8 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
-import compression from 'compression';
-import session from 'express-session';
+import * as session from 'express-session';
+import * as compression from 'compression';
+import * as passport from 'passport';
 import helmet from 'helmet';
-import passport from 'passport';
 
 export function middleware(app: INestApplication): INestApplication {
   const is_prod = process.env.NODE_ENV === 'production';
