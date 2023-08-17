@@ -2,7 +2,7 @@ ENV_FILE = .env
 include $(ENV_FILE)
 
 COMPOSE_FILE_DEV = docker-compose.dev.yml
-COMPOSE_FILE_PROD = docker-compose.prod.yml
+COMPOSE_FILE_PROD = docker-compose.yml
 DOCKER = docker
 COMPOSE = $(DOCKER) compose --env-file $(ENV_FILE)
 
