@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  ## Database ##
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_DB
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    ports:
+      - 5432:5432
+  ## Website Frontend ##
+  front:
+    image: ft-transcendance-front-dev:latest
+    build:
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: front
+    restart: unless-stopped
+    volumes:
+      - ./front/package.json:/app/package.json
+      - ./front/pnpm-lock.yaml:/app/pnpm-lock.yaml
+      - ./front/src:/app/src
+    networks:
+      - frontend
+    ports:
+      - 8080:8080
+  ## Backend server API ##
+  api:
+    image: ft-transcendance-api-dev:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    container_name: api
+    restart: unless-stopped
+    environment:
+      DB_HOST: postgres
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      DB_USER: ${POSTGRES_USER:?err}
+      DB_NAME: ${POSTGRES_DB:?err}
+      PORT: 8081
+      SESSION_SECRET: ${SESSION_SECRET:?err}
+    volumes:
+      - ./api/package.json:/app/package.json
+      - ./api/pnpm-lock.yaml:/app/pnpm-lock.yaml
+      - ./api/src:/app/src
+    networks:
+      - backend
+    ports:
+      - 8081:8081
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
