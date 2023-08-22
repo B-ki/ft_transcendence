@@ -21,4 +21,4 @@ FROM base AS deploy
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 
-CMD [ "node", "dist/app.js" ]
+CMD [ "node", "dist/main.js" ]

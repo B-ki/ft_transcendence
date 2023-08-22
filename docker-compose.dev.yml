@@ -1,5 +1,6 @@
 version: '3.8'
 
+name: transcendence-dev
 services:
   ## Database ##
   postgres:
