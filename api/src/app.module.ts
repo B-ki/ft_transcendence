@@ -1,7 +1,8 @@
 import { Logger, Module } from '@nestjs/common';
-import { UserModule } from './modules/user';
+import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
+
 import { AuthModule } from './modules/auth';
-import { PrismaModule, loggingMiddleware } from 'nestjs-prisma';
+import { UserModule } from './modules/user';
 
 @Module({
   imports: [

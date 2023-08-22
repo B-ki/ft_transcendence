@@ -5,12 +5,13 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "NODE_ENV=production node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --log-level warn --write \"./{src,test}/**/*.ts\"",
+    "lint": "eslint ./src --ext .ts --ignore-path ./.gitignore",
+    "lint:fix": "eslint ./{src,test} --ext .ts --fix --ignore-path ./.gitignore",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"
@@ -51,6 +52,7 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
     "prisma": "^5.1.1",

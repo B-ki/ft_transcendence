@@ -8,9 +8,9 @@ services:
     container_name: postgres
     restart: unless-stopped
     environment:
-      - POSTGRES_PASSWORD
-      - POSTGRES_USER
-      - POSTGRES_DB
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_USER: ${POSTGRES_USER:?err}
+      POSTGRES_DB: ${POSTGRES_DB:?err}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
@@ -36,11 +36,15 @@ services:
     container_name: api
     restart: unless-stopped
     environment:
-      DB_HOST: postgres
-      DB_PASSWORD: ${POSTGRES_PASSWORD:?err}
-      DB_USER: ${POSTGRES_USER:?err}
-      DB_NAME: ${POSTGRES_DB:?err}
-      SESSION_SECRET: ${SESSION_SECRET:?err}
+      POSTGRES_HOST: ${POSTGRES_HOST:?err}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_USER: ${POSTGRES_USER:?err}
+      POSTGRES_DB: ${POSTGRES_DB:?err}
+      DATABASE_URL: ${DATABASE_URL:?err}
+      PORT: 8081
+      JWT_SECRET: ${JWT_SECRET:?err}
+      APP_ID: ${APP_ID:?err}
+      APP_SECRET: ${APP_SECRET:?err}
     networks:
       - backend
     ports:

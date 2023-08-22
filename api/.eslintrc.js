@@ -16,10 +16,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended', // Needs to be the last one in the array.
   ],
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['simple-import-sort', '@typescript-eslint', 'prettier'],
   ignorePatterns: ['.eslintrc.js'],
   rules: {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
