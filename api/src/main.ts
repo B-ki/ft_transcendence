@@ -31,7 +31,7 @@ async function bootstrap(): Promise<string> {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('', app, document);
 
   app.enableShutdownHooks();
 
