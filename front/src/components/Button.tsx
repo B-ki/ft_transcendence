@@ -27,9 +27,9 @@ export const Button = (props: ButtonProps) => {
             size ? variants[size] : ''
           }  flex items-center justify-center gap-3 rounded-md px-4 py-2 font-bold drop-shadow-lg`}
         >
-          {props.iconLeft && <Icon size={props.size} logo={props.iconLeft} />}
+          {iconLeft && <Icon size={props.size} logo={iconLeft} />}
           <span>{children}</span>
-          {props.iconRight && <Icon size={props.size} logo={props.iconRight} />}
+          {iconRight && <Icon size={props.size} logo={iconRight} />}
         </div>
       </button>
     </div>
