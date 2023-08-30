@@ -4,6 +4,8 @@ include $(ENV_FILE)
 DOCKER = docker
 COMPOSE = $(DOCKER) compose --env-file $(ENV_FILE)
 
+all: prod
+
 prod: docker-compose.prod.yml prod.build prod.upd
 
 dev:  docker-compose.dev.yml dev.build dev.upd

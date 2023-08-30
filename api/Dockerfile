@@ -13,12 +13,25 @@ FROM base AS build
 
 COPY ./ ./
 COPY --from=dependencies /app/node_modules ./node_modules
+RUN pnpm prisma generate
 RUN pnpm build
 RUN pnpm prune --prod
 
-FROM base AS deploy
+FROM node:18-slim
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
+RUN apt-get update && apt-get install libssl-dev dumb-init -y --no-install-recommends
 
-CMD [ "node", "dist/main.js" ]
+WORKDIR /app
+COPY --chown=node:node --from=build /app/dist ./dist
+
+COPY --chown=node:node --from=build /app/node_modules ./node_modules
+
+COPY --chown=node:node --from=build /app/prisma ./prisma
+
+COPY ./docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENV NODE_ENV production
+EXPOSE 8081
+
+CMD [ "dumb-init", "node", "dist/main.js" ]

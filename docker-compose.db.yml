@@ -8,9 +8,9 @@ services:
     container_name: postgres
     restart: unless-stopped
     environment:
-      - POSTGRES_PASSWORD
-      - POSTGRES_USER
-      - POSTGRES_DB
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_USER: ${POSTGRES_USER:?err}
+      POSTGRES_DB: ${POSTGRES_DB:?err}
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:

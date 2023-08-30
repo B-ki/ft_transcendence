@@ -16,7 +16,7 @@ services:
     networks:
       - backend
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
   ## Website Frontend ##
   front:
     image: ft-transcendance-front-dev:latest
@@ -45,6 +45,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST:?err}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
       POSTGRES_USER: ${POSTGRES_USER:?err}
+      POSTGRES_PORT: ${POSTGRES_PORT:?err}
       POSTGRES_DB: ${POSTGRES_DB:?err}
       DATABASE_URL: ${DATABASE_URL:?err}
       PORT: 8081
