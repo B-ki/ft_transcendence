@@ -1,4 +1,4 @@
-import '@/styles/pages/Home.css';
+// import '@/styles/pages/Home.css';
 
 import React, { useState } from 'react';
 
