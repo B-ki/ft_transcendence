@@ -6,6 +6,7 @@ interface ButtonProps {
   size?: 'small' | 'large';
   iconLeft?: string;
   iconRight?: string;
+  onClick?: () => void;
 }
 
 const variants = {
@@ -17,13 +18,13 @@ const variants = {
 };
 
 export const Button = (props: ButtonProps) => {
-  const { children, type, iconLeft, iconRight, size } = props;
+  const { children, type, iconLeft, iconRight, size, onClick } = props;
 
   return (
-    <div>
-      <button>
+    <>
+      <button className="" onClick={onClick}>
         <div
-          className={`${type ? variants[type] : ''} ${
+          className={`${type ? variants[type] : 'bg-white-1 text-primary hover:bg-white-3'} ${
             size ? variants[size] : ''
           }  flex items-center justify-center gap-3 rounded-md px-4 py-2 font-bold drop-shadow-lg`}
         >
@@ -32,6 +33,6 @@ export const Button = (props: ButtonProps) => {
           {iconRight && <Icon size={props.size} logo={iconRight} />}
         </div>
       </button>
-    </div>
+    </>
   );
 };
