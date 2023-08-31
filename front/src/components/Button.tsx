@@ -1,3 +1,5 @@
+import { FC } from 'react';
+
 import { Icon } from '@/components/Icon';
 
 interface ButtonProps {
@@ -17,9 +19,7 @@ const variants = {
   large: 'text-xl',
 };
 
-export const Button = (props: ButtonProps) => {
-  const { children, type, iconLeft, iconRight, size, onClick } = props;
-
+export const Button: FC<ButtonProps> = ({ children, type, iconLeft, iconRight, size, onClick }) => {
   return (
     <>
       <button className="" onClick={onClick}>
@@ -28,9 +28,9 @@ export const Button = (props: ButtonProps) => {
             size ? variants[size] : ''
           }  flex items-center justify-center gap-3 rounded-md px-4 py-2 font-bold drop-shadow-lg`}
         >
-          {iconLeft && <Icon size={props.size} logo={iconLeft} />}
+          {iconLeft && <Icon size={size} logo={iconLeft} />}
           <span>{children}</span>
-          {iconRight && <Icon size={props.size} logo={iconRight} />}
+          {iconRight && <Icon size={size} logo={iconRight} />}
         </div>
       </button>
     </>
