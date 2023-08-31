@@ -3,3 +3,7 @@
 export interface Test {
   id: number;
 }
+
+export interface JwtPayload {
+  username: string;
+}
