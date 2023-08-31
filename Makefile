@@ -1,14 +1,16 @@
 ENV_FILE = .env
 include $(ENV_FILE)
 
-COMPOSE_FILE_DEV = docker-compose.dev.yml
-COMPOSE_FILE_PROD = docker-compose.yml
 DOCKER = docker
 COMPOSE = $(DOCKER) compose --env-file $(ENV_FILE)
 
-prod: prod.build prod.upd
+all: prod
 
-dev:	dev.build dev.upd
+prod: docker-compose.prod.yml prod.build prod.upd
+
+dev:  docker-compose.dev.yml dev.build dev.upd
+
+db:   docker-compose.db.yml db.build db.upd
 
 %.upd:	$(ENV_FILE)
 	$(COMPOSE) -f docker-compose.$*.yml up -d

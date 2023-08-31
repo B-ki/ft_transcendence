@@ -1,6 +1,6 @@
 version: '3.8'
 
-name: transcendence-dev
+name: transcendence
 services:
   ## Database ##
   postgres:
@@ -15,30 +15,24 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - backend
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
   ## Website Frontend ##
   front:
-    image: ft-transcendance-front-dev:latest
+    image: ft-transcendance-front:latest
     build:
       context: ./front
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: front
     restart: unless-stopped
-    volumes:
-      - ./front/package.json:/app/package.json
-      - ./front/pnpm-lock.yaml:/app/pnpm-lock.yaml
-      - ./front/src:/app/src
     networks:
       - frontend
     ports:
-      - 8080:8080
+      - 8080:80
   ## Backend server API ##
   api:
-    image: ft-transcendance-api-dev:latest
+    image: ft-transcendance-api:latest
     build:
       context: ./api
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: api
     restart: unless-stopped
     environment:
@@ -52,10 +46,6 @@ services:
       JWT_SECRET: ${JWT_SECRET:?err}
       APP_ID: ${APP_ID:?err}
       APP_SECRET: ${APP_SECRET:?err}
-    volumes:
-      - ./api/package.json:/app/package.json
-      - ./api/pnpm-lock.yaml:/app/pnpm-lock.yaml
-      - ./api/src:/app/src
     networks:
       - backend
     ports:

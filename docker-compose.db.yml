@@ -1,0 +1,26 @@
+version: '3.8'
+
+name: transcendence-dev-db
+services:
+  ## Database ##
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_USER: ${POSTGRES_USER:?err}
+      POSTGRES_DB: ${POSTGRES_DB:?err}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - db
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
+volumes:
+  db_data:
+
+networks:
+  db:
+    driver: bridge
