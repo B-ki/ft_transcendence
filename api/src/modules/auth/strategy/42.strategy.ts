@@ -4,6 +4,9 @@ import { Strategy } from 'passport-jwt';
 
 import { config } from '@/config';
 
+import { FortyTwoProfile } from '../auth.interface';
+import { AuthService } from '../auth.service';
+
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   constructor(private authService: AuthService) {
@@ -14,7 +17,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  async validate(accessToken, refreshToken, profile, cb) {
-    return this.authService.authenticateOrCreateUserFrom42(profile);
+  validate(accessToken: string, refreshToken: string, profile: FortyTwoProfile): FortyTwoProfile {
+    return profile;
   }
 }

@@ -7,3 +7,14 @@ export interface Test {
 export interface JwtPayload {
   username: string;
 }
+
+export interface FortyTwoProfile {
+  id: string;
+  login: string;
+  email: string;
+  imageUrl: string;
+  displayName: string;
+  firstName: string;
+  lastName: string;
+  createdAt: Date;
+}

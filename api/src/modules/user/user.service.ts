@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
+
+import { FortyTwoProfile } from '../auth';
 
 @Injectable()
 export class UserService {
@@ -18,8 +20,14 @@ export class UserService {
       },
     });
     if (!user) {
-      throw Promise.reject(new NotFoundException('User does not exists'));
+      throw Promise.reject('User does not exists');
     }
     return user;
+  }
+
+  async createUser(profile: FortyTwoProfile) {
+    const user: User = profile;
+    user.createdAt = new Date();
+    this.prisma.user.create({ data: user });
   }
 }
