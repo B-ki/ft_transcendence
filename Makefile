@@ -37,7 +37,7 @@ db:   docker-compose.db.yml db.build db.upd
 	$(COMPOSE) -f docker-compose.$*.yml ps
 
 %.logs:
-	$(COMPOSE) -f docker-compose.$*.yml logs
+	$(COMPOSE) -f docker-compose.$*.yml logs -f
 
 %.clean:
 	$(COMPOSE) -f docker-compose.$*.yml down -v
