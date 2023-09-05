@@ -1,10 +1,12 @@
 import type { INestApplication } from '@nestjs/common';
 import * as compression from 'compression';
-import * as morgan from 'morgan';
 
-export function middleware(app: INestApplication): INestApplication {
+export async function middleware(app: INestApplication): Promise<INestApplication> {
   if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('tiny'));
+    // Didn't manage to use es6 modules import here
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const morgan = require('morgan');
+    app.use(morgan('dev'));
   }
 
   app.use(compression());
