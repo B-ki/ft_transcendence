@@ -9,8 +9,9 @@
     "dev": "NODE_ENV=development nest start --watch",
     "debug": "NODE_ENV=development nest start --debug --watch",
     "format": "prettier --log-level warn --write \"./{src,test}/**/*.ts\"",
-    "lint": "eslint ./src --ext .ts --ignore-path ./.gitignore",
-    "lint:fix": "eslint ./{src,test} --ext .ts --fix --ignore-path ./.gitignore",
+    "lint": "eslint . --ext .ts --ignore-path .gitignore",
+    "lint:fix": "eslint . --ext .ts --fix --ignore-path .gitignore",
+    "lint:fix:report": "eslint . --output-file eslint_report.json --format json --ext .ts --fix --ignore-path .gitignore",
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:e2e": "jest --config ./test/jest-e2e.json"
