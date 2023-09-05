@@ -8,20 +8,21 @@ import { UserModule } from '../user';
 import { AuthController } from './auth.controller';
 import { AuthSerializer } from './auth.serializer';
 import { AuthService } from './auth.service';
+import { FortyTwoStrategy } from './strategy/42.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
     JwtModule.register({
       global: true,
-      secret: config.jwt.secret,
+      secret: `${config.jwt.secret}`,
       signOptions: { expiresIn: 3600 },
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthSerializer, JwtStrategy],
-  exports: [PassportModule, JwtStrategy],
+  providers: [AuthService, AuthSerializer, JwtStrategy, FortyTwoStrategy],
+  exports: [PassportModule, JwtStrategy, FortyTwoStrategy],
 })
 export class AuthModule {}

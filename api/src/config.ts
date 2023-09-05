@@ -1,6 +1,6 @@
 export const config = {
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET || 'default-secret-key',
   },
   app42: {
     id: process.env.APP_ID,

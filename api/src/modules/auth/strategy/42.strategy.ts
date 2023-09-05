@@ -11,8 +11,8 @@ import { AuthService } from '../auth.service';
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   constructor(private authService: AuthService) {
     super({
-      clientID: config.app42.id,
-      clientSecret: config.app42.secret,
+      clientID: `${config.app42.id}`,
+      clientSecret: `${config.app42.secret}`,
       callbackURL: 'http://localhost:3000/auth/42/callback',
     });
   }
