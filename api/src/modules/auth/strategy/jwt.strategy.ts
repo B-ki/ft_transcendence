@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { User } from '@prisma/client';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt'
 
 import { config } from '@/config';
 
@@ -12,7 +12,7 @@ import { JwtPayload } from '../auth.interface';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private userService: UserService) {
     super({
-      secretOrKey: `${config.jwt.secret}`,
+      secretOrKey: `testinfsdgfd`, //${config.jwt.secret}
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
