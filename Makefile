@@ -42,7 +42,7 @@ db:   docker-compose.db.yml db.build db.upd
 %.clean:
 	$(COMPOSE) -f docker-compose.$*.yml down -v
 
-fclean: dev.clean prod.clean
+fclean: dev.clean prod.clean db.clean
 	$(DOCKER) system prune -a --volumes -f
 
 re: fclean prod
