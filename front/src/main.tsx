@@ -8,8 +8,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from '@/components/Root';
 import Error from '@/pages/Error';
 import Home from '@/pages/Home';
+import Login from '@/pages/Login';
 import Private from '@/pages/Private';
-import Register from '@/pages/Register';
 import { privateGuard } from '@/utils/privateGuard';
 
 const container = document.getElementById('root');
@@ -31,8 +31,8 @@ const router = createBrowserRouter([
         loader: privateGuard,
       },
       {
-        path: 'register',
-        element: <Register />,
+        path: 'login',
+        element: <Login />,
         loader: privateGuard,
       },
     ],

@@ -2,23 +2,26 @@ import React, { useState } from 'react';
 import { FC } from 'react';
 
 interface InputProps {
-  text: string;
+  labelText: string;
+  inputText: string;
+  mandatory: boolean;
 }
 
-export const Input: FC<InputProps> = ({ text }) => {
+export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
   const [inputValue, setInputValue] = useState('');
 
   return (
-    <div className="flex flex-wrap gap-4">
-      <div>
-        <input
-          className="rounded-md border border-dark-3 hover:border-blue focus:outline-none"
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={text}
-        />
-      </div>
-    </div>
+    <label className="flex flex-col">
+      <span className={`${mandatory ? "after:text-red after:content-['*'] " : ''} text-dark-2`}>
+        {labelText}
+      </span>
+      <input
+        className="rounded-md border border-dark-3 bg-white-3  invalid:border-red focus:border-blue focus:outline-none"
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        placeholder={inputText}
+      />
+    </label>
   );
 };
