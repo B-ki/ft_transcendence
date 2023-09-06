@@ -6,9 +6,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path ./.gitignore",
+    "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path .gitignore",
+    "lint:fix:report": "eslint ./src --output-file eslint_report.json --format json --ext .jsx,.js,.ts,.tsx --fix --ignore-path .gitignore",
     "format": "prettier --log-level warn --write \"./**/*.{js,jsx,ts,tsx,css,md,json,html}\" ",
-    "lint": "eslint ./src --ext .ts,.tsx --ignore-path ./.gitignore",
+    "lint": "eslint ./src --ext .ts,.tsx --ignore-path .gitignore",
     "type-check": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
