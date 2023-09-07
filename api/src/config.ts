@@ -9,6 +9,7 @@ export const config = {
   },
   app: {
     port: process.env.PORT || 8081,
+    host: process.env.SERVER_HOST || 'localhost',
   },
   swagger: {
     enabled: true,

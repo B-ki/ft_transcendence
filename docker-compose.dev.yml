@@ -52,6 +52,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:?err}
       APP_ID: ${APP_ID:?err}
       APP_SECRET: ${APP_SECRET:?err}
+      SERVER_HOST: ${SERVER_HOST}
     volumes:
       - ./api/package.json:/app/package.json
       - ./api/pnpm-lock.yaml:/app/pnpm-lock.yaml
