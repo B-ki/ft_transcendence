@@ -1,18 +1,18 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
+import { FortyTwoAuthGuard, JwtAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get('42')
-  @UseGuards(AuthGuard('42'))
+  @UseGuards(FortyTwoAuthGuard)
   auth42(): void {}
 
   @Get('42/callback')
-  @UseGuards(AuthGuard('42'))
+  @UseGuards(FortyTwoAuthGuard)
   async auth42callback(@Req() req: any): Promise<{ token: string }> {
     return {
       token: await this.authService.login(req.user),
@@ -20,7 +20,7 @@ export class AuthController {
   }
 
   @Get('test')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   test() {
     return 'Hello World !';
   }
