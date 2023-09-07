@@ -30,4 +30,14 @@ export class UserService {
   async createUser(profile: FortyTwoProfile) {
     await this.prisma.user.create({ data: profile });
   }
+
+  async testGetFirstName(user: User): Promise<string | undefined> {
+    return (
+      await this.prisma.user.findUnique({
+        where: {
+          login: user.login,
+        },
+      })
+    )?.firstName;
+  }
 }

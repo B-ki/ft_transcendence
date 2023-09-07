@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { UserService } from '../user';
 import { FortyTwoProfile, JwtPayload } from './auth.interface';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -60,5 +61,9 @@ export class AuthService {
       this.logger.error(error.response?.data);
       throw new Error('Unable to fetch profile informations');
     }
+  }
+
+  async test(user: User): Promise<string | undefined> {
+    return await this.userService.testGetFirstName(user);
   }
 }

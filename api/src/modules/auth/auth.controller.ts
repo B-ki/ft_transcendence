@@ -1,6 +1,8 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { User } from '@prisma/client';
 
 import { AuthService } from './auth.service';
+import { GetUser } from './decorators';
 import { FortyTwoAuthGuard, JwtAuthGuard } from './guards';
 
 @Controller('auth')
@@ -21,7 +23,8 @@ export class AuthController {
 
   @Get('test')
   @UseGuards(JwtAuthGuard)
-  test() {
-    return 'Hello World !';
+  async test(@GetUser() user: User) {
+    //const name = await this.authService.test(user);
+    return `Hello World ! I am ${user.firstName}`;
   }
 }
