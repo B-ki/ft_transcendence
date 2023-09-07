@@ -1,6 +1,7 @@
 export const config = {
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET || 'default-secret-key',
+    expiringTime: 24 * 60 * 60,
   },
   app42: {
     id: process.env.APP_ID,
@@ -8,6 +9,7 @@ export const config = {
   },
   app: {
     port: process.env.PORT || 8081,
+    host: process.env.SERVER_HOST || 'localhost',
   },
   swagger: {
     enabled: true,

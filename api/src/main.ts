@@ -37,6 +37,7 @@ async function bootstrap(): Promise<string> {
 
   // Start the app
   await app.listen(config.app.port);
+  NestLogger.log(`API listening on port ${config.app.port}`);
   return app.getUrl();
 }
 
