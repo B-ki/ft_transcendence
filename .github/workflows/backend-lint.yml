@@ -2,8 +2,8 @@ name: Lint and format backend
 
 on:
   pull_request:
-    paths-ignore:
-      - front/**
+    paths:
+      - api/**
 
 jobs:
   lint:
