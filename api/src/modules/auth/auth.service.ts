@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import axios from 'axios';
 
 import { UserService } from '../user';
 import { FortyTwoProfile, JwtPayload } from './auth.interface';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
