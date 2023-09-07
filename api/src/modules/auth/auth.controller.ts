@@ -1,8 +1,7 @@
-import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AuthService } from './auth.service';
-import { config } from '@/config';
 
 @Controller('auth')
 export class AuthController {
@@ -10,19 +9,17 @@ export class AuthController {
 
   @Get('42')
   @UseGuards(AuthGuard('42'))
-  auth42(@Req() req: Request, @Res() res: Response): void {
-    console.log(req);
-    console.log(res);
-    console.log(config.app42.id);
-  }
+  auth42(): void {}
 
   @Get('42/callback')
   @UseGuards(AuthGuard('42'))
-  async auth42callback(@Param('code') code: string): Promise<void> {
-    console.log(code);
+  async auth42callback(@Req() req: any): Promise<{ token: string }> {
+    console.log('user from 42.strategy.validate: ', req.user);
+    return { token: await this.authService.login(req.user) };
   }
 
-  @Get()
+  @Get('test')
+  @UseGuards(AuthGuard('jwt'))
   test() {
     return 'Hello World !';
   }

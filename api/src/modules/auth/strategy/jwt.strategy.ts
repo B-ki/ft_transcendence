@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { User } from '@prisma/client';
-import { ExtractJwt, Strategy } from 'passport-jwt'
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { config } from '@/config';
 
@@ -18,12 +18,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<User> {
-    const { username } = payload;
-    const login = username;
-    const user: User = await this.userService.getUnique(login);
-    if (!user) {
-      new NotFoundException('User does not exists');
-    }
+    console.log('jwt.strategy.validate. Searching for user:', payload);
+    const user: User = await this.userService.getUnique(payload.username);
+
     return user;
   }
 }

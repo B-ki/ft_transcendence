@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { Strategy } from 'passport-oauth2';
 
 import { config } from '@/config';
 
 import { FortyTwoProfile } from '../auth.interface';
 import { AuthService } from '../auth.service';
-import { Strategy } from 'passport-oauth2';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
@@ -19,7 +19,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  validate(accessToken: string, refreshToken: string, profile: FortyTwoProfile): FortyTwoProfile {
+  async validate(accessToken: string, refreshToken: string): Promise<FortyTwoProfile> {
+    const profile = await this.authService.fetchProfileInformations(accessToken);
     return profile;
   }
 }

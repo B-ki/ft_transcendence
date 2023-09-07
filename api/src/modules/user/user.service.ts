@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
@@ -13,21 +13,21 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
-  async getUnique(username: string): Promise<User> {
+  async getUnique(login: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: username,
+        login: login,
       },
     });
+
     if (!user) {
-      throw Promise.reject('User does not exists');
+      throw new NotFoundException(`User ${login} not found`);
     }
+
     return user;
   }
 
   async createUser(profile: FortyTwoProfile) {
-    const user: User = profile;
-    user.createdAt = new Date();
-    this.prisma.user.create({ data: user });
+    await this.prisma.user.create({ data: profile });
   }
 }

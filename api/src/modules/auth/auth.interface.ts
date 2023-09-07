@@ -9,12 +9,10 @@ export interface JwtPayload {
 }
 
 export interface FortyTwoProfile {
-  id: string;
   login: string;
   email: string;
   imageUrl: string;
   displayName: string;
   firstName: string;
   lastName: string;
-  createdAt: Date;
 }

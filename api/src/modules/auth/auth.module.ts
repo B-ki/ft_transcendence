@@ -16,13 +16,13 @@ import { JwtStrategy } from './strategy/jwt.strategy';
     JwtModule.register({
       global: true,
       secret: `${config.jwt.secret}`,
-      signOptions: { expiresIn: 3600 },
+      signOptions: { expiresIn: config.jwt.expiringTime },
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthSerializer, JwtStrategy, FortyTwoStrategy],
-  exports: [PassportModule, JwtStrategy, FortyTwoStrategy],
+  exports: [PassportModule, JwtStrategy],
 })
 export class AuthModule {}
