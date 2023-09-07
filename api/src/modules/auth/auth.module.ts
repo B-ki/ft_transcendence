@@ -6,10 +6,7 @@ import { config } from '@/config';
 
 import { UserModule } from '../user';
 import { AuthController } from './auth.controller';
-import { AuthSerializer } from './auth.serializer';
 import { AuthService } from './auth.service';
-import { FortyTwoStrategy } from './strategy/42.strategy';
-import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -22,6 +19,6 @@ import { JwtStrategy } from './strategy/jwt.strategy';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthSerializer, JwtStrategy, FortyTwoStrategy],
+  providers: [AuthService],
 })
 export class AuthModule {}
