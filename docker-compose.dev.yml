@@ -59,6 +59,7 @@ services:
     networks:
       - backend
     ports:
+      - 5555:5555
       - 8081:8081
 
 volumes:
