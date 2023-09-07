@@ -38,7 +38,6 @@
     "helmet": "^7.0.0",
     "nestjs-prisma": "^0.22.0",
     "passport": "^0.6.0",
-    "passport-42": "^1.2.6",
     "passport-jwt": "^4.0.1",
     "passport-oauth2": "^1.7.0",
     "prisma": "^5.2.0",

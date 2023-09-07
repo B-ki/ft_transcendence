@@ -19,7 +19,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string): Promise<FortyTwoProfile> {
+  async validate(accessToken: string): Promise<FortyTwoProfile> {
     const profile = await this.authService.fetchProfileInformations(accessToken);
     return profile;
   }

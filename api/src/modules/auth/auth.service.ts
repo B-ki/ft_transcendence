@@ -32,10 +32,10 @@ export class AuthService {
     }
 
     const payload: JwtPayload = { username: profile.login };
-    const accessToken = await this.generateJWT(payload);
-    console.log('Returning accessToken :', accessToken);
+    const token = await this.generateJWT(payload);
+    this.logger.log(`${profile.login} logged in`);
 
-    return accessToken;
+    return token;
   }
 
   async fetchProfileInformations(accessToken: string): Promise<FortyTwoProfile> {

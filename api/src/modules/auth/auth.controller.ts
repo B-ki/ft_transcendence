@@ -14,8 +14,9 @@ export class AuthController {
   @Get('42/callback')
   @UseGuards(AuthGuard('42'))
   async auth42callback(@Req() req: any): Promise<{ token: string }> {
-    console.log('user from 42.strategy.validate: ', req.user);
-    return { token: await this.authService.login(req.user) };
+    return {
+      token: await this.authService.login(req.user),
+    };
   }
 
   @Get('test')
