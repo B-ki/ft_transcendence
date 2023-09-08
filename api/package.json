@@ -83,7 +83,7 @@
       "json",
       "ts"
     ],
-    "rootDir": ".",
+    "rootDir": "src",
     "moduleNameMapper": {
       "@/(.*)$": "<rootDir>/$1"
     },
