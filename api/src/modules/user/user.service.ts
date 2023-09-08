@@ -7,7 +7,7 @@ import { FortyTwoProfile } from '../auth';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getAll(): Promise<User[]> {
     return this.prisma.user.findMany();
