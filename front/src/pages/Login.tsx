@@ -1,17 +1,17 @@
-import { useApi } from '@/hooks/useApi';
-import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
 import 'react-notifications-component/dist/theme.css';
 
 import { ReactNotifications } from 'react-notifications-component';
 import { Store } from 'react-notifications-component';
+import { Navigate } from 'react-router-dom';
 
 import logo_42 from '@/assets/42_Logo.svg';
 import myImage from '@/assets/blurry-gradient-haikei.png';
 import { Button } from '@/components/Button';
+import { useApi } from '@/hooks/useApi';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
-  const { user, login, logout } = useAuth();
+  const { user, login } = useAuth();
 
   const { error, data, isLoading } = useApi().get('test', '/banks', {
     params: { test: 'bonjours' },

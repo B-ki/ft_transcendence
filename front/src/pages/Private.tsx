@@ -1,14 +1,14 @@
+import React from 'react';
+import { ReactNotifications } from 'react-notifications-component';
+import { useNavigate } from 'react-router-dom';
+
+import myImage from '@/assets/cool-profile-picture.jpg';
+import { Button } from '@/components/Button';
 import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
-import myImage from '@/assets/cool-profile-picture.jpg';
-import React from 'react';
-import { Button } from '@/components/Button';
-import { useNavigate } from 'react-router-dom';
-import { ReactNotifications } from 'react-notifications-component';
-import { Store } from 'react-notifications-component';
 
 function Private() {
-  const { user, login, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const { error, data, isLoading } = useApi().get('test', '/banks', {
@@ -32,7 +32,7 @@ function Private() {
         </Button>
       </div>
       <ReactNotifications />
-      <img className="w-32 rounded-full" src={myImage} />
+      <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
       Very private page
     </div>
   );

@@ -7,7 +7,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from '@/components/Root';
 import Error from '@/pages/Error';
-import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Private from '@/pages/Private';
 import { privateGuard } from '@/utils/privateGuard';
@@ -22,7 +21,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: 'app',
+        path: '',
         element: <Login />,
       },
       {
