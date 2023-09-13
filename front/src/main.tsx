@@ -7,9 +7,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from '@/components/Root';
 import Error from '@/pages/Error';
-import Home from '@/pages/Home';
+import Login from '@/pages/Login';
 import Private from '@/pages/Private';
-import Register from '@/pages/Register';
 import { privateGuard } from '@/utils/privateGuard';
 
 const container = document.getElementById('root');
@@ -23,16 +22,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Home />,
+        element: <Login />,
       },
       {
         path: 'private',
         element: <Private />,
-        loader: privateGuard,
-      },
-      {
-        path: 'register',
-        element: <Register />,
         loader: privateGuard,
       },
     ],

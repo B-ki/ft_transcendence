@@ -46,4 +46,4 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          file_pattern: '**.ts **.jsx **.js **.ts **.tsx'
+          file_pattern: '**.ts **.js **.tsx'
