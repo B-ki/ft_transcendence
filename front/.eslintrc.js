@@ -40,6 +40,7 @@ module.exports = {
     'tailwindcss',
     'prettier',
   ],
+  ignorePatterns: ['.eslintrc.js'],
   rules: {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'react/react-in-jsx-scope': 'off',
