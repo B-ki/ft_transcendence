@@ -8,6 +8,10 @@ export class FortyTwoAuthGuard extends AuthGuard('42') {
     if (err || !user) {
       if (err instanceof TokenError) {
         throw new UnauthorizedException(err.message);
+      } else if (!user) {
+        throw new UnauthorizedException(
+          'The resource owner or authorization server denied the request.',
+        );
       } else {
         throw err;
       }
