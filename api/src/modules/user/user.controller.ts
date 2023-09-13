@@ -1,21 +1,14 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+import { JwtAuthGuard } from '../auth/guards';
 import { UserService } from './user.service';
 
 @Controller('user')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UserController {
   constructor(private userService: UserService) {}
-
-  @Get()
-  async getUser() {
-    return {
-      id: 1,
-      login: 'apigeon',
-      email: 'apigeon@42.fr',
-    };
-  }
 
   @Get('/all')
   async getAllUsers() {

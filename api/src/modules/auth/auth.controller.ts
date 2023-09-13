@@ -1,4 +1,5 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { AuthService } from './auth.service';
@@ -23,8 +24,8 @@ export class AuthController {
 
   @Get('test')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   async test(@GetUser() user: User) {
-    //const name = await this.authService.test(user);
     return `Hello World ! I am ${user.firstName}`;
   }
 }
