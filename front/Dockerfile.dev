@@ -9,4 +9,4 @@ RUN pnpm install
 
 COPY ./ ./
 
-CMD [ "/bin/bash", "-c", "pnpm i --silent && pnpm run dev" ]
+CMD [ "pnpm", "run", "dev" ]

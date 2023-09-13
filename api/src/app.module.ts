@@ -1,37 +1,30 @@
-import { ConfigModule } from '@nestjs/config';
-import { Module, ValidationPipe } from '@nestjs/common';
-import { APP_FILTER, APP_PIPE, RouterModule } from '@nestjs/core';
+import { Logger, Module } from '@nestjs/common';
+import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
 
-import { config } from '@/config';
-import { BaseModule } from '@/base';
-import { CommonModule, ExceptionsFilter } from '@/common';
+import { AuthModule } from './modules/auth';
+import { ChatModule } from './modules/chat';
+import { FakeModule } from './modules/fake';
+// import { GameModule } from './modules/game';
+import { UserModule } from './modules/user';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    UserModule,
+    AuthModule,
+    FakeModule,
+    ChatModule,
+    // GameModule,
+    PrismaModule.forRoot({
       isGlobal: true,
-      load: [config],
-    }),
-    // TODO: Add Databse Module once ORM is chosen
-    // TODO: Add Logger Module once done
-    CommonModule,
-    BaseModule,
-    RouterModule.register([
-      {
-        path: 'api',
-        module: BaseModule,
+      prismaServiceOptions: {
+        middlewares: [
+          loggingMiddleware({
+            logger: new Logger('PrismaClient'),
+            logLevel: 'log',
+          }),
+        ],
       },
-    ]),
-  ],
-  providers: [
-    { provide: APP_FILTER, useClass: ExceptionsFilter },
-    {
-      provide: APP_PIPE,
-      useValue: new ValidationPipe({
-        transform: true,
-        whitelist: true,
-      }),
-    },
+    }),
   ],
 })
 export class AppModule {}

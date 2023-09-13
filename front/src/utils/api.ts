@@ -1,6 +1,6 @@
 import ky from 'ky';
 
-const url: string = 'https://random-data-api.com/api/v2/';
+const url: string = 'http://localhost:8081/api/';
 
 const base = ky.create({ prefixUrl: url });
 
