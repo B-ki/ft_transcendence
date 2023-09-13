@@ -23,16 +23,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'app',
-        element: <Home />,
+        element: <Login />,
       },
       {
         path: 'private',
         element: <Private />,
-        loader: privateGuard,
-      },
-      {
-        path: 'login',
-        element: <Login />,
         loader: privateGuard,
       },
     ],
