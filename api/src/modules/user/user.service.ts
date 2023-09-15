@@ -7,7 +7,7 @@ import { FortyTwoProfile } from '../auth';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getAll(): Promise<User[]> {
     return this.prisma.user.findMany();
@@ -27,8 +27,8 @@ export class UserService {
     return user;
   }
 
-  async createUser(profile: FortyTwoProfile) {
-    await this.prisma.user.create({ data: profile });
+  async createUser(profile: FortyTwoProfile): Promise<User> {
+    return await this.prisma.user.create({ data: profile });
   }
 
   async testGetFirstName(user: User): Promise<string | undefined> {
