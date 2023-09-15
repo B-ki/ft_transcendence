@@ -1,5 +1,8 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
+import { prismaMock } from 'test/singleton';
+
+import { FortyTwoProfile } from '@/modules/auth';
 
 import { AuthService } from '../../src/modules/auth/auth.service';
 import { UserService } from '../../src/modules/user';
