@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
-  ) { }
+  ) {}
 
   async generateJWT(payload: JwtPayload): Promise<string> {
     const token: string = this.jwtService.sign(payload);
