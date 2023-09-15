@@ -1,5 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import * as compression from 'compression';
+import helmet from 'helmet';
 
 export function middleware(app: INestApplication): INestApplication {
   if (process.env.NODE_ENV === 'development') {
@@ -9,6 +10,7 @@ export function middleware(app: INestApplication): INestApplication {
     app.use(morgan('dev'));
   }
 
+  app.use(helmet());
   app.use(compression());
   // app.use(passport.initialize());
   // app.use(passport.session());
