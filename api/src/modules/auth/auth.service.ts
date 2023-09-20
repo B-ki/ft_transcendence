@@ -15,9 +15,8 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async generateJWT(payload: JwtPayload): Promise<string> {
-    const token: string = this.jwtService.sign(payload);
-    return token;
+  generateJWT(payload: JwtPayload): string {
+    return this.jwtService.sign(payload);
   }
 
   async login(profile: FortyTwoProfile): Promise<string> {
