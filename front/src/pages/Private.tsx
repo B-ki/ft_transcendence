@@ -40,6 +40,7 @@ function Private() {
         </Button>
       </div>
       <ReactNotifications />
+      <div></div>
       <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
       Very private page
     </div>
