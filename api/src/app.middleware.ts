@@ -10,7 +10,16 @@ export function middleware(app: INestApplication): INestApplication {
     app.use(morgan('dev'));
   }
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          'upgrade-insecure-requests': null,
+        },
+      },
+    }),
+  );
+
   app.use(compression());
   // app.use(passport.initialize());
   // app.use(passport.session());

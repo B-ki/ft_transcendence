@@ -6,7 +6,7 @@ export type SocketMiddleware = (socket: Socket, next: (err?: Error) => void) => 
 export const WSAuthMiddleware = (jwtService: JwtService): SocketMiddleware => {
   return (client: Socket, next: (err?: Error) => void) => {
     try {
-      jwtService.verify(client.handshake.auth.token);
+      jwtService.verify(client.handshake.headers.token as string); // handshake.auth
       next();
     } catch (err) {
       next(err);

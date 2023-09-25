@@ -1,4 +1,4 @@
-import { Logger, OnModuleInit } from '@nestjs/common';
+import { Logger, OnModuleInit, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   MessageBody,
@@ -11,29 +11,29 @@ import {
 import { Server } from 'socket.io';
 
 import { WSAuthMiddleware } from '../auth/ws/ws.middleware';
+import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
 import { ChatEvent } from './chat.state';
 
 @WebSocketGateway({ namespace: 'chat' })
-export class ChatGateway implements OnModuleInit, OnGatewayInit {
+export class ChatGateway implements OnGatewayInit {
   @WebSocketServer()
-  io: Server;
-  private logger: Logger = new Logger('ChatGateway');
+  private io: Server;
+  private logger: Logger = new Logger(ChatGateway.name);
 
   constructor(private jwtService: JwtService) {}
 
-  onModuleInit() {
-    Logger.log('On module init');
+  afterInit(server: Server) {
+    const authMiddleware = WSAuthMiddleware(this.jwtService);
+    server.use(authMiddleware);
+
     this.io.on('connection', (socket) => {
       this.logger.log('Client connected: ' + socket.id);
     });
+
+    setInterval(() => this.io.emit('message', 'hello'), 2000);
   }
 
-  afterInit(server: Server) {
-    Logger.log('After init');
-    const authMiddleware = WSAuthMiddleware(this.jwtService);
-    server.use(authMiddleware);
-  }
-
+  @UseGuards(WsJwtGuard)
   @SubscribeMessage(ChatEvent.Message)
   onMessage(@MessageBody() message: string): WsResponse<string> {
     return { event: ChatEvent.Message, data: 'You sent: ' + message };
