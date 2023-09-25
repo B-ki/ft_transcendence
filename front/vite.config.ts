@@ -12,6 +12,14 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: 8080,
+    proxy: {
+      '/api': {
+        target: 'http://api:3000',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
   },
   resolve: {
     alias: [{ find: '@/', replacement: fileURLToPath(new URL('./src/', import.meta.url)) }],

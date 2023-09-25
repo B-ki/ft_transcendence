@@ -8,8 +8,9 @@ export const config = {
     secret: process.env.APP_SECRET,
   },
   app: {
-    port: process.env.PORT || 8081,
-    host: process.env.SERVER_HOST || 'localhost',
+    port: process.env.PORT || 3000,
+    host: process.env.HOST || 'localhost',
+    frontPort: process.env.FRONT_PORT || 80,
   },
   swagger: {
     enabled: true,
