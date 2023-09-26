@@ -10,7 +10,10 @@ export const config = {
   app: {
     port: process.env.PORT || 3000,
     host: process.env.HOST || 'localhost',
-    frontPort: process.env.FRONT_PORT || 80,
+  },
+  front: {
+    port: process.env.FRONT_PORT || 80,
+    oauthCallback: '/',
   },
   swagger: {
     enabled: true,
