@@ -14,7 +14,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - network
+      - database
+        
   ## Website Frontend ##
   front:
     image: ft-transcendance-front:latest
@@ -29,6 +30,7 @@ services:
       - network
     ports:
       - 8080:80
+
   ## Backend server API ##
   api:
     image: ft-transcendance-api:latest
@@ -52,6 +54,7 @@ services:
       PORT: 3000
     networks:
       - network
+      - database
     expose:
       - 3000
 
@@ -60,4 +63,6 @@ volumes:
 
 networks:
   network:
+    driver: bridge
+  database:
     driver: bridge
