@@ -10,8 +10,9 @@ import Error from '@/pages/Error';
 import Login from '@/pages/Login';
 import Private from '@/pages/Private';
 import { privateGuard } from '@/utils/privateGuard';
-import OauthCallback from './pages/OauthCallback';
+
 import Home from './pages/Home';
+import OauthCallback from './pages/OauthCallback';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

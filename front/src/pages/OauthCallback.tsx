@@ -1,6 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 import { useApi } from '@/hooks/useApi';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useNavigate } from 'react-router-dom';
 
 export default function OauthCallback() {
   const navigate = useNavigate();

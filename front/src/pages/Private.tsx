@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import background from '@/assets/blurry-gradient-haikei.png';
 import myImage from '@/assets/cool-profile-picture.jpg';
-import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
+import { Modal } from '@/components/Modal';
 // import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
