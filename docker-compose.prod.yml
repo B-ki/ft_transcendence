@@ -14,7 +14,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - backend
+      - database
+        
   ## Website Frontend ##
   front:
     image: ft-transcendance-front:latest
@@ -23,10 +24,13 @@ services:
       dockerfile: Dockerfile
     container_name: front
     restart: unless-stopped
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
-      - frontend
+      - network
     ports:
       - 8080:80
+
   ## Backend server API ##
   api:
     image: ft-transcendance-api:latest
@@ -42,21 +46,23 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:?err}
       POSTGRES_DB: ${POSTGRES_DB:?err}
       DATABASE_URL: ${DATABASE_URL:?err}
-      PORT: 8081
+      FRONT_PORT: ${PORT:?err}
       JWT_SECRET: ${JWT_SECRET:?err}
       APP_ID: ${APP_ID:?err}
       APP_SECRET: ${APP_SECRET:?err}
-      SERVER_HOST: ${SERVER_HOST}
+      HOST: ${HOST:?err}
+      PORT: 3000
     networks:
-      - backend
-    ports:
-      - 8081:8081
+      - network
+      - database
+    expose:
+      - 3000
 
 volumes:
   db_data:
 
 networks:
-  backend:
+  network:
     driver: bridge
-  frontend:
+  database:
     driver: bridge

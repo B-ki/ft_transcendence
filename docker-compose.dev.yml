@@ -14,9 +14,10 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - backend
+      - network
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
   ## Website Frontend ##
   front:
     image: ft-transcendance-front-dev:latest
@@ -30,9 +31,10 @@ services:
       - ./front/pnpm-lock.yaml:/app/pnpm-lock.yaml
       - ./front/src:/app/src
     networks:
-      - frontend
+      - network
     ports:
       - 8080:8080
+
   ## Backend server API ##
   api:
     image: ft-transcendance-api-dev:latest
@@ -48,26 +50,25 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:?err}
       POSTGRES_DB: ${POSTGRES_DB:?err}
       DATABASE_URL: ${DATABASE_URL:?err}
-      PORT: 8081
+      FRONT_PORT: ${PORT:?err}
       JWT_SECRET: ${JWT_SECRET:?err}
       APP_ID: ${APP_ID:?err}
       APP_SECRET: ${APP_SECRET:?err}
-      SERVER_HOST: ${SERVER_HOST}
+      HOST: ${HOST:?err}
+      PORT: 3000
     volumes:
       - ./api/package.json:/app/package.json
       - ./api/pnpm-lock.yaml:/app/pnpm-lock.yaml
       - ./api/src:/app/src
     networks:
-      - backend
+      - network
     ports:
       - 5555:5555
-      - 8081:8081
+      - 3000:3000
 
 volumes:
   db_data:
 
 networks:
-  backend:
-    driver: bridge
-  frontend:
+  network:
     driver: bridge

@@ -58,7 +58,6 @@ export class AuthService {
         lastName: profile.last_name,
       };
     } catch (error) {
-      this.logger.error(error.response?.data);
       throw new Error('Unable to fetch profile informations');
     }
   }
