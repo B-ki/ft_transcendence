@@ -26,23 +26,28 @@ function Private() {
   };
 
   return (
-    <div
-      className="relative flex h-screen w-screen flex-col"
-      style={{
-        backgroundImage: `url(${background})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-      }}
-    >
-      <div className="absolute right-2 top-2">
+    <div className="relative flex h-screen w-screen flex-col">
+      <div
+        className="absolute left-0 top-0 h-40 w-screen"
+        style={{
+          backgroundImage: `url(${background})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      ></div>
+      <div className="absolute right-2 top-44">
         <Button size="large" type="primary" onClick={() => handleClick()}>
           logout
         </Button>
       </div>
       <ReactNotifications />
-      <div></div>
-      <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
-      Very private page
+      <div className="absolute left-10 top-24 flex flex-row gap-3">
+        <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
+        <div className="flex flex-col items-start justify-end gap-4">
+          <span className="text-dark-2">{'Je me presente "Le Boss"'}</span>
+          <span className="left-0 font-bold">Lbesnard</span>
+        </div>
+      </div>
     </div>
   );
 }
