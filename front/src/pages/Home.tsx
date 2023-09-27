@@ -12,7 +12,7 @@ function Home() {
   return (
     <div>
       <div className="mt-10 flex w-screen justify-center gap-8">
-        <button className="w-fit" onClick={() => login('apigeon@42.fr', '1234')}>
+        <button className="w-fit" onClick={() => login()}>
           Login
         </button>
         {user && (
