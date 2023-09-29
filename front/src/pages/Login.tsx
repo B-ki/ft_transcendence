@@ -9,6 +9,7 @@ import logo_42 from '@/assets/42_Logo.svg';
 import { Button } from '@/components/Button';
 // import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
+import { Navbar } from '@/components/Navbar';
 
 export default function Login() {
   const { user, login } = useAuth();
@@ -22,7 +23,7 @@ export default function Login() {
   // if (data) console.log(data);
 
   const redirect = () => {
-    window.location.href = 'http://localhost:8081/api/auth/42';
+    window.location.href = `${window.location.origin}/api/auth/42`;
     return null;
   };
 
@@ -34,16 +35,10 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40"
-      // style={{
-      //   backgroundImage: `url(${background})`,
-      //   backgroundRepeat: 'no-repeat',
-      //   backgroundSize: 'cover',
-      // }}
-    >
+    <div className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40">
+      <Navbar />
       <ReactNotifications />
-      <h1 className="text-6xl font-bold text-primary">FT_TRANSENSENCE</h1>
+      <h1 className="text-6xl font-bold text-primary">FT_TRANSENDENCE</h1>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Sign in to your account</h1>
         <Button onClick={() => handleLogin(login)} type="secondary" iconLeft={logo_42}>

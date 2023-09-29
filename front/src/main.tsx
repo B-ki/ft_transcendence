@@ -9,6 +9,9 @@ import Root from '@/components/Root';
 import Error from '@/pages/Error';
 import Login from '@/pages/Login';
 import Private from '@/pages/Private';
+import Home from '@/pages/Home';
+import Profile from '@/pages/Profile';
+import Friends from '@/pages/Friends';
 import { privateGuard } from '@/utils/privateGuard';
 
 const container = document.getElementById('root');
@@ -23,6 +26,21 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Login />,
+      },
+      {
+        path: '/home',
+        element: <Home />,
+        loader: privateGuard,
+      },
+      {
+        path: '/profile',
+        element: <Profile />,
+        loader: privateGuard,
+      },
+      {
+        path: '/friends',
+        element: <Friends />,
+        loader: privateGuard,
       },
       {
         path: 'private',
