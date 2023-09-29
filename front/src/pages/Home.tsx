@@ -1,6 +1,6 @@
+import { Navbar } from '@/components/Navbar';
 import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
-import { Navbar } from '@/components/Navbar';
 
 function Home() {
   const { user, login, logout } = useAuth();
