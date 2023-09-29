@@ -10,8 +10,6 @@ import Error from '@/pages/Error';
 import Login from '@/pages/Login';
 import Private from '@/pages/Private';
 import { privateGuard } from '@/utils/privateGuard';
-import OauthCallback from './pages/OauthCallback';
-import Home from './pages/Home';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -24,21 +22,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Home />,
-        loader: privateGuard,
-      },
-      {
-        path: 'login',
         element: <Login />,
       },
       {
         path: 'private',
         element: <Private />,
         loader: privateGuard,
-      },
-      {
-        path: 'oauth-callback',
-        element: <OauthCallback />,
       },
     ],
   },

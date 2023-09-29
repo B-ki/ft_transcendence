@@ -22,7 +22,7 @@ export default function Login() {
   // if (data) console.log(data);
 
   const redirect = () => {
-    window.location.href = `${window.location.origin}/api/auth/42`;
+    window.location.href = 'http://localhost:8081/api/auth/42';
     return null;
   };
 

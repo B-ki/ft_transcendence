@@ -14,7 +14,9 @@ interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: unknown;
-  login: () => void;
+  login: (email: string, password: string) => void;
+  login_42: () => void;
+  register: (username: string, email: string, password: string, confirm_password: string) => void;
   logout: () => void;
 }
 
@@ -52,9 +54,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   }, []);
 
   /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: Remove warning once done
-  const login = () => {
+  const login = (email: string, password: string) => {
+    setLoading(true);
+    const token = 'kjgawngjawngngawg';
+    setUser({
+      id: '1',
+      username: email.split('@')[0],
+      email: email,
+      token: token,
+    });
+    setItem('token', token);
+    // TODO: Login user with API
+    // TODO: Save user info and token in localStorage
+    // TODO: set error if login fails
+    setLoading(false); // TODO: Put in the 'finally' block of the fetch
+  };
+
+  const login_42 = () => {
     setLoading(true);
     // TODO: use 42 OAuth to login user with API
+    setLoading(false); // TODO: Put in the 'finally' block of the fetch
+  };
+
+  const register = (
+    username: string,
+    email: string,
+    password: string,
+    confirm_password: string,
+  ) => {
+    setLoading(true);
+    login(email, password);
+    // TODO: Register user with API
     setLoading(false); // TODO: Put in the 'finally' block of the fetch
   };
 
@@ -70,9 +100,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
       loading,
       error,
       login,
+      login_42,
+      register,
       logout,
     }),
-    [user, loading, error, login, logout],
+    [user, loading, error, login, login_42, register, logout],
   );
 
   return (
