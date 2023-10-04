@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Button } from './Button';
 import { useNavigate } from 'react-router-dom';
+
+import { Button } from './Button';
 
 const navigation = [
   { name: 'Home', href: '/home' },
