@@ -13,13 +13,13 @@ import { useAuth } from '@/hooks/useAuth';
 export default function Login() {
   const { user, login } = useAuth();
 
-  const { error, data, isLoading } = useApi().get('test', '/banks', {
-    params: { test: 'bonjours' },
-  });
+  // const { error, data, isLoading } = useApi().get('test', '/banks', {
+  //   params: { test: 'bonjours' },
+  // });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) console.log(error);
-  if (data) console.log(data);
+  // if (isLoading) return <div>Loading...</div>;
+  // if (error) console.log(error);
+  // if (data) console.log(data);
 
   const handleLogin = (login: (email: string, password: string) => void) => {
     login('apigeon@42.fr', '1234');
