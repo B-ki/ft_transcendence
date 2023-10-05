@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Button } from './Button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import DropdownImg from '@/assets/dropdown.svg';
+
+import { Button } from './Button';
 
 const navigation = [
   { name: 'Private', href: '/private' },

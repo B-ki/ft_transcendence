@@ -1,10 +1,12 @@
 import { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+
+import gitLogo from '@/assets/github-mark.svg';
 import { useAuth } from '@/hooks/useAuth';
+
 import { Button } from './Button';
 import { Dropdown } from './Dropdown';
-import gitLogo from '@/assets/github-mark.svg';
 
 const navigation = [
   { name: 'Game', href: '/game' },
