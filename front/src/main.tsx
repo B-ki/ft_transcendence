@@ -10,7 +10,7 @@ import Error from '@/pages/Error';
 import Friends from '@/pages/Friends';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
-import Private from '@/pages/Private';
+import Game from '@/pages/Game';
 import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
 
@@ -43,8 +43,8 @@ const router = createBrowserRouter([
         loader: privateGuard,
       },
       {
-        path: 'private',
-        element: <Private />,
+        path: '/game',
+        element: <Game />,
         loader: privateGuard,
       },
     ],

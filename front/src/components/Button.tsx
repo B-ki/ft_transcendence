@@ -29,7 +29,7 @@ export const Button: FC<ButtonProps> = ({ children, type, iconLeft, iconRight, s
           }  flex items-center justify-center gap-3 rounded-md px-4 py-2 font-bold drop-shadow-lg`}
         >
           {iconLeft && <Icon size={size} logo={iconLeft} />}
-          <span>{children}</span>
+          {children ? <span>{children}</span> : null}
           {iconRight && <Icon size={size} logo={iconRight} />}
         </div>
       </button>
