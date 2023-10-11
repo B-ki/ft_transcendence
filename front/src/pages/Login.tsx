@@ -8,7 +8,7 @@ import logo_42 from '@/assets/42_Logo.svg';
 // import background from '@/assets/wave-haikei.svg';
 import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
-// import { useApi } from '@/hooks/useApi';
+import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
@@ -27,11 +27,8 @@ export default function Login() {
     return null;
   };
 
-  const handleLogin = (login: (email: string, password: string) => void) => {
-    login('apigeon@42.fr', '1234');
-    {
-      user && redirect();
-    }
+  const handleLogin = () => {
+    redirect();
   };
 
   return (
@@ -40,7 +37,7 @@ export default function Login() {
       <h1 className="text-6xl font-bold text-primary">FT_TRANSENDENCE</h1>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Sign in to your account</h1>
-        <Button onClick={() => handleLogin(login)} type="secondary" iconLeft={logo_42}>
+        <Button onClick={() => handleLogin()} type="secondary" iconLeft={logo_42}>
           Login with 42
         </Button>
         {/* {user && redirect()} */}

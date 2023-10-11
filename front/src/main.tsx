@@ -13,6 +13,7 @@ import Login from '@/pages/Login';
 import Game from '@/pages/Game';
 import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
+import OauthCallback from './pages/OauthCallback';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <Login />,
+      },
+      {
+        path: '/oauth-callback',
+        element: <OauthCallback />,
       },
       {
         path: '/home',
