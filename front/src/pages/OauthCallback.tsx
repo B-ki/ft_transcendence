@@ -1,8 +1,8 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useApi } from '@/hooks/useApi';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useEffect } from 'react';
 
 export default function OauthCallback() {
   const navigate = useNavigate();
