@@ -12,6 +12,7 @@ describe('UserService', () => {
 
   const mockJwtService = {};
 
+  // CONTINUE FROM THERE TO CREATE THE USER TEST
   const mockUserService = {
     getAll: jest.fn(),
     getUnique: jest.fn(),
