@@ -13,7 +13,7 @@ export const config = {
   },
   front: {
     port: process.env.FRONT_PORT || 80,
-    oauthCallback: '/oauth-callback',
+    oauthCallback: '/api/auth/42/callback',
   },
   swagger: {
     enabled: true,
