@@ -3,8 +3,11 @@
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
-  "setupFilesAfterEnv": ["<rootDir>/singleton.ts"],
+  "testMatch": ["<rootDir>/src/**/*spec.ts"],
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "collectCoverage": true,
+  "clearMocks": true,
+  "preset": "ts-jest"
 }
