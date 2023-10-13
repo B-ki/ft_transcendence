@@ -95,12 +95,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "module.exports" : {
-      "clearMocks": true,
-      "preset": "ts-jest",
-      "testEnvironment": "node",
-      "setupFilesAfterEnv": ["<rootDir>/test/singleton.ts"]
-    }
+    "testEnvironment": "node"
   }
 }

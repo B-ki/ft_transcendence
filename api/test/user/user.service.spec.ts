@@ -1,57 +1,40 @@
-import { JwtService } from '@nestjs/jwt';
-import { Test } from '@nestjs/testing';
-import { prismaMock } from 'test/singleton';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { PrismaService } from 'nestjs-prisma';
 
-import { FortyTwoProfile } from '@/modules/auth';
-
-import { AuthService } from '../../src/modules/auth/auth.service';
-import { UserService } from '../../src/modules/user';
+import { UserService } from '../../src/modules/user/user.service';
 
 describe('UserService', () => {
-  let userService: UserService;
-
-  const mockJwtService = {};
-
-  // CONTINUE FROM THERE TO CREATE THE USER TEST
-  const mockUserService = {
-    getAll: jest.fn(),
-    getUnique: jest.fn(),
-    createUser: jest.fn(),
-  };
+  let user: UserService;
+  let prisma: DeepMockProxy<PrismaClient>;
 
   beforeEach(async () => {
-    // initialize a NestJS module with authService
-    const module = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        {
-          provide: JwtService,
-          useValue: mockJwtService,
-        },
-        {
-          provide: UserService,
-          useValue: mockUserService,
-        },
-      ],
-    }).compile();
+    // initialize a NestJS module with userService
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [UserService, { provide: PrismaService, useValue: jest.fn() }],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(mockDeep<PrismaClient>())
+      .compile();
 
-    authService = module.get(AuthService);
+    user = module.get(UserService);
+    prisma = module.get(PrismaService);
   });
 
-  // it = "test case"
   it('should be defined', () => {
-    expect(authService).toBeDefined();
+    expect(user).toBeDefined();
   });
 
   it('should have functions : login, fetchProfileInformation and generateJWT', () => {
-    expect(authService.login).toBeDefined();
-    expect(authService.fetchProfileInformations).toBeDefined();
-    expect(authService.generateJWT).toBeDefined();
+    expect(user.getAll).toBeDefined();
+    expect(user.getUnique).toBeDefined();
+    expect(user.createUser).toBeDefined();
   });
 
-  it("login => Should create a new user if it doesn't exists", async () => {
+  it('createUser => Should create a new user', async () => {
     //arrange
-    const profile: FortyTwoProfile = {
+    /*const profile: FortyTwoProfile = {
       login: 'testLogin',
       email: 'testMail',
       imageUrl: 'testUrl',
@@ -69,11 +52,39 @@ describe('UserService', () => {
       firstName: 'testFirstName',
       lastName: 'testLastName',
       createdAt: new Date(),
-    };
+    };*/
 
     //act
-    prismaMock.user.create.mockResolvedValue(user);
+    const testUsers:
+      | {
+          id: string;
+          login: string;
+          email: string;
+          imageUrl: string | null;
+          displayName: string;
+          firstName: string;
+          lastName: string;
+          createdAt: Date;
+        }[]
+      | Prisma.PrismaPromise<
+          {
+            id: string;
+            login: string;
+            email: string;
+            imageUrl: string | null;
+            displayName: string;
+            firstName: string;
+            lastName: string;
+            createdAt: Date;
+          }[]
+        > = [];
 
-    await expect(UserService.).resolves.toEqual
+    prisma.user.findMany.mockResolvedValueOnce(testUsers);
+
+    //prismaService.user.create.mockResolvedValue(user);
+
+    // await expect(userService.createUser(profile)).resolves.toEqual(user);
+
+    expect(user.getAll()).resolves.toBe(testUsers);
   });
 });
