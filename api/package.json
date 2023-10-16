@@ -13,8 +13,7 @@
     "lint:fix": "eslint . --ext .ts --fix --ignore-path .gitignore",
     "lint:fix:report": "eslint . --output-file eslint_report.json --format json --ext .ts --fix --ignore-path .gitignore",
     "test": "NODE_ENV=development jest",
-    "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
