@@ -1,51 +1,26 @@
-import { NotFoundException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+
+import { FortyTwoProfile } from '@/modules/auth';
 
 import { UserService } from '../../src/modules/user';
 import { PrismaService } from '../../src/prisma';
 
-const testUser = {
-  id: '1',
-  login: 'testLogin',
-  email: 'testMail',
-  imageUrl: 'testUrl',
-  displayName: 'testLogin',
-  firstName: 'testFirstName',
-  lastName: 'testLastName',
-  createdAt: new Date(),
-};
-const testUser2 = {
-  id: '2',
-  login: 'testLogin2',
-  email: 'testMail2',
-  imageUrl: 'testUrl2',
-  displayName: 'testLogin2',
-  firstName: 'testFirstName2',
-  lastName: 'testLastName2',
-  createdAt: new Date(),
-};
-const testArray = [testUser, testUser2];
-
-const db = {
-  user: {
-    findMany: jest.fn().mockResolvedValue(testArray),
-    findUnique: jest.fn().mockResolvedValue(testUser),
-    create: jest.fn().mockReturnValue(testUser),
-  },
-};
-
 describe('UserService', () => {
   let userService: UserService;
-  let prismaService: PrismaService;
+  let prismaService: DeepMockProxy<PrismaClient>;
 
   beforeEach(async () => {
-    const module2 = await Test.createTestingModule({
-      providers: [UserService, { provide: PrismaService, useValue: db }],
-    }).compile();
+    const module = await Test.createTestingModule({
+      providers: [UserService, PrismaService],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(mockDeep<PrismaClient>())
+      .compile();
 
-    userService = module2.get<UserService>(UserService);
-    prismaService = module2.get<PrismaService>(PrismaService);
+    userService = module.get(UserService);
+    prismaService = module.get(PrismaService);
   });
 
   it('should be defined', () => {
@@ -56,5 +31,62 @@ describe('UserService', () => {
     expect(userService.getAll).toBeDefined();
     expect(userService.getUnique).toBeDefined();
     expect(userService.createUser).toBeDefined();
+  });
+
+  const user = {
+    id: '1',
+    login: 'testLogin',
+    email: 'testMail',
+    imageUrl: 'testUrl',
+    displayName: 'testLogin',
+    firstName: 'testFirstName',
+    lastName: 'testLastName',
+    createdAt: new Date(),
+  };
+
+  const profile: FortyTwoProfile = {
+    login: 'testLogin',
+    email: 'testMail',
+    imageUrl: 'testUrl',
+    displayName: 'testLogin',
+    firstName: 'testFirstName',
+    lastName: 'testLastName',
+  };
+
+  it('should create users correctly', async () => {
+    // arrange
+    // assert
+
+    //act
+    prismaService.user.create.mockResolvedValueOnce(user);
+    const result = await userService.createUser(profile);
+
+    // Validate that the created user matches the profile
+    expect(result.id).toEqual('1');
+    expect(result.login).toEqual(profile.login);
+    expect(result.email).toEqual(profile.email);
+    expect(result.imageUrl).toEqual(profile.imageUrl);
+    expect(result.displayName).toEqual(profile.displayName);
+    expect(result.firstName).toEqual(profile.firstName);
+    expect(result.lastName).toEqual(profile.lastName);
+  });
+
+  it('should get users correctly', async () => {
+    // arrange
+    // assert
+
+    //act
+    prismaService.user.findUnique.mockResolvedValueOnce(user);
+
+    const result = await userService.getUnique('testLogin');
+
+    // Validate that the created user matches the profile
+    expect(result.id).toEqual('1');
+    expect(result.login).toEqual(profile.login);
+    expect(result.email).toEqual(profile.email);
+    expect(result.imageUrl).toEqual(profile.imageUrl);
+    expect(result.displayName).toEqual(profile.displayName);
+    expect(result.firstName).toEqual(profile.firstName);
+    expect(result.lastName).toEqual(profile.lastName);
   });
 });
