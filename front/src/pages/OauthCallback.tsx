@@ -1,31 +1,43 @@
+import { useApi } from '@/hooks/useApi';
+import axios from 'axios';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { useApi } from '@/hooks/useApi';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 export default function OauthCallback() {
   const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search);
-  const code = { string: queryParameters.get('code') };
+  const code = queryParameters.get('code');
   const errorType = queryParameters.get('error');
-  const { error, data, isLoading } = useApi().post('JWTtoken', '/auth/42/callback');
+  const errorMessage = queryParameters.get('error_description');
 
-  const loadOnce = () => {
-    if (isLoading) {
-      return <div>Loading...</div>;
+  const { error: getTokenError, data: tokenData, isLoading: tokenLoading } = useApi().get('getAuthorizationCode', '/auth/42');
+  if (code) {
+    const { data, isLoading, error } = useApi().get('send oauth code', '/auth/42/callback', {
+      params: { code: code },
+    });
+         useEffect(() => {
+      axios.get('/api/auth/42/callback?code' + code).then((data) => {
+        console.log(data);
+        localStorage.setItem('token', data.data);
+      });
+    }, []);
+      useEffect(() => {
+        fetch('/api/auth/42/callback?code=' + code)
+          .then((response) => {
+            response.json().then((json) => {
+              console.log(json.token);
+              localStorage.setItem('token', json.token);
+              navigate('/');
+            });
+          })
+          .catch((error) => {
+            console.log('errorrred');
+            console.log(error);
+            navigate('/login');
+          });
+      }, []);
     }
 
-    if (error) {
-      console.log(error);
-      return <div>Error occurred while fetching data.</div>;
-    }
-    console.log(data);
-  };
-
-  // useEffect(() => {
-  //   loadOnce();
-  // }, []);
-
-  return <>bonjour</>;
+  return <div>Bonjour</div>;
+  
 }
