@@ -13,7 +13,8 @@
     "lint:fix": "eslint . --ext .ts --fix --ignore-path .gitignore",
     "lint:fix:report": "eslint . --output-file eslint_report.json --format json --ext .ts --fix --ignore-path .gitignore",
     "test": "NODE_ENV=development jest",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

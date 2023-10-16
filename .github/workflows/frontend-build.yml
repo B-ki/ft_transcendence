@@ -6,7 +6,7 @@ on:
       - front/**
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     defaults:
