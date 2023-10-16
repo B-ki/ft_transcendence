@@ -12,15 +12,15 @@ describe('UserService', () => {
   let prismaService: DeepMockProxy<PrismaClient>;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    const module2 = await Test.createTestingModule({
       providers: [UserService, PrismaService],
     })
       .overrideProvider(PrismaService)
       .useValue(mockDeep<PrismaClient>())
       .compile();
 
-    userService = module.get(UserService);
-    prismaService = module.get(PrismaService);
+    userService = module2.get(UserService);
+    prismaService = module2.get(PrismaService);
   });
 
   it('should be defined', () => {
@@ -54,14 +54,8 @@ describe('UserService', () => {
   };
 
   it('should create users correctly', async () => {
-    // arrange
-    // assert
-
-    //act
-    prismaService.user.create.mockResolvedValueOnce(user);
+    prismaService.user.create.mockResolvedValue(user);
     const result = await userService.createUser(profile);
-
-    // Validate that the created user matches the profile
     expect(result.id).toEqual('1');
     expect(result.login).toEqual(profile.login);
     expect(result.email).toEqual(profile.email);
@@ -71,16 +65,9 @@ describe('UserService', () => {
     expect(result.lastName).toEqual(profile.lastName);
   });
 
-  it('should get users correctly', async () => {
-    // arrange
-    // assert
-
-    //act
-    prismaService.user.findUnique.mockResolvedValueOnce(user);
-
+  it('should get a user correctly', async () => {
+    prismaService.user.findUnique.mockResolvedValue(user);
     const result = await userService.getUnique('testLogin');
-
-    // Validate that the created user matches the profile
     expect(result.id).toEqual('1');
     expect(result.login).toEqual(profile.login);
     expect(result.email).toEqual(profile.email);
@@ -88,5 +75,23 @@ describe('UserService', () => {
     expect(result.displayName).toEqual(profile.displayName);
     expect(result.firstName).toEqual(profile.firstName);
     expect(result.lastName).toEqual(profile.lastName);
+  });
+
+  it('should throw an error for non-existing user', async () => {
+    prismaService.user.findUnique.mockResolvedValue(null);
+
+    try {
+      await userService.getUnique('nonExistentUser');
+    } catch (error) {
+      expect(error.message).toBe('User nonExistentUser not found');
+    }
+  });
+
+  it('should get all users correctly', () => {
+    const users = [user];
+
+    prismaService.user.findMany.mockResolvedValue(users);
+
+    expect(userService.getAll()).resolves.toEqual(users);
   });
 });
