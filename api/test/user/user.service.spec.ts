@@ -12,15 +12,15 @@ describe('UserService', () => {
   let prismaService: DeepMockProxy<PrismaClient>;
 
   beforeEach(async () => {
-    const module2 = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       providers: [UserService, PrismaService],
     })
       .overrideProvider(PrismaService)
       .useValue(mockDeep<PrismaClient>())
       .compile();
 
-    userService = module2.get(UserService);
-    prismaService = module2.get(PrismaService);
+    userService = module.get(UserService);
+    prismaService = module.get(PrismaService);
   });
 
   it('should be defined', () => {
@@ -52,7 +52,6 @@ describe('UserService', () => {
     firstName: 'testFirstName',
     lastName: 'testLastName',
   };
-
   it('should create users correctly', async () => {
     prismaService.user.create.mockResolvedValue(user);
     const result = await userService.createUser(profile);
