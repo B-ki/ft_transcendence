@@ -32,7 +32,7 @@ export class AuthService {
     }
 
     const payload: JwtPayload = { username: profile.login };
-    const token = await this.generateJWT(payload);
+    const token = this.generateJWT(payload);
     this.logger.log(`${profile.login} logged in`);
 
     return token;
