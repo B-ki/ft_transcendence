@@ -12,6 +12,7 @@ import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
+  // useAuth() is calling the AuthContext:
   const { user, login } = useAuth();
 
   // const { error, data, isLoading } = useApi().get('test', '/banks', {
@@ -34,7 +35,7 @@ export default function Login() {
   return (
     <div className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40">
       <ReactNotifications />
-      <h1 className="text-6xl font-bold text-primary">FT_TRANSENDENCE</h1>
+      <h1 className="text-6xl font-bold text-primary">FT_TRANSCENDENCE</h1>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Sign in to your account</h1>
         <Button onClick={() => handleLogin()} type="secondary" iconLeft={logo_42}>
