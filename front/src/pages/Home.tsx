@@ -5,7 +5,8 @@ import { useAuth } from '@/hooks/useAuth';
 function Home() {
   const { user, login, logout } = useAuth();
 
-  const { data, isLoading } = useApi().get('Get Me info', '/user');
+  // Not working anymore
+  // const { data, isLoading } = useApi().get('Get Me info', '/user');
 
   // if (isLoading) return <div>Loading...</div>;
   // console.log(data);
