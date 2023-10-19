@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: '',
+        path: '/login',
         element: <Login />,
       },
       {
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         element: <OauthCallback />,
       },
       {
-        path: '/home',
+        path: '/',
         element: <Home />,
         loader: privateGuard,
       },

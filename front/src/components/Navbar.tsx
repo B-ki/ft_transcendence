@@ -19,12 +19,13 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
+    // replace logout and delete local storage
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   const handleLogoClick = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   return (
