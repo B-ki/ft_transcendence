@@ -7,21 +7,8 @@ import { ReactNotifications } from 'react-notifications-component';
 import logo_42 from '@/assets/42_Logo.svg';
 // import background from '@/assets/wave-haikei.svg';
 import { Button } from '@/components/Button';
-import { Navbar } from '@/components/Navbar';
-import { useApi } from '@/hooks/useApi';
-import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
-  // useAuth() is calling the AuthContext:
-  const { user, login } = useAuth();
-
-  // const { error, data, isLoading } = useApi().get('test', '/banks', {
-  //   params: { test: 'bonjours' },
-  // });
-
-  // if (isLoading) return <div>Loading...</div>;
-  // if (error) console.log(error);
-  // if (data) console.log(data);
 
   const redirect = () => {
     window.location.href = `${window.location.origin}/api/auth/42`;
