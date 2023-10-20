@@ -1,10 +1,10 @@
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { createContext, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { User } from '@/contexts/userInterface';
+import { redirect, useLocation } from 'react-router-dom';
 import { useApi } from '@/hooks/useApi';
-import jwt_decode from "jwt-decode";
-
+import jwt_decode from 'jwt-decode';
+import ApiClient from '@/utils/apiAxios';
+import { User } from '@/dto/userInterface';
 
 interface AuthContextType {
   user?: User;
@@ -12,12 +12,12 @@ interface AuthContextType {
   error?: unknown;
   login_42: () => void;
   logout: () => void;
+  settingUser: (user: Promise<void | User>) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export function AuthProvider({ children }: { children: React.ReactNode }): 
-JSX.Element {
+export function AuthProvider({ children }: { children: React.ReactNode }): JSX.Element {
   const [user, setUser] = useState<User>();
   const [error, setError] = useState<unknown>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,24 +32,21 @@ JSX.Element {
     if (error) setError(undefined);
   }, [location.pathname]);
 
-  //setLoadingInitial(false); 
-
   useEffect(() => {
     // TODO: Fetch user data from API if token in localStorage
     const token = getItem('token');
 
     if (token) {
-      // VALIDATE TOKEN
       let decodedToken = jwt_decode(token);
-      console.log("Decoded Token", decodedToken);
+      console.log('Decoded Token', decodedToken);
       let currentDate = new Date();
-      
       if (decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log("Token expired.");
+        console.log('Token expired.');
       } else {
-        console.log("Valid token");
-
+        console.log('Valid token');
       }
+
+      //ApiClient.getInstance().get('/user/login');
 
       const login = getItem('login');
       setUser({
@@ -68,26 +65,19 @@ JSX.Element {
   const login_42 = () => {
     setLoading(true);
     const token = getItem('token');
-    const { user } = useApi().get('')
-    setUser({
-      id: '1',
-      username: 'username',
-      email: 'email,'
-      //token: token,
-    });
-    //setItem('token', token);
-    // TODO: Login user with API
-    // TODO: Save user info and token in localStorage
-    // TODO: set error if login fails
+    window.location.href = `${window.location.origin}/api/auth/42`;
     setLoading(false); // TODO: Put in the 'finally' block of the fetch
+  };
+
+  const settingUser = (user: Promise<void | User>) => {
+    setUser(user);
   };
 
   // IF LOGIN BY EMAIL AND PASSWORD ALLOWED, DO : login, register
 
   const logout = () => {
     setUser(undefined);
-    removeItem('token');
-    // TODO: redirect to Home page
+    removeItem('token'); // Guards redirect to Homepage directly
   };
 
   const memoedValue = useMemo(
@@ -97,10 +87,11 @@ JSX.Element {
       error,
       login_42,
       logout,
+      settingUser,
       //login,
       //register,
     }),
-    [user, loading, error, login_42, /*login_42, register,*/ logout],
+    [user, loading, error, login_42, /*login_42, register,*/ logout, settingUser],
   );
 
   return (
