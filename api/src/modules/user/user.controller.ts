@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '../auth/guards';
@@ -15,8 +15,8 @@ export class UserController {
     return this.userService.getAll();
   }
 
-  @Get('/:id')
-  async getUserByLogin(@Param('id') id: string) {
-    return this.userService.getUnique(id);
+  @Get('/id/:login')
+  async getUserByLogin(@Param('login') login: string) {
+    return this.userService.getUnique(login);
   }
 }
