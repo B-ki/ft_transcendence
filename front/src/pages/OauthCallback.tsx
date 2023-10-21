@@ -1,5 +1,5 @@
 import { AuthContext } from '@/contexts/AuthContext';
-import { User } from '@/dto/userInterface';
+import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 import ApiClient from '@/utils/apiAxios';
@@ -7,10 +7,10 @@ import { useContext } from 'react';
 import { UseQueryResult } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
-export async function getUser(login: string, jwtToken: string): Promise<User | void> {
+export async function getUser(login: string): Promise<userDto | void> {
   try {
     const userData = await ApiClient.getInstance()
-      .get<User>(`/user/id/${login}`)
+      .get<userDto>(`/user/id/${login}`)
       .then((userData) => {
         console.log('User data:', userData);
       });
@@ -18,6 +18,17 @@ export async function getUser(login: string, jwtToken: string): Promise<User | v
   } catch (error) {
     // TO-DO : handle error
   }
+}
+
+export function getUserApi(login: string) {
+  const { data, isLoading, isError } = useApi().get('getting user', `/user/id/${login}`);
+  if (data) {
+    return data;
+  }
+}
+
+function Nana(login: string) {
+  getUserApi('rmorel');
 }
 
 export default function OauthCallback() {
@@ -50,9 +61,8 @@ export default function OauthCallback() {
 
     if (data) {
       console.log(data);
-      console.log('on est la');
       localStorage.setItem('token', data.token);
-      const userData = getUser('rmorel', data.token);
+      const userData = getUser('rmorel');
       if (userData) {
         settingUser(userData);
       }
