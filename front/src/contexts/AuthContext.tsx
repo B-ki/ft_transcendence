@@ -4,61 +4,50 @@ import { redirect, useLocation } from 'react-router-dom';
 import { useApi } from '@/hooks/useApi';
 import jwt_decode from 'jwt-decode';
 import ApiClient from '@/utils/apiAxios';
-import { User } from '@/dto/userInterface';
+import { userDto } from '@/dto/userDto';
+import { jwtToken } from '@/dto/jwtToken';
 
 interface AuthContextType {
-  user?: User;
+  user?: userDto;
   loading: boolean;
   error?: unknown;
   login_42: () => void;
   logout: () => void;
-  settingUser: (user: Promise<void | User>) => void;
+  settingUser: (user: Promise<void | userDto>) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export function AuthProvider({ children }: { children: React.ReactNode }): JSX.Element {
-  const [user, setUser] = useState<User>();
+export function AuthProvider({ children }: { children: React.ReactNode }): Promise<JSX.Element> {
+  const [user, setUser] = useState<null | userDto>(null);
   const [error, setError] = useState<unknown>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
+  const [loadingInitial, setLoadingInitial] = useState<boolean>(false);
 
   const { getItem, setItem, removeItem } = useLocalStorage();
 
   // const history = useHistory();
   const location = useLocation();
 
+  /*const token = localStorage.getItem('token');
+
+  if (token) {
+    const decodedToken = jwt_decode<jwtToken>(token);
+    console.log('login :', decodedToken.username);
+    //const { data: userData } = useApi().get('get user', `user/id/${decodedToken.username}`);
+    //const userData = getUser(decodedToken.username);
+    //console.log('userData', userData);
+    //const userType = userData as userDto;
+  }
+  //console.log('user state:', user);
+  */
+
   useEffect(() => {
     if (error) setError(undefined);
   }, [location.pathname]);
 
   useEffect(() => {
-    // TODO: Fetch user data from API if token in localStorage
-    const token = getItem('token');
-
-    if (token) {
-      let decodedToken = jwt_decode(token);
-      console.log('Decoded Token', decodedToken);
-      let currentDate = new Date();
-      if (decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log('Token expired.');
-      } else {
-        console.log('Valid token');
-      }
-
-      //ApiClient.getInstance().get('/user/login');
-
-      const login = getItem('login');
-      setUser({
-        login: 'apigeon',
-        first_name: 'arthur',
-        last_name: 'pigeon',
-        email: 'apigeon@42.fr',
-        imageURL: 'nimp',
-        //token: token,
-      });
-    }
-    setLoadingInitial(false); // TODO: Put in the 'finally' block of the fetch
+    setLoadingInitial(false);
   }, []);
 
   /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: Remove warning once done
@@ -69,14 +58,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
     setLoading(false); // TODO: Put in the 'finally' block of the fetch
   };
 
-  const settingUser = (user: Promise<void | User>) => {
-    setUser(user);
+  const settingUser = async (user: Promise<void | userDto>) => {
+    if (user) {
+      setUser(user);
+    }
   };
 
   // IF LOGIN BY EMAIL AND PASSWORD ALLOWED, DO : login, register
 
   const logout = () => {
-    setUser(undefined);
+    setUser(null);
     removeItem('token'); // Guards redirect to Homepage directly
   };
 
