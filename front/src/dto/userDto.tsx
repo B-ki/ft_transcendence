@@ -6,3 +6,11 @@ export interface userDto {
   imageURL: string;
   JWTtoken?: string;
 }
+
+export const dummyUserDto: userDto = {
+  login: 'rmorel',
+  first_name: 'romain',
+  last_name: 'morel',
+  email: 'lorem@ipsum.fr',
+  imageURL: 'image',
+}
