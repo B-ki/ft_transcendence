@@ -6,6 +6,7 @@ import jwt_decode from 'jwt-decode';
 import ApiClient from '@/utils/apiAxios';
 import { userDto } from '@/dto/userDto';
 import { jwtToken } from '@/dto/jwtToken';
+import { UseQueryResult } from 'react-query';
 
 interface AuthContextType {
   user?: userDto;
@@ -13,7 +14,8 @@ interface AuthContextType {
   error?: unknown;
   login_42: () => void;
   logout: () => void;
-  settingUser: (user: Promise<void | userDto>) => void;
+  setUser: (user: null | userDto) => void;
+  settingUser: (user: null | userDto) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -58,11 +60,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
     setLoading(false); // TODO: Put in the 'finally' block of the fetch
   };
 
-  const settingUser = async (user: Promise<void | userDto>) => {
-    if (user) {
-      setUser(user);
+  const setUserAfterLogin = async (login: string) => {
+    setLoading(true);
+    const query = useApi().get('user', `/user/id/${login}`) as UseQueryResult<userDto>;
+    console.log('in setUserAfterLogin');
+    if (query.data) {
+      console.log(query.data);
+      setUser(query.data);
     }
+    //window.location.href = `${window.location.origin}/friends`;
+    setLoading(false);
   };
+
+  const settingUser = (user: userDto | null): void => {
+    setUser(user);
+  }
 
   // IF LOGIN BY EMAIL AND PASSWORD ALLOWED, DO : login, register
 
@@ -78,11 +90,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
       error,
       login_42,
       logout,
+      setUser,
       settingUser,
       //login,
       //register,
     }),
-    [user, loading, error, login_42, /*login_42, register,*/ logout, settingUser],
+    [user, loading, error, login_42, /*login_42, register,*/ logout, setUser, settingUser],
   );
 
   return (
