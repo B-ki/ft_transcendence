@@ -13,4 +13,4 @@ export const dummyUserDto: userDto = {
   last_name: 'morel',
   email: 'lorem@ipsum.fr',
   imageURL: 'image',
-}
+};

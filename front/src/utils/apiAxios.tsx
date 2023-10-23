@@ -1,5 +1,7 @@
-import { ApiConfiguration, IApiClient, RequestConfig } from '@/dto/IAPI';
 import Axios, { AxiosInstance } from 'axios';
+
+import { IApiClient, RequestConfig } from '@/dto/IAPI';
+import { userDto } from '@/dto/userDto';
 
 export default class ApiClient implements IApiClient {
   public client: AxiosInstance;
@@ -43,7 +45,7 @@ export default class ApiClient implements IApiClient {
     return ApiClient.instance.client;
   }
 
-  /*async post<TRequest, TResponse>(
+  async post<TRequest, TResponse>(
     path: string,
     payload: TRequest,
     config?: RequestConfig,
@@ -86,5 +88,18 @@ export default class ApiClient implements IApiClient {
       // handleServiceError(error);
     }
     return {} as TResponse;
-  }*/
+  }
+}
+
+export async function getUser(login: string): Promise<userDto | void> {
+  try {
+    const userData = await ApiClient.getInstance()
+      .get<userDto>(`/user/id/${login}`)
+      .then((userData) => {
+        console.log('User data:', userData);
+      });
+    return userData;
+  } catch (error) {
+    // TO-DO : handle error
+  }
 }
