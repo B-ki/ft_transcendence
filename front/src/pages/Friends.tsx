@@ -6,12 +6,14 @@ import ApiClient from '@/utils/apiAxios';
 function Friends() {
   const { user, logout } = useAuth();
 
+  // TO DO : When reloading Friends page, user is null. How can we fix that ?
+
+  console.log("[Friends] user = ", user);
+
   //const { data, isLoading } = useApi().get('Get Me info', '/user');
 
   //   if (isLoading) return <div>Loading...</div>;
   //   console.log(data);
-
-  ApiClient.getInstance().get('/user/all');
 
   return (
     <div>
