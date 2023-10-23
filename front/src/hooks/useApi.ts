@@ -12,14 +12,12 @@ interface RequestArgsType {
 }
 
 export function useApi() {
-
   const make_request = (
     type: RequestType,
     label: string,
     endpoint: string,
     args?: RequestArgsType,
   ) => {
-  
     if (endpoint.startsWith('/')) endpoint = endpoint.slice(1);
 
     const method = (() => {
@@ -37,20 +35,16 @@ export function useApi() {
       }
     })();
 
-    return useQuery(
-      label,
-      async () => {
-        try {
+    return useQuery(label, async () => {
+      try {
         const response = await method(endpoint, {
           json: args?.data,
           searchParams: args?.params,
           ...args?.options,
         });
         return response.json();
-      }
-      catch(err) {}
-      },
-    );
+      } catch (err) {}
+    });
   };
 
   const post = (label: string, endpoint: string, args?: RequestArgsType) =>
