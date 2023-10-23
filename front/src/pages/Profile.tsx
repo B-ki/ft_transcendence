@@ -1,28 +1,28 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import background from '@/assets/blurry-gradient-haikei.png';
+import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
+//import { useNavigate } from 'react-router-dom';
+import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
-import { useAuth } from '@/hooks/useAuth';
 import { Table } from '@/components/Table';
+//import { useAuth } from '@/hooks/useAuth';
 
 function Profile() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
-    <div className="relative flex h-screen w-screen flex-col">
+    <div
+      className="relative flex h-screen w-screen flex-col"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
       <Navbar />
       <div
         className="h-40 w-screen"
         style={{
-          backgroundImage: `url(${background})`,
+          backgroundImage: `url(${banner})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}

@@ -11,20 +11,20 @@ const games = [
 export const Table = () => {
   return (
     <div className="rounded-md border p-5">
-      <table className="border-gray-200 border-collapse border-2 font-sans text-xs">
+      <table className="border-collapse border-2 font-sans text-xs">
         <caption className="pb-10 text-center">Your Caption Text</caption>
         <thead>
           <tr>
-            <th className="bg-gray-700 text-white" scope="col">
+            <th className="text-white-1" scope="col">
               Header 1
             </th>
-            <th className="bg-gray-700 text-white" scope="col">
+            <th className="text-white-1" scope="col">
               Header 2
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-gray-100">
+          <tr className="">
             <td className="border text-center">Data 1</td>
             <td className="border text-center">Data 2</td>
           </tr>

@@ -1,28 +1,25 @@
+import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
-import { useApi } from '@/hooks/useApi';
-import { useAuth } from '@/hooks/useAuth';
 
 function Home() {
-  const { user, login, logout } = useAuth();
-
-  const { data, isLoading } = useApi().get('Get Me info', '/user');
-
-  // if (isLoading) return <div>Loading...</div>;
-  // console.log(data);
-
   return (
-    <div>
+    <div
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
       <Navbar />
-      <div className="mt-10 flex w-screen justify-center gap-8">
-        <h1>Home Page</h1>
-        <button className="w-fit" onClick={() => login('apigeon@42.fr', '1234')}>
-          Login
-        </button>
-        {user && (
-          <button className="w-fit" onClick={logout}>
-            Logout
-          </button>
-        )}
+      <div className="h-screen w-screen">
+        <div className="absolute flex h-2/3 w-screen flex-col justify-center gap-6">
+          <p className="flex items-center justify-center text-6xl font-bold text-white-1">
+            Welcome to
+          </p>
+          <p className="flex items-center justify-center text-6xl font-bold text-white-1">
+            Our Pong
+          </p>
+        </div>
       </div>
     </div>
   );
