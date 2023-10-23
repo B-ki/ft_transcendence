@@ -1,14 +1,29 @@
-import { UseQueryResult } from 'react-query';
+import { UseQueryResult, useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
 
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 import UseSetUser from './UseSetUser';
+import ApiClient, { getUser } from '@/utils/apiAxios';
+
+const fetchUserData = async (login: string, token: string | null) => {
+  const response = await fetch(`/api/user/id/${login}`, {
+    headers: {Authorization: `Bearer ${token}`}
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+  return response.json();
+};
 
 const UseGetUser = (props: { token: string; login: string }) => {
-  const query = useApi().get('my user', `/user/id/${props.login}`) as UseQueryResult<userDto>;
-  console.log(`[UseGetUser] query user/id/${props.login}`, query.data);
+
+  // This doesn't work because enabled parameter isn't correctly use with useApi()
+  //const query = useApi().get('my user', `/user/id/${props.login}`, { enabled: !!props.token }) as UseQueryResult<userDto>;
+
+  const query = useQuery(['userData', props.login], () => fetchUserData(props.login, props.token), { enabled: !!props.token });
+   
   if (query.isError) {
     return <div>Cant reach user</div>; // TO DO : handdle error
   } else if (query.isLoading) {
@@ -19,6 +34,7 @@ const UseGetUser = (props: { token: string; login: string }) => {
     console.log('[UseGetUser] last else', query);
     return <Navigate to="/" />;
   }
+  
 };
 
 export default UseGetUser;
