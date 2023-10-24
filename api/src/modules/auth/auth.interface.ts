@@ -5,7 +5,7 @@ export interface Test {
 }
 
 export interface JwtPayload {
-  username: string;
+  login: string;
 }
 
 export interface FortyTwoProfile {

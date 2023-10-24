@@ -17,7 +17,7 @@ async function bootstrap(): Promise<string> {
   // Base url at /api
   app.setGlobalPrefix('api', { exclude: ['public'] });
 
-  // Exception filters
+  // Enable validation globally
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   // Add some middlewares
@@ -37,7 +37,6 @@ async function bootstrap(): Promise<string> {
 
   // Start the app
   await app.listen(config.app.port);
-  NestLogger.log(`API listening on port ${config.app.port}`);
   return app.getUrl();
 }
 

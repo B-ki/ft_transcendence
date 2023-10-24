@@ -7,13 +7,60 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+enum ChannelType {
+    PUBLIC
+    PROTECTED
+    PRIVATE
+}
+
+enum ChannelRole {
+    USER
+    ADMIN
+    OWNER
+}
+
 model User {
-    id          String   @id @default(uuid())
-    login       String   @unique
-    email       String   @unique
+    id          Int           @id @default(autoincrement())
+    createdAt   DateTime      @default(now())
+    login       String        @unique
+    email       String        @unique
     imageUrl    String?
     displayName String
     firstName   String
     lastName    String
-    createdAt   DateTime @default(now())
+    channelUser ChannelUser[]
+}
+
+model ChannelUser {
+    id        Int         @id @default(autoincrement())
+    user      User        @relation(fields: [userId], references: [id])
+    userId    Int
+    channel   Channel     @relation(fields: [channelId], references: [id])
+    channelId Int
+    role      ChannelRole
+    Message   Message[]
+
+    @@unique([userId, channelId])
+}
+
+model Channel {
+    id        Int           @id @default(autoincrement())
+    createdAt DateTime      @default(now())
+    updatedAt DateTime      @updatedAt
+    name      String        @unique
+    type      ChannelType
+    password  String?
+    users     ChannelUser[]
+    messages  Message[]
+    isDM      Boolean       @default(false) // is Direct Message
+}
+
+model Message {
+    id        Int         @id @default(autoincrement())
+    createdAt DateTime    @default(now())
+    channel   Channel     @relation(fields: [channelId], references: [id])
+    channelId Int
+    author    ChannelUser @relation(fields: [authorId], references: [id])
+    authorId  Int
+    content   String
 }

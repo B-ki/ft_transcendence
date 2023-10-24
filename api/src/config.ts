@@ -21,4 +21,7 @@ export const config = {
     description: 'The API documentation for the ft_transcendence website',
     version: '1.0',
   },
+  bcrypt: {
+    saltRounds: 10,
+  },
 } as const;
