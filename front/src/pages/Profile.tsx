@@ -30,15 +30,15 @@ function Profile() {
       <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
         <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
         <div className="flex flex-col items-start justify-end gap-4">
-          <span className="text-dark-2">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold">Lbesnard</span>
+          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
+          <span className="left-0 font-bold text-white-1">Lbesnard</span>
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
         <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
         <div className="flex flex-col items-start justify-end gap-4">
-          <span className="text-dark-2">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold">Lbesnard</span>
+          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
+          <span className="left-0 font-bold text-white-1">Lbesnard</span>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">

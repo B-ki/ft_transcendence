@@ -7,9 +7,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from './Button';
 
 const navigation = [
-  { name: 'Private', href: '/private' },
-  { name: 'Profile', href: '/profile' },
-  { name: 'Friends', href: '/friends' },
+  { id: '0', name: 'Private', href: '/private' },
+  { id: '1', name: 'Profile', href: '/profile' },
+  { id: '2', name: 'Friends', href: '/friends' },
 ];
 
 export const Dropdown = () => {
@@ -32,7 +32,7 @@ export const Dropdown = () => {
       {open ? (
         <ul className="absolute m-1 list-none rounded-md border border-dark-1 bg-darkBlue-2 text-white-1">
           {navigation.map((item) => (
-            <li className=" w-20 rounded-md hover:bg-accent">
+            <li key={item.id} className=" w-20 rounded-md hover:bg-accent">
               <button className="w-full" onClick={() => handleMenuClick(item)}>
                 {item.name}
               </button>

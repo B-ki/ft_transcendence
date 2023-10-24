@@ -28,7 +28,7 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="flex h-16 items-center justify-between bg-darkBlue-2 px-10 py-2">
+    <div className="flex h-16 items-center justify-between bg-darkBlue-1 px-10 py-2">
       <div className="flex flex-row">
         <button onClick={handleLogoClick} className="flex gap-3">
           <img src={pongLogo} alt="link to our github" className="h-9" />

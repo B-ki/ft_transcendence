@@ -23,7 +23,7 @@ function Home() {
     >
       <Navbar />
       <div className="h-screen w-screen">
-        <div className="absolute flex h-2/3 w-screen flex-col justify-center gap-6">
+        <div className="flex h-2/3 w-screen flex-col justify-center gap-6">
           <p className="flex items-center justify-center text-6xl font-bold text-white-1">
             Welcome to
           </p>
