@@ -31,7 +31,7 @@ export class AuthService {
       }
     }
 
-    const payload: JwtPayload = { username: profile.login };
+    const payload: JwtPayload = { login: profile.login };
     const token = this.generateJWT(payload);
     this.logger.log(`${profile.login} logged in`);
 
