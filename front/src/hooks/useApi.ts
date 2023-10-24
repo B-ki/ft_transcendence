@@ -19,6 +19,7 @@ export function useApi() {
     args?: RequestArgsType,
   ) => {
     if (endpoint.startsWith('/')) endpoint = endpoint.slice(1);
+
     const method = (() => {
       switch (type) {
         case 'post':
@@ -33,15 +34,17 @@ export function useApi() {
           return api.get;
       }
     })();
-    return useQuery(
-      label,
-      async () =>
-        await method(endpoint, {
+
+    return useQuery(label, async () => {
+      try {
+        const response = await method(endpoint, {
           json: args?.data,
           searchParams: args?.params,
           ...args?.options,
-        }).json(),
-    );
+        });
+        return response.json();
+      } catch (err) {}
+    });
   };
 
   const post = (label: string, endpoint: string, args?: RequestArgsType) =>

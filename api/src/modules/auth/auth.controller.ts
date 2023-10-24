@@ -16,9 +16,10 @@ export class AuthController {
 
   @Get('42/callback')
   @UseGuards(FortyTwoAuthGuard)
-  async auth42callback(@Req() req: any): Promise<{ token: string }> {
+  async auth42callback(@Req() req: any): Promise<{ token: string; login: string }> {
     return {
       token: await this.authService.login(req.user),
+      login: req.user.login,
     };
   }
 
