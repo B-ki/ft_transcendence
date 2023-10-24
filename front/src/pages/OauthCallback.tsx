@@ -1,31 +1,42 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { UseQueryResult } from 'react-query';
+import { Navigate, useNavigate } from 'react-router-dom';
 
+import UseSetToken from '@/components/Auth/UseSetToken';
+import { tokenDto } from '@/dto/tokenDto';
 import { useApi } from '@/hooks/useApi';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 export default function OauthCallback() {
-  const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search);
-  const code = { string: queryParameters.get('code') };
-  const errorType = queryParameters.get('error');
-  const { error, data, isLoading } = useApi().post('JWTtoken', '/auth/42/callback');
+  const code = queryParameters.get('code');
+  //const errorType = queryParameters.get('error');
+  //const errorMessage = queryParameters.get('error_description');
+  const api = useApi();
 
-  const loadOnce = () => {
-    if (isLoading) {
-      return <div>Loading...</div>;
-    }
+  //TO DO : Handle errorType and errorMessage
 
-    if (error) {
-      console.log(error);
-      return <div>Error occurred while fetching data.</div>;
-    }
-    console.log(data);
-  };
-
-  // useEffect(() => {
-  //   loadOnce();
-  // }, []);
-
-  return <>bonjour</>;
+  const query1 = api.get('send oauth code', '/auth/42/callback', {
+    params: { code: code },
+    enabled: !!code,
+  }) as UseQueryResult<tokenDto>;
+  console.log('[OauthCallback] query.data = ', query1.data);
+  if (query1.isLoading) {
+    return <div>Loading...</div>; // TO DO : Create a loading component
+  } else if (query1.isError) {
+    return <div>Is error...</div>; // TO DO : Handle error
+  } else if (query1.data) {
+    return <UseSetToken tokenDto={query1.data} />;
+  } else {
+    console.log('[OauthCallback] last else, return to /');
+    return <Navigate to="/" />;
+  }
 }
+
+/*
+
+TO DO :
+
+B- Verify errors : If not accepted to give permission to 42 API for example, etc.
+
+C- Configure linter, to check hook rules, etc.
+
+*/

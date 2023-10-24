@@ -27,8 +27,8 @@ export class UserService {
     return user;
   }
 
-  async createUser(profile: FortyTwoProfile) {
-    await this.prisma.user.create({ data: profile });
+  async createUser(profile: FortyTwoProfile): Promise<User> {
+    return await this.prisma.user.create({ data: profile });
   }
 
   async testGetFirstName(user: User): Promise<string | undefined> {
