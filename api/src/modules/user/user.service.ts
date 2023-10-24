@@ -4,6 +4,7 @@ import { User } from '@prisma/client';
 import { PrismaService } from '@/prisma';
 
 import { FortyTwoProfile } from '../auth';
+import { userLoginDto } from './dto/userLoginDto';
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,7 @@ export class UserService {
   async getUnique(login: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {
-        login: login,
+        login: loginDto.login,
       },
     });
 

@@ -24,11 +24,18 @@ model User {
     createdAt   DateTime      @default(now())
     login       String        @unique
     email       String        @unique
+    isConnected Boolean
     imageUrl    String?
     displayName String
     firstName   String
     lastName    String
+    username    String?
+    bannerUrl   String?
+    description String?
     channelUser ChannelUser[]
+    games       GameUser[]
+    friends     User[]        @relation("friends")
+    friendOf    User[]        @relation("friends")
 }
 
 model ChannelUser {
@@ -63,4 +70,30 @@ model Message {
     author    ChannelUser @relation(fields: [authorId], references: [id])
     authorId  Int
     content   String
+}
+
+model Game {
+    id          Int         @id @default(autoincrement())
+    createdAt   DateTime    @default(now())
+    users       GameUser[]
+    winner      GameUser?   @relation("GameWinner")
+    loser       GameUser?   @relation("GameLoser")
+    winnerScore Int
+    loserScore  Int
+}
+
+model GameUser {
+    userId    Int
+    user      User        @relation(fields: [userId], references: [id])
+
+    gameId    Int
+    game      Game        @relation(fields: [gameId], references: [id])
+
+    winnerId  Int         @unique
+    winner    Game?       @relation("GameWinner", fields: [winnerId], references: [id])
+
+    loserId   Int         @unique
+    loser     Game?       @relation("GameLoser", fields: [loserId], references: [id])
+
+    @@id([userId, gameId])
 }
