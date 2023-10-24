@@ -1,11 +1,11 @@
-import { UseQueryResult, useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { Navigate } from 'react-router-dom';
 
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
+import ApiClient, { getUser } from '@/utils/apiAxios';
 
 import UseSetUser from './UseSetUser';
-import ApiClient, { getUser } from '@/utils/apiAxios';
 
 const fetchUserData = async (login: string, token: string | null) => {
   const response = await fetch(`/api/user/id/${login}`, {

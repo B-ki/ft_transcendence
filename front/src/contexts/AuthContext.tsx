@@ -1,10 +1,10 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
 import { dummyUserDto, userDto } from '@/dto/userDto';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useApi } from '@/hooks/useApi';
-import { UseQueryResult } from 'react-query';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface AuthContextType {
   user?: userDto;
@@ -31,19 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
   //const token = localStorage.getItem('token');
 
   // When is this hook called ?
-  
+
   useEffect(() => {
     const getUser = async () => {
-      const token = localStorage.getItem('token')
-      console.log("[AuthContext]", token)
+      const token = localStorage.getItem('token');
+      console.log('[AuthContext]', token);
       if (token) {
         const query = useApi().get('my user', `/user/id/${user?.login}`) as UseQueryResult<userDto>;
         setUser(dummyUserDto);
       }
-    }
-  })
-  
-  
+    };
+  });
+
   useEffect(() => {
     if (error) setError(undefined);
   }, [location.pathname]);
@@ -64,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
   const logout = () => {
     setUser(null);
     removeItem('token'); // Guards redirect to Homepage directly
-   };
+  };
 
   const memoedValue = useMemo(
     () => ({
