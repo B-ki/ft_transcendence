@@ -20,9 +20,9 @@ export default function OauthCallback() {
   }) as UseQueryResult<tokenDto>;
   console.log('[OauthCallback] query.data = ', query1.data);
   if (query1.isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // TO DO : Create a loading component
   } else if (query1.isError) {
-    return <div>Is error...</div>;
+    return <div>Is error...</div>; // TO DO : Handle error
   } else if (query1.data) {
     return <UseSetToken tokenDto={query1.data} />;
   } else {

@@ -12,7 +12,7 @@ const UseSetToken = (props: { tokenDto: tokenDto }) => {
   useEffect(() => {
     console.log('[UseGetUser] useEffect => setItem(token)', props.tokenDto.token);
     setItem('token', props.tokenDto.token);
-  });
+  }, []);
   return <UseGetUser token={props.tokenDto.token} login={props.tokenDto.login} />;
 };
 

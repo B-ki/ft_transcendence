@@ -10,7 +10,7 @@ const UseSetUser = (props: { user: userDto }) => {
   useEffect(() => {
     console.log('[UseSetUser] setUser to ', props.user);
     setUser(props.user);
-  }, [setUser]);
-  return <Navigate to="/friends" />;
+  }, []); // TO DO : Check if [setUser] useful ?
+  return <Navigate to="/home" />;
 };
 export default UseSetUser;

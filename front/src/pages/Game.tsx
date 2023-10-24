@@ -3,7 +3,9 @@ import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 function Game() {
-  const { user, login, logout } = useAuth();
+  const { user, login_42, logout } = useAuth();
+
+  const login = user?.login
 
   const { data, isLoading } = useApi().get('Get Me info', '/user');
 
