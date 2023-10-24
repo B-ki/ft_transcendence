@@ -8,7 +8,7 @@ function Friends() {
 
   // TO DO : When reloading Friends page, user is null. How can we fix that ?
 
-  console.log('[Friends] user = ', user);
+  //console.log('[Friends] user = ', user);
 
   //const { data, isLoading } = useApi().get('Get Me info', '/user');
 

@@ -3,17 +3,10 @@ import 'react-notifications-component/dist/theme.css';
 import logo_42 from '@/assets/42_Logo.svg';
 import background from '@/assets/layeredWavesBg.svg';
 import { Button } from '@/components/Button';
-<<<<<<< HEAD
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
-  const redirect = () => {
-    window.location.href = `${window.location.origin}/api/auth/42`;
-    return null;
-  };
-
-  const handleLogin = () => {
-    redirect();
-  };
+  const { user, login_42 } = useAuth();
 
   return (
     <div
@@ -30,17 +23,6 @@ export default function Login() {
         </h1>
         <h2 className="flex items-center justify-center text-6xl font-bold text-white-1">Game</h2>
       </div>
-=======
-import { useAuth } from '@/hooks/useAuth';
-
-export default function Login() {
-  const { user, login_42 } = useAuth();
-
-  return (
-    <div className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40">
-      <ReactNotifications />
-      <h1 className="text-6xl font-bold text-primary">FT_TRANSCENDENCE</h1>
->>>>>>> main
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Sign in to your account</h1>
         <Button onClick={login_42} type="secondary" iconLeft={logo_42}>

@@ -1,18 +1,9 @@
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
+import { useAuth } from '@/hooks/useAuth';
 
 function Home() {
-<<<<<<< HEAD
-=======
-  const { user, login, logout } = useAuth();
-
-  // Not working anymore
-  // const { data, isLoading } = useApi().get('Get Me info', '/user');
-
-  // if (isLoading) return <div>Loading...</div>;
-  // console.log(data);
-
->>>>>>> main
+  const { user, logout } = useAuth();
   return (
     <div
       style={{
