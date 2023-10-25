@@ -9,6 +9,8 @@ import { Table } from '@/components/Table';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { useAuth } from '@/hooks/useAuth';
+import ProfilePicture from '@/components/PicUploader';
+import PicUploader from '@/components/PicUploader';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -19,7 +21,9 @@ function Profile() {
   const [show, setShow] = useState(false);
   const { user } = useAuth();
 
-  const handleProfilepicClick = () => {};
+  const handleProfilepicClick = () => {
+    console.log(user?.login);
+  };
 
   return (
     <div
@@ -33,17 +37,10 @@ function Profile() {
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center">
-            <span>Profile pic</span>
-            <img
-              onClick={handleProfilepicClick}
-              className="h-24 rounded-full"
-              src={myImage}
-              alt="profile pic"
-            />
+            <PicUploader name="profile picture" />
           </div>
           <div className="flex flex-col items-center">
-            <span>Banner</span>
-            <img className="h-24" src={banner} alt="profile pic" />
+            <PicUploader name="banner" />
           </div>
         </div>
         {inputs.map((item) => (
@@ -73,14 +70,14 @@ function Profile() {
         />
         <div className="flex flex-col items-start justify-end gap-4">
           <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold text-white-1">Lbesnard</span>
+          <span className="left-0 font-bold text-white-1">{user?.login}</span>
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
         <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
         <div className="flex flex-col items-start justify-end gap-4">
           <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold text-white-1">Lbesnard</span>
+          <span className="left-0 font-bold text-white-1">{user?.login}</span>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
