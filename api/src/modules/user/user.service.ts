@@ -9,10 +9,6 @@ import { FortyTwoProfile } from '../auth';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
-  }
-
   async getUnique(login: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {

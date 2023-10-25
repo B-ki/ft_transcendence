@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
       const token = localStorage.getItem('token');
       console.log('[AuthContext]', token);
       if (token) {
-        const query = useApi().get('my user', `/user/id/${user?.login}`) as UseQueryResult<userDto>;
+        const query = useApi().get('my user', `/user/${user?.login}`) as UseQueryResult<userDto>;
         setUser(dummyUserDto);
       }
     };

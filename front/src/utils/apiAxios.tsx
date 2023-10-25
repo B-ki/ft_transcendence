@@ -94,7 +94,7 @@ export default class ApiClient implements IApiClient {
 export async function getUser(login: string): Promise<userDto | void> {
   try {
     const userData = await ApiClient.getInstance()
-      .get<userDto>(`/user/id/${login}`)
+      .get<userDto>(`/user/${login}`)
       .then((userData) => {
         console.log('User data:', userData);
       });
