@@ -10,12 +10,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get('/all')
-  async getAllUsers() {
-    return this.userService.getAll();
-  }
-
-  @Get('/id/:login')
+  @Get('/:login')
   async getUserByLogin(@Param('login') login: string) {
     return this.userService.getUnique(login);
   }
