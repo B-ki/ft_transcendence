@@ -1,14 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FC } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { useEffect } from 'react';
 
 interface InputProps {
-  picture?: string;
-  name: 'profile picture' | 'banner';
+  picture?: string | null;
+  name: 'Profile picture' | 'Banner';
 }
 
 const PicUploader: FC<InputProps> = ({ picture, name }) => {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null | undefined>(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    setImage(picture);
+  }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]; // Assuming only one file is uploaded

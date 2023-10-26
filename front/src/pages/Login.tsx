@@ -25,7 +25,7 @@ export default function Login() {
       </div>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Sign in to your account</h1>
-        <Button onClick={login_42} type="secondary" iconLeft={logo_42}>
+        <Button size="small" onClick={login_42} type="secondary" iconLeft={logo_42}>
           Login with 42
         </Button>
         {/* {user && redirect()} */}

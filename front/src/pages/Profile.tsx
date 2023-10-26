@@ -9,6 +9,7 @@ import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { useAuth } from '@/hooks/useAuth';
 import PicUploader from '@/components/PicUploader';
+import { Button } from '@/components/Button';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -19,8 +20,8 @@ function Profile() {
   const [show, setShow] = useState(false);
   const { user } = useAuth();
 
-  const handleProfilepicClick = () => {
-    console.log(user?.login);
+  const handleSaveChanges = () => {
+    console.log(user?.imageURL);
   };
 
   return (
@@ -35,23 +36,25 @@ function Profile() {
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center">
-            <PicUploader
-              picture="@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg"
-              name="profile picture"
-            />
+            <PicUploader picture={myImage} name="Profile picture" />
           </div>
           <div className="flex flex-col items-center">
-            <PicUploader name="banner" />
+            <PicUploader picture={banner} name="Banner" />
           </div>
         </div>
-        {inputs.map((item) => (
-          <Input
-            key={item.id}
-            labelText={item.labelTxt}
-            inputText={item.inputTxt}
-            mandatory={item.mandatory}
-          ></Input>
-        ))}
+        <div className="flex flex-col gap-2 pt-2">
+          {inputs.map((item) => (
+            <Input
+              key={item.id}
+              labelText={item.labelTxt}
+              inputText={item.inputTxt}
+              mandatory={item.mandatory}
+            ></Input>
+          ))}
+          <Button onClick={handleSaveChanges} type="primary" size="small">
+            Save Changes
+          </Button>
+        </div>
       </Modal>
       <Navbar />
       <div
@@ -75,7 +78,12 @@ function Profile() {
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
-        <img className="w-32 rounded-full" src={myImage} alt="profile pic" />
+        <img
+          className="w-32 rounded-full"
+          src={myImage}
+          alt="profile pic"
+          onClick={() => setShow(true)}
+        />
         <div className="flex flex-col items-start justify-end gap-4">
           <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
           <span className="left-0 font-bold text-white-1">{user?.login}</span>

@@ -1,11 +1,12 @@
 import { FC } from 'react';
 
 interface IconProps {
-  size?: 'small' | 'large';
+  size?: 'xsmall' | 'small' | 'large';
   logo: string;
 }
 
 const variants = {
+  xsmall: 'w-2',
   small: 'w-6',
   large: 'w-10',
 };

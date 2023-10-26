@@ -28,7 +28,12 @@ export const Dropdown = () => {
 
   return (
     <div>
-      <Button iconLeft={DropdownImg} onClick={handlDropdownClick}></Button>
+      <Button
+        type="primary"
+        size="small"
+        iconLeft={DropdownImg}
+        onClick={handlDropdownClick}
+      ></Button>
       {open ? (
         <ul className="absolute m-1 list-none rounded-md border border-dark-1 bg-darkBlue-2 text-white-1">
           {navigation.map((item) => (
