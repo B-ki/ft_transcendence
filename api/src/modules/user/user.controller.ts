@@ -2,7 +2,6 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '../auth/guards';
-import { userLoginDto } from './dto/userLoginDto';
 import { UserService } from './user.service';
 
 @Controller('user')
