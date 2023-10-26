@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
-//import { useNavigate } from 'react-router-dom';
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
 import { Table } from '@/components/Table';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { useAuth } from '@/hooks/useAuth';
-import ProfilePicture from '@/components/PicUploader';
 import PicUploader from '@/components/PicUploader';
 
 const inputs = [
@@ -37,7 +35,10 @@ function Profile() {
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center">
-            <PicUploader name="profile picture" />
+            <PicUploader
+              picture="@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg"
+              name="profile picture"
+            />
           </div>
           <div className="flex flex-col items-center">
             <PicUploader name="banner" />

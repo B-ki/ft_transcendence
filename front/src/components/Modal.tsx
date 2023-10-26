@@ -18,6 +18,19 @@ export const Modal: FC<ModalProps> = ({ show, title, children, onClose }) => {
     return;
   }
 
+  const closeOnEscapteKey = (e: KeyboardEvent) => {
+    if (e.key === 'escape') {
+      onclose;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', closeOnEscapteKey);
+    return function cleanup() {
+      document.removeEventListener('keydown', closeOnEscapteKey);
+    };
+  });
+
   return (
     <div
       className="absolute left-0 top-0 z-50 flex h-screen w-screen flex-col items-center justify-center gap-2 bg-dark-1/50"
