@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 import axios from 'axios';
 
 import { UserService } from '../user';
-import { FortyTwoProfile, JwtPayload } from './auth.interface';
+import { FortyTwoProfile, JwtPayload } from './dto/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -55,6 +55,10 @@ export class AuthService {
         displayName: profile.login,
         firstName: profile.first_name,
         lastName: profile.last_name,
+        username: profile.login,
+        description: 'No description atm.',
+        isConnected: true,
+        bannerUrl: 'Good banner to place here',
       };
     } catch (error) {
       throw new Error('Unable to fetch profile informations');

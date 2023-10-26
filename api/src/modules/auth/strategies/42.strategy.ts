@@ -4,7 +4,7 @@ import { Strategy } from 'passport-oauth2';
 
 import { config } from '@/config';
 
-import { FortyTwoProfile } from '../auth.interface';
+import { FortyTwoProfile } from '../dto/auth.interface';
 import { AuthService } from '../auth.service';
 
 @Injectable()

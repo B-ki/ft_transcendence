@@ -1,9 +1,3 @@
-// custom types go here
-
-export interface Test {
-  id: number;
-}
-
 export interface JwtPayload {
   login: string;
 }
@@ -15,4 +9,8 @@ export interface FortyTwoProfile {
   displayName: string;
   firstName: string;
   lastName: string;
+  isConnected: boolean;
+  bannerUrl: string;
+  description: string;
+  username: string;
 }

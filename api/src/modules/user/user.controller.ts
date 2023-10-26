@@ -1,7 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
+import { GetUser } from '../auth/decorators';
 import { JwtAuthGuard } from '../auth/guards';
+import { userDescriptionDto } from './dto/user.interface';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -15,6 +18,15 @@ export class UserController {
     return this.userService.getUnique(login);
   }
 
+  @Patch('/:login/description')
+  async patchDescription(
+    @Body() descriptionDto: userDescriptionDto,
+    @GetUser() user: User,
+  ): Promise<User> {
+    const { description } = descriptionDto;
+    return this.userService.updateDescription(user, description);
+  }
+
   /*
   TO DO : 
 
@@ -22,13 +34,14 @@ export class UserController {
     - POST :
       - User :
         - addFriend
+      - Game :
+        - createGame
+    - PATCH :
+      - User :
         - updateDescription
         - updateUsername
         - updateImage
         - updateBanner
-      - Game :
-        - createGame
-        - updateGameWinner
     - GET :
       - User :
         - getFriendList (with isConnected param)

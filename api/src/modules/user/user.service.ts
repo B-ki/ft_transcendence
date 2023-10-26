@@ -36,4 +36,19 @@ export class UserService {
       })
     )?.firstName;
   }
+
+  async updateDescription(user: User, description: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        login: user.login,
+      },
+    });
+
+    /* TO DO : Pas d'erreur pour moi, car validate function
+    if (!user) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }*/
+
+    // FIND HOW TO UPDATE USER DESCRIPTION ON PRISMA
+  }
 }
