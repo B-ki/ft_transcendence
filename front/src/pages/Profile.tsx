@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import PicUploader from '@/components/PicUploader';
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
 import background from '@/assets/layeredWavesBg.svg';
@@ -8,7 +9,6 @@ import { Table } from '@/components/Table';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { useAuth } from '@/hooks/useAuth';
-import PicUploader from '@/components/PicUploader';
 import { Button } from '@/components/Button';
 
 const inputs = [
@@ -22,6 +22,8 @@ function Profile() {
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
+    //setUserName
+    //setUserDesciption
   };
 
   return (

@@ -1,24 +1,24 @@
 import { Navbar } from '@/components/Navbar';
 import { useAuth } from '@/hooks/useAuth';
+import background from '@/assets/layeredWavesBg.svg';
 
 function Game() {
-  const { user, login_42, logout } = useAuth();
-
-  const login = user?.login;
+  const { user } = useAuth();
 
   return (
-    <div>
+    <div
+      className="relative flex h-screen w-screen flex-col"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
       <Navbar />
       <div className="mt-10 flex w-screen justify-center gap-8">
         <h1>Game page</h1>
-        <button className="w-fit" onClick={() => login('apigeon@42.fr', '1234')}>
-          Login
-        </button>
-        {user && (
-          <button className="w-fit" onClick={logout}>
-            Logout
-          </button>
-        )}
+        <button className="w-fit">Login</button>
+        {user && <button className="w-fit">Logout</button>}
       </div>
     </div>
   );

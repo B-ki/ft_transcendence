@@ -18,7 +18,7 @@ const PicUploader: FC<InputProps> = ({ picture, name }) => {
   }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0]; // Assuming only one file is uploaded
+    const file = acceptedFiles[0];
 
     // Here, you can handle the file, for example, upload it to a server
     // For simplicity, we'll just update the state with the selected image.
