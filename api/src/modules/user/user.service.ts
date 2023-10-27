@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
@@ -37,18 +37,73 @@ export class UserService {
     )?.firstName;
   }
 
-  async updateDescription(user: User, description: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({
+  async updateDescription(user: User, newDescription: string): Promise<User> {
+    const updateUser = await this.prisma.user.update({
       where: {
         login: user.login,
       },
+      data: {
+        description: newDescription,
+      },
     });
 
-    /* TO DO : Pas d'erreur pour moi, car validate function
-    if (!user) {
+    if (!updateUser) {
       throw new NotFoundException(`User ${user.login} not found`);
-    }*/
+    }
 
-    // FIND HOW TO UPDATE USER DESCRIPTION ON PRISMA
+    return updateUser;
+  }
+
+  async updateBanner(user: User, newBanner: string): Promise<User> {
+    const updateUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        bannerUrl: newBanner,
+      },
+    });
+
+    if (!updateUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updateUser;
+  }
+
+  async updateImage(user: User, newImage: string): Promise<User> {
+    const logger = new Logger();
+    logger.debug('image url = ', newImage);
+    const updateUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        imageUrl: newImage,
+      },
+    });
+
+    if (!updateUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updateUser;
+  }
+
+  async updateUsername(user: User, newUsername: string): Promise<User> {
+    const updateUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        username: newUsername,
+      },
+    });
+
+    if (!updateUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updateUser;
   }
 }

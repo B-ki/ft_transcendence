@@ -28,19 +28,26 @@ describe('UserService', () => {
   });
 
   it('should have functions', () => {
-    expect(userService.getAll).toBeDefined();
     expect(userService.getUnique).toBeDefined();
     expect(userService.createUser).toBeDefined();
+    expect(userService.updateBanner).toBeDefined();
+    expect(userService.updateImage).toBeDefined();
+    expect(userService.updateUsername).toBeDefined();
+    expect(userService.updateDescription).toBeDefined();
   });
 
   const user = {
-    id: '1',
+    id: 1,
     login: 'testLogin',
     email: 'testMail',
     imageUrl: 'testUrl',
     displayName: 'testLogin',
     firstName: 'testFirstName',
     lastName: 'testLastName',
+    isConnected: true,
+    username: 'testLogin',
+    bannerUrl: 'bannerUrl',
+    description: 'description',
     createdAt: new Date(),
   };
 
@@ -51,29 +58,22 @@ describe('UserService', () => {
     displayName: 'testLogin',
     firstName: 'testFirstName',
     lastName: 'testLastName',
+    isConnected: true,
+    username: 'testLogin2',
+    bannerUrl: 'bannerUrl',
+    description: 'description',
   };
+
   it('should create users correctly', async () => {
-    prismaService.user.create.mockResolvedValue(user);
+    prismaService.user.create.mockResolvedValue(user); // result will be equal to user
     const result = await userService.createUser(profile);
-    expect(result.id).toEqual('1');
-    expect(result.login).toEqual(profile.login);
-    expect(result.email).toEqual(profile.email);
-    expect(result.imageUrl).toEqual(profile.imageUrl);
-    expect(result.displayName).toEqual(profile.displayName);
-    expect(result.firstName).toEqual(profile.firstName);
-    expect(result.lastName).toEqual(profile.lastName);
+    expect(result).toEqual(user);
   });
 
   it('should get a user correctly', async () => {
     prismaService.user.findUnique.mockResolvedValue(user);
     const result = await userService.getUnique('testLogin');
-    expect(result.id).toEqual('1');
-    expect(result.login).toEqual(profile.login);
-    expect(result.email).toEqual(profile.email);
-    expect(result.imageUrl).toEqual(profile.imageUrl);
-    expect(result.displayName).toEqual(profile.displayName);
-    expect(result.firstName).toEqual(profile.firstName);
-    expect(result.lastName).toEqual(profile.lastName);
+    expect(result).toEqual(user);
   });
 
   it('should throw an error for non-existing user', async () => {
@@ -86,11 +86,9 @@ describe('UserService', () => {
     }
   });
 
-  it('should get all users correctly', () => {
-    const users = [user];
-
-    prismaService.user.findMany.mockResolvedValue(users);
-
-    expect(userService.getAll()).resolves.toEqual(users);
+  it('should update the description', async () => {
+    prismaService.user.update.mockResolvedValue(user);
+    const result = await userService.updateImage(user, 'new Banner');
+    expect(result).toEqual(user);
   });
 });

@@ -33,11 +33,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
   // When is this hook called ?
 
   useEffect(() => {
-    const getUser = async () => {
+    async () => {
       const token = localStorage.getItem('token');
       console.log('[AuthContext]', token);
       if (token) {
-        const query = useApi().get('my user', `/user/${user?.login}`) as UseQueryResult<userDto>;
+        useApi().get('my user', `/user/${user?.login}`) as UseQueryResult<userDto>;
         setUser(dummyUserDto);
       }
     };

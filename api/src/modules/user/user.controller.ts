@@ -1,10 +1,15 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Patch, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { GetUser } from '../auth/decorators';
 import { JwtAuthGuard } from '../auth/guards';
-import { userDescriptionDto } from './dto/user.interface';
+import {
+  userBannerDto,
+  userDescriptionDto,
+  userImageDto,
+  userUsernameDto,
+} from './dto/user.interface';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -24,9 +29,31 @@ export class UserController {
     @GetUser() user: User,
   ): Promise<User> {
     const { description } = descriptionDto;
+    const logger = new Logger();
+    logger.debug('description = ', descriptionDto);
     return this.userService.updateDescription(user, description);
   }
 
+  @Patch('/:login/banner')
+  async patchBanner(@Body() bannerDto: userBannerDto, @GetUser() user: User): Promise<User> {
+    const { banner } = bannerDto;
+    const logger = new Logger();
+    logger.debug('bannerDto: ', bannerDto);
+    logger.debug('bannerUrl: ', banner);
+    return this.userService.updateBanner(user, banner);
+  }
+
+  @Patch('/:login/image')
+  async patchImage(@Body() imageDto: userImageDto, @GetUser() user: User): Promise<User> {
+    const { image } = imageDto;
+    return this.userService.updateImage(user, image);
+  }
+
+  @Patch('/:login/username')
+  async patchUsername(@Body() usernameDto: userUsernameDto, @GetUser() user: User): Promise<User> {
+    const { username } = usernameDto;
+    return this.userService.updateUsername(user, username);
+  }
   /*
   TO DO : 
 
@@ -36,12 +63,6 @@ export class UserController {
         - addFriend
       - Game :
         - createGame
-    - PATCH :
-      - User :
-        - updateDescription
-        - updateUsername
-        - updateImage
-        - updateBanner
     - GET :
       - User :
         - getFriendList (with isConnected param)
