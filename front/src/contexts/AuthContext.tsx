@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
 
   //const token = localStorage.getItem('token');
 
-  // When is this hook called ?
+  // TO DO : Query user everytime we reload the page
 
   useEffect(() => {
     async () => {
@@ -73,8 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
       login_42,
       logout,
       setUser,
-      //login,
-      //register,
     }),
     [user, loading, error, login_42, logout, setUser],
   );
