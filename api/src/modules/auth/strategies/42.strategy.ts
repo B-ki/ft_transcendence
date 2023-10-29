@@ -5,7 +5,7 @@ import { Strategy } from 'passport-oauth2';
 import { config } from '@/config';
 
 import { AuthService } from '../auth.service';
-import { FortyTwoProfile } from '../dto/auth.interface';
+import { CreateUserDto } from '../auth.dto';
 
 @Injectable()
 export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
@@ -19,7 +19,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     });
   }
 
-  async validate(accessToken: string): Promise<FortyTwoProfile> {
+  async validate(accessToken: string): Promise<CreateUserDto> {
     const profile = await this.authService.fetchProfileInformations(accessToken);
     return profile;
   }

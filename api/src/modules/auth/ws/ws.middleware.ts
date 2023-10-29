@@ -3,7 +3,7 @@ import { Socket } from 'socket.io';
 
 import { UserService } from '@/modules/user';
 
-import { JwtPayload } from '../dto/auth.interface';
+import { JwtPayload } from '../auth.dto';
 
 export type SocketMiddleware = (socket: Socket, next: (err?: Error) => void) => void;
 

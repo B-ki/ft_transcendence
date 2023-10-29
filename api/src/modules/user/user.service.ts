@@ -3,7 +3,7 @@ import { User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
 
-import { FortyTwoProfile } from '../auth';
+import { CreateUserDto } from '../auth';
 
 @Injectable()
 export class UserService {
@@ -23,7 +23,7 @@ export class UserService {
     return user;
   }
 
-  async createUser(profile: FortyTwoProfile): Promise<User> {
+  async createUser(profile: CreateUserDto): Promise<User> {
     return await this.prisma.user.create({ data: profile });
   }
 

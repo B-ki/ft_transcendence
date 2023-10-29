@@ -5,11 +5,11 @@ import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorators';
 import { JwtAuthGuard } from '../auth/guards';
 import {
-  userBannerDto,
-  userDescriptionDto,
-  userImageDto,
-  userUsernameDto,
-} from './dto/user.interface';
+  UpdateUserBannerDto,
+  UpdateUserDescriptionDto,
+  UpdateUserImageDto,
+  UpdateUserUsernameDto,
+} from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -25,7 +25,7 @@ export class UserController {
 
   @Patch('/:login/description')
   async patchDescription(
-    @Body() descriptionDto: userDescriptionDto,
+    @Body() descriptionDto: UpdateUserDescriptionDto,
     @GetUser() user: User,
   ): Promise<User> {
     const { description } = descriptionDto;
@@ -35,24 +35,24 @@ export class UserController {
   }
 
   @Patch('/:login/banner')
-  async patchBanner(@Body() bannerDto: userBannerDto, @GetUser() user: User): Promise<User> {
-    const { banner } = bannerDto;
-    const logger = new Logger();
-    logger.debug('bannerDto: ', bannerDto);
-    logger.debug('bannerUrl: ', banner);
-    return this.userService.updateBanner(user, banner);
+  async patchBanner(@Body() bannerDto: UpdateUserBannerDto, @GetUser() user: User): Promise<User> {
+    const { bannerUrl } = bannerDto;
+    return this.userService.updateBanner(user, bannerUrl);
   }
 
   @Patch('/:login/image')
-  async patchImage(@Body() imageDto: userImageDto, @GetUser() user: User): Promise<User> {
-    const { image } = imageDto;
-    return this.userService.updateImage(user, image);
+  async patchImage(@Body() imageDto: UpdateUserImageDto, @GetUser() user: User): Promise<User> {
+    const { imageUrl } = imageDto;
+    return this.userService.updateImage(user, imageUrl);
   }
 
   @Patch('/:login/username')
-  async patchUsername(@Body() usernameDto: userUsernameDto, @GetUser() user: User): Promise<User> {
-    const { username } = usernameDto;
-    return this.userService.updateUsername(user, username);
+  async patchUsername(
+    @Body() usernameDto: UpdateUserUsernameDto,
+    @GetUser() user: User,
+  ): Promise<User> {
+    const { displayName } = usernameDto;
+    return this.userService.updateUsername(user, displayName);
   }
   /*
   TO DO : 

@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
-import { FortyTwoProfile } from '@/modules/auth';
+import { CreateUserDto } from '@/modules/auth';
 
 import { UserService } from '../../src/modules/user';
 import { PrismaService } from '../../src/prisma';
@@ -51,7 +51,7 @@ describe('UserService', () => {
     createdAt: new Date(),
   };
 
-  const profile: FortyTwoProfile = {
+  const profile: CreateUserDto = {
     login: 'testLogin',
     email: 'testMail',
     imageUrl: 'testUrl',
