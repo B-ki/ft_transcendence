@@ -3,7 +3,7 @@ import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 function Home() {
-  const { user, login, logout } = useAuth();
+  const { user, login_42, logout } = useAuth();
 
   // Not working anymore
   // const { data, isLoading } = useApi().get('Get Me info', '/user');
@@ -16,7 +16,7 @@ function Home() {
       <Navbar />
       <div className="mt-10 flex w-screen justify-center gap-8">
         <h1>Home Page</h1>
-        <button className="w-fit" onClick={() => login('apigeon@42.fr', '1234')}>
+        <button className="w-fit" onClick={() => login_42()}>
           Login
         </button>
         {user && (

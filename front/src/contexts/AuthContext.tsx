@@ -7,7 +7,7 @@ import { useApi } from '@/hooks/useApi';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface AuthContextType {
-  user?: userDto;
+  user?: userDto | null;
   loading: boolean;
   error?: unknown;
   login_42: () => void;
@@ -17,7 +17,7 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export function AuthProvider({ children }: { children: React.ReactNode }): Promise<JSX.Element> {
+export function AuthProvider({ children }: { children: React.ReactNode }): JSX.Element {
   const [user, setUser] = useState<null | userDto>(null);
   const [error, setError] = useState<unknown>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): Promi
       //login,
       //register,
     }),
-    [user, loading, error, login_42, /*login_42, register,*/ logout, setUser],
+    [user, loading, error, login_42, logout, setUser],
   );
 
   return (
