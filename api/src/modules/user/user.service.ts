@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Channel, User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
 
@@ -25,16 +25,6 @@ export class UserService {
 
   async createUser(profile: CreateUserDto): Promise<User> {
     return await this.prisma.user.create({ data: profile });
-  }
-
-  async testGetFirstName(user: User): Promise<string | undefined> {
-    return (
-      await this.prisma.user.findUnique({
-        where: {
-          login: user.login,
-        },
-      })
-    )?.firstName;
   }
 
   async updateDescription(user: User, newDescription: string): Promise<User> {
@@ -105,5 +95,17 @@ export class UserService {
     }
 
     return updateUser;
+  }
+
+  async getChannellist(user: User) {
+    return await this.prisma.channel.findMany({
+      where: {
+        users: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+    });
   }
 }

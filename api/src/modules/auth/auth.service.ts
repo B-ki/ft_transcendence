@@ -63,8 +63,4 @@ export class AuthService {
       throw new Error('Unable to fetch profile informations');
     }
   }
-
-  async test(user: User): Promise<string | undefined> {
-    return await this.userService.testGetFirstName(user);
-  }
 }

@@ -33,7 +33,8 @@ model User {
     bannerUrl   String?
     description String?
     channelUser ChannelUser[]
-    games       GameUser[]
+    gamesWon    Game[]        @relation("GameWinner")
+    gamesLost   Game[]        @relation("GameLoser")
     friends     User[]        @relation("friends")
     friendOf    User[]        @relation("friends")
 }
@@ -75,25 +76,10 @@ model Message {
 model Game {
     id          Int         @id @default(autoincrement())
     createdAt   DateTime    @default(now())
-    users       GameUser[]
-    winner      GameUser?   @relation("GameWinner")
-    loser       GameUser?   @relation("GameLoser")
+    winner      User?   @relation("GameWinner", fields: [winnerId], references: [id])
+    winnerId    Int
+    loser       User?   @relation("GameLoser", fields: [loserId], references: [id])
+    loserId     Int
     winnerScore Int
     loserScore  Int
-}
-
-model GameUser {
-    userId    Int
-    user      User        @relation(fields: [userId], references: [id])
-
-    gameId    Int
-    game      Game        @relation(fields: [gameId], references: [id])
-
-    winnerId  Int         @unique
-    winner    Game?       @relation("GameWinner", fields: [winnerId], references: [id])
-
-    loserId   Int         @unique
-    loser     Game?       @relation("GameLoser", fields: [loserId], references: [id])
-
-    @@id([userId, gameId])
 }

@@ -2,9 +2,9 @@ import { IsNotEmpty, MaxLength } from 'class-validator';
 
 import { CreateUserDto } from '../auth';
 
-export class userLoginDto {
+export class UserLoginDto {
   @IsNotEmpty()
-  @MaxLength(20)
+  @MaxLength(30)
   login: string;
 }
 

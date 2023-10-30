@@ -1,10 +1,8 @@
-import { Controller, Get, Logger, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
+import { DummyUserOne, DummyUserTwo } from './auth.dto';
 import { AuthService } from './auth.service';
-import { GetUser } from './decorators';
-import { FortyTwoAuthGuard, JwtAuthGuard } from './guards';
+import { FortyTwoAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -23,10 +21,19 @@ export class AuthController {
     };
   }
 
-  @Get('test')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async test(@GetUser() user: User) {
-    return `Hello World ! I am ${user.firstName}`;
+  @Get('dummy/1')
+  async createDummyUserOne(): Promise<{ token: string; login: string }> {
+    return {
+      token: await this.authService.login(DummyUserOne),
+      login: DummyUserOne.login,
+    };
+  }
+
+  @Get('dummy/2')
+  async createDummyUserTwo(): Promise<{ token: string; login: string }> {
+    return {
+      token: await this.authService.login(DummyUserTwo),
+      login: DummyUserTwo.login,
+    };
   }
 }
