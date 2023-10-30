@@ -5,20 +5,20 @@ export class JwtPayload {
 }
 
 export class CreateUserDto {
-  @IsNotEmpty()
+  //@IsNotEmpty()
   login: string;
 
-  @IsEmail()
+  //@IsEmail()
   email: string;
 
   imageUrl: string;
 
   displayName: string;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   firstName: string;
 
-  @IsNotEmpty()
+  //@IsNotEmpty()
   lastName: string;
 
   isConnected: boolean;

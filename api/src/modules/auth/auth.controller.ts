@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -17,6 +17,8 @@ export class AuthController {
   @Get('42/callback')
   @UseGuards(FortyTwoAuthGuard)
   async auth42callback(@Req() req: any): Promise<{ token: string; login: string }> {
+    const logger = new Logger();
+    logger.debug(req.user);
     return {
       token: await this.authService.login(req.user),
       login: req.user.login,
