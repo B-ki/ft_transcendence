@@ -30,7 +30,8 @@ export class UserController {
   ): Promise<User> {
     const { description } = descriptionDto;
     const logger = new Logger();
-    logger.debug('description = ', descriptionDto);
+    logger.debug('descriptionDto = ', descriptionDto);
+    logger.debug('description = ', description);
     return this.userService.updateDescription(user, description);
   }
 
