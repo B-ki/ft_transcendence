@@ -19,6 +19,7 @@ export default function OauthCallback() {
 }
 
 const UseCodeToGetToken = (props: { code: string }) => {
+  console.log('[UseCodeToGetToken] code =', props.code);
   const query1 = useApi().get('send oauth code', '/auth/42/callback', {
     params: { code: props.code },
   }) as UseQueryResult<tokenDto>;

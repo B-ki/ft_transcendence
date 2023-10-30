@@ -4,7 +4,7 @@ export class JwtPayload {
   login: string;
 }
 
-export class CreateUserDto {
+export interface CreateUserDto {
   //@IsNotEmpty()
   login: string;
 

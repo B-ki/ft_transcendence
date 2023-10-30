@@ -20,8 +20,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async validate(accessToken: string): Promise<CreateUserDto> {
-    const logger = new Logger();
-    logger.debug(`42 access token = ${accessToken}`);
     const profile = await this.authService.fetchProfileInformations(accessToken);
     return profile;
   }
