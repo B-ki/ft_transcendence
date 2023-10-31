@@ -1,9 +1,19 @@
-export class CreateGameDto {}
+import { IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
 
-export class CreateGameLoginDto {
-  login: string;
-}
+export class CreateGameDto {
+  @IsNotEmpty()
+  @MaxLength(8)
+  winnerLogin: string;
 
-export class CreateGameScoreDto {
-  score: number;
+  @IsNotEmpty()
+  @MaxLength(8)
+  loserLogin: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  winnerScore: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  loserScore: number;
 }

@@ -4,16 +4,17 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { CreateUserDto } from '@/modules/auth';
 
-import { UserService } from '../../src/modules/user';
+import { FriendService, UserService } from '../../src/modules/user';
 import { PrismaService } from '../../src/prisma';
 
 describe('UserService', () => {
   let userService: UserService;
   let prismaService: DeepMockProxy<PrismaClient>;
+  let friendService: FriendService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      providers: [UserService, PrismaService],
+      providers: [UserService, FriendService, PrismaService],
     })
       .overrideProvider(PrismaService)
       .useValue(mockDeep<PrismaClient>())
@@ -21,10 +22,12 @@ describe('UserService', () => {
 
     userService = module.get(UserService);
     prismaService = module.get(PrismaService);
+    friendService = module.get(FriendService);
   });
 
-  it('should be defined', () => {
+  it('services should be defined', () => {
     expect(userService).toBeDefined();
+    expect(friendService).toBeDefined();
   });
 
   it('should have functions', () => {
@@ -32,7 +35,7 @@ describe('UserService', () => {
     expect(userService.createUser).toBeDefined();
     expect(userService.updateBanner).toBeDefined();
     expect(userService.updateImage).toBeDefined();
-    expect(userService.updateUsername).toBeDefined();
+    expect(userService.updateDisplayName).toBeDefined();
     expect(userService.updateDescription).toBeDefined();
   });
 
@@ -45,7 +48,6 @@ describe('UserService', () => {
     firstName: 'testFirstName',
     lastName: 'testLastName',
     isConnected: true,
-    username: 'testLogin',
     bannerUrl: 'bannerUrl',
     description: 'description',
     createdAt: new Date(),
@@ -59,7 +61,6 @@ describe('UserService', () => {
     firstName: 'testFirstName',
     lastName: 'testLastName',
     isConnected: true,
-    username: 'testLogin2',
     bannerUrl: 'bannerUrl',
     description: 'description',
   };
@@ -87,8 +88,111 @@ describe('UserService', () => {
   });
 
   it('should update the description', async () => {
-    prismaService.user.update.mockResolvedValue(user);
+    const userDescription = {
+      id: 1,
+      login: 'testLogin',
+      email: 'testMail',
+      imageUrl: 'testUrl',
+      displayName: 'testLogin',
+      firstName: 'testFirstName',
+      lastName: 'testLastName',
+      isConnected: true,
+      bannerUrl: 'bannerUrl',
+      description: 'newDescription',
+      createdAt: new Date(),
+    };
+
+    prismaService.user.update.mockResolvedValue(userDescription);
     const result = await userService.updateImage(user, 'new Banner');
-    expect(result).toEqual(user);
+    expect(result).toEqual(userDescription);
   });
+
+  it('should update displayName', async () => {
+    const userDisplayName = {
+      id: 1,
+      login: 'testLogin',
+      email: 'testMail',
+      imageUrl: 'testUrl',
+      displayName: 'newDisplayName',
+      firstName: 'testFirstName',
+      lastName: 'testLastName',
+      isConnected: true,
+      bannerUrl: 'bannerUrl',
+      description: 'description',
+      createdAt: new Date(),
+    };
+
+    prismaService.user.update.mockResolvedValue(userDisplayName);
+    const result = await userService.updateImage(user, 'new displayName');
+    expect(result).toEqual(userDisplayName);
+  });
+
+  it('should update imageUrl', async () => {
+    const userImageUrl = {
+      id: 1,
+      login: 'testLogin',
+      email: 'testMail',
+      imageUrl: 'new imageUrl',
+      displayName: 'newDisplayName',
+      firstName: 'testFirstName',
+      lastName: 'testLastName',
+      isConnected: true,
+      bannerUrl: 'bannerUrl',
+      description: 'description',
+      createdAt: new Date(),
+    };
+
+    prismaService.user.update.mockResolvedValue(userImageUrl);
+    const result = await userService.updateImage(user, 'new displayName');
+    expect(result).toEqual(userImageUrl);
+  });
+
+  it('should update bannerUrl', async () => {
+    const userBannerUrl = {
+      id: 1,
+      login: 'testLogin',
+      email: 'testMail',
+      imageUrl: 'new imageUrl',
+      displayName: 'newDisplayName',
+      firstName: 'testFirstName',
+      lastName: 'testLastName',
+      isConnected: true,
+      bannerUrl: 'new bannerUrl',
+      description: 'description',
+      createdAt: new Date(),
+    };
+
+    prismaService.user.update.mockResolvedValue(userBannerUrl);
+    const result = await userService.updateImage(user, 'new displayName');
+    expect(result).toEqual(userBannerUrl);
+  });
+
+  /*it('addFriend and getFriendList', async () => {
+    const newFriend = {
+      id: 2,
+      login: 'copaing',
+      email: 'email@ducopaing.fr',
+      imageUrl: 'imageDuCopaing',
+      displayName: 'Tony labricot',
+      firstName: 'Tony',
+      lastName: 'Labricot',
+      isConnected: true,
+      bannerUrl: 'Abricot banner',
+      description: 'Abricot cest beau la vie',
+      createdAt: new Date(),
+      friendOf: [],
+      friends: [],
+    };
+
+    const newFriendList = [newFriend];
+    prismaService.user.create.mockResolvedValueOnce(newFriend);
+    await userService.createUser(newFriend);
+    prismaService.user.findUnique.mockResolvedValueOnce(newFriend);
+    prismaService.user.update.mockResolvedValueOnce(newFriend);
+    await friendService.addFriend(user, 'copaing');
+    prismaService.user.findMany.mockResolvedValueOnce(newFriendList);
+    const result = await friendService.getFriendList(user);
+    expect(result).toEqual(newFriendList);
+  });
+  */
 });

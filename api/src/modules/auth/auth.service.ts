@@ -1,6 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import axios from 'axios';
 
 import { UserService } from '../user';
@@ -48,11 +47,16 @@ export class AuthService {
 
       const profile = response.data;
 
+      let displayName = profile.login;
+      while (await this.userService.isDisplayNameInUse(displayName)) {
+        displayName += '_';
+      }
+
       return {
         login: profile.login,
         email: profile.email,
         imageUrl: profile.image.versions.medium,
-        displayName: profile.login,
+        displayName: displayName,
         firstName: profile.first_name,
         lastName: profile.last_name,
         description: 'No description atm.',

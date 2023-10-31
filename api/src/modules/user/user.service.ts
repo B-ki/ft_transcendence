@@ -1,5 +1,5 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { Channel, User } from '@prisma/client';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
 
@@ -62,8 +62,6 @@ export class UserService {
   }
 
   async updateImage(user: User, newImage: string): Promise<User> {
-    const logger = new Logger();
-    logger.debug('image url = ', newImage);
     const updateUser = await this.prisma.user.update({
       where: {
         login: user.login,
@@ -80,32 +78,32 @@ export class UserService {
     return updateUser;
   }
 
-  async updateUsername(user: User, newUsername: string): Promise<User> {
-    const updateUser = await this.prisma.user.update({
+  async updateDisplayName(user: User, newName: string): Promise<User> {
+    if (await this.isDisplayNameInUse(newName)) {
+      throw new BadRequestException(`Display name ${newName} is already in use`);
+    }
+
+    const updatedUser = await this.prisma.user.update({
       where: {
         login: user.login,
       },
       data: {
-        username: newUsername,
+        displayName: newName,
       },
     });
 
-    if (!updateUser) {
+    if (!updatedUser) {
       throw new NotFoundException(`User ${user.login} not found`);
     }
 
-    return updateUser;
+    return updatedUser;
   }
 
-  async getChannellist(user: User) {
-    return await this.prisma.channel.findMany({
+  async isDisplayNameInUse(name: string): Promise<boolean> {
+    return !!(await this.prisma.user.findUnique({
       where: {
-        users: {
-          some: {
-            userId: user.id,
-          },
-        },
+        displayName: name,
       },
-    });
+    }));
   }
 }

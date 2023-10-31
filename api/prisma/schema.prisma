@@ -26,10 +26,9 @@ model User {
     email       String        @unique
     isConnected Boolean
     imageUrl    String?
-    displayName String
+    displayName String        @unique
     firstName   String
     lastName    String
-    username    String?
     bannerUrl   String?
     description String?
     channelUser ChannelUser[]
@@ -74,11 +73,11 @@ model Message {
 }
 
 model Game {
-    id          Int         @id @default(autoincrement())
-    createdAt   DateTime    @default(now())
-    winner      User?   @relation("GameWinner", fields: [winnerId], references: [id])
+    id          Int      @id @default(autoincrement())
+    createdAt   DateTime @default(now())
+    winner      User?    @relation("GameWinner", fields: [winnerId], references: [id])
     winnerId    Int
-    loser       User?   @relation("GameLoser", fields: [loserId], references: [id])
+    loser       User?    @relation("GameLoser", fields: [loserId], references: [id])
     loserId     Int
     winnerScore Int
     loserScore  Int

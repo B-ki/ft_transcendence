@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Game, User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -12,21 +12,15 @@ export class GameService {
     scoreWinner: number,
     scoreLoser: number,
   ): Promise<void> {
-    // eslint-disable-next-line no-useless-catch
-    const logger = new Logger();
-    logger.debug(winner);
-    logger.debug(loser);
-    logger.debug(scoreWinner);
-    logger.debug(scoreLoser);
     await this.prisma.game.create({
       data: {
         winnerScore: scoreWinner,
         loserScore: scoreLoser,
         winner: {
-          connect: { id: winner.id },
+          connect: winner,
         },
         loser: {
-          connect: { id: loser.id },
+          connect: loser,
         },
       },
     });

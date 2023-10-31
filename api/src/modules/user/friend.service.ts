@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { PrismaService } from 'nestjs-prisma';
+
+import { PrismaService } from '@/prisma';
 
 @Injectable()
 export class FriendService {
@@ -11,6 +12,9 @@ export class FriendService {
       where: {
         login: friendLogin,
       },
+      include: {
+        friendOf: true,
+      },
     });
 
     if (!newFriend) {
@@ -20,22 +24,10 @@ export class FriendService {
     if (user === newFriend) {
       throw new BadRequestException('Cant add user to its own friendlist');
     }
-    // Check if newFriend not in friend list
-    const newFriendInFriendlist = await this.prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-      include: {
-        friends: {
-          where: {
-            id: newFriend.id,
-          },
-        },
-      },
-    });
 
-    if (newFriendInFriendlist?.friends.length) {
-      throw new BadRequestException('User already in friend list!');
+    // Check if we're not already friend with that user
+    if (newFriend.friendOf.find((f) => f.id === user.id)) {
+      throw new BadRequestException('You already added this friend');
     }
 
     // Add newFriend to user friends
@@ -51,6 +43,22 @@ export class FriendService {
         },
       },
     });
+
+    // Add user to newFriend friendOf
+    await this.prisma.user.update({
+      where: {
+        id: newFriend.id,
+      },
+      data: {
+        friendOf: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    return { success: true };
   }
 
   async removeFriend(user: User, friendToRemoveLogin: string) {
@@ -58,33 +66,21 @@ export class FriendService {
       where: {
         login: friendToRemoveLogin,
       },
+      include: {
+        friendOf: true,
+      },
     });
 
     if (!friendToRemove) {
       throw new NotFoundException('Friend doesnt exists');
     }
-    if (user === friendToRemove) {
-      throw new BadRequestException('Cant delete user from its own friendlist');
-    }
-    // Check if friendToRemove not in friend list
-    const friendToRemoveFriendlist = await this.prisma.user.findUnique({
-      where: {
-        id: user.id,
-      },
-      include: {
-        friends: {
-          where: {
-            id: friendToRemove.id,
-          },
-        },
-      },
-    });
 
-    if (friendToRemoveFriendlist?.friends.length === 0) {
-      throw new BadRequestException('User not in friend list!');
+    // Check if we're friend with user
+    if (!friendToRemove.friendOf.find((f) => f.id === user.id)) {
+      throw new BadRequestException('You are not friend with this user');
     }
 
-    // Delete friendToRemove from user friends
+    // Delete friendToRemove from user friendlist
     await this.prisma.user.update({
       where: {
         id: user.id,
@@ -97,10 +93,26 @@ export class FriendService {
         },
       },
     });
+
+    // Delete user from user friendToRemove friendOf
+    await this.prisma.user.update({
+      where: {
+        id: friendToRemove.id,
+      },
+      data: {
+        friendOf: {
+          disconnect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    return { success: true };
   }
 
   async getFriendList(user: User) {
-    return await this.prisma.user.findMany({
+    const u = await this.prisma.user.findUnique({
       where: {
         id: user.id,
       },
@@ -108,5 +120,8 @@ export class FriendService {
         friends: true,
       },
     });
+
+    // user is never null since it's authenticated
+    return u!.friends;
   }
 }

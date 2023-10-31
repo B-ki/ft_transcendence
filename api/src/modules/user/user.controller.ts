@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Logger, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { GetUser } from '../auth/decorators';
 import { JwtAuthGuard } from '../auth/guards';
-import { FriendService } from './friends.service';
+import { FriendService } from './friend.service';
 import {
+  UpdateDisplayNameDto,
   UpdateUserBannerDto,
   UpdateUserDescriptionDto,
   UpdateUserImageDto,
-  UpdateUserUsernameDto,
   UserLoginDto,
 } from './user.dto';
 import { UserService } from './user.service';
@@ -33,54 +33,40 @@ export class UserController {
     @Body() descriptionDto: UpdateUserDescriptionDto,
     @GetUser() user: User,
   ): Promise<User> {
-    const { description } = descriptionDto;
-    const logger = new Logger();
-    logger.debug('descriptionDto = ', descriptionDto);
-    logger.debug('description = ', description);
-    return this.userService.updateDescription(user, description);
+    return this.userService.updateDescription(user, descriptionDto.description);
   }
 
   @Patch('/:login/banner')
   async patchBanner(@Body() bannerDto: UpdateUserBannerDto, @GetUser() user: User): Promise<User> {
-    const { bannerUrl } = bannerDto;
-    return this.userService.updateBanner(user, bannerUrl);
+    return this.userService.updateBanner(user, bannerDto.bannerUrl);
   }
 
   @Patch('/:login/image')
   async patchImage(@Body() imageDto: UpdateUserImageDto, @GetUser() user: User): Promise<User> {
-    const { imageUrl } = imageDto;
-    return this.userService.updateImage(user, imageUrl);
+    return this.userService.updateImage(user, imageDto.imageUrl);
   }
 
-  @Patch('/:login/username')
-  async patchUsername(
-    @Body() usernameDto: UpdateUserUsernameDto,
+  @Patch('/:login/displayname')
+  async patchDisplayname(
+    @Body() displaynameDto: UpdateDisplayNameDto,
     @GetUser() user: User,
   ): Promise<User> {
-    const { displayName } = usernameDto;
-    return this.userService.updateUsername(user, displayName);
+    return this.userService.updateDisplayName(user, displaynameDto.displayName);
   }
 
-  @Get('/addfriend')
-  async addFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User): Promise<void> {
-    const { login } = friendLoginDto;
-    return this.friendService.addFriend(user, login);
+  @Post('/addfriend')
+  async addFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User) {
+    return this.friendService.addFriend(user, friendLoginDto.login);
   }
 
-  @Get('/removefriend')
-  async removeFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User): Promise<void> {
-    const { login } = friendLoginDto;
-    return this.friendService.removeFriend(user, login);
+  @Post('/removefriend')
+  async removeFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User) {
+    return this.friendService.removeFriend(user, friendLoginDto.login);
   }
 
   @Get('/friendlist')
   async getFriendList(@GetUser() user: User): Promise<User[]> {
     return this.friendService.getFriendList(user);
-  }
-
-  @Get('/channellist')
-  async getChannelList(@GetUser() user: User) {
-    return this.userService.getChannellist(user);
   }
 
   /*
