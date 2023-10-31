@@ -15,6 +15,7 @@ import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
 
 import OauthCallback from './pages/OauthCallback';
+import { Navbar } from './components/Navbar';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

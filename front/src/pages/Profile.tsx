@@ -74,9 +74,9 @@ function Profile() {
           alt="profile pic"
           onClick={() => setShow(true)}
         />
-        <div className="flex flex-col items-start justify-end gap-4">
+        <div className="flex flex-col items-start justify-end gap-2">
+          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
           <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold text-white-1">{user?.login}</span>
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
@@ -86,9 +86,9 @@ function Profile() {
           alt="profile pic"
           onClick={() => setShow(true)}
         />
-        <div className="flex flex-col items-start justify-end gap-4">
+        <div className="flex flex-col items-start justify-end gap-2">
+          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
           <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-          <span className="left-0 font-bold text-white-1">{user?.login}</span>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">

@@ -5,7 +5,7 @@ import { Icon } from '@/components/Icon';
 interface ButtonProps {
   children?: React.ReactNode;
   type: 'primary' | 'secondary';
-  size: 'xsmall' | 'small' | 'large';
+  size: 'xsmall' | 'small' | 'large' | 'xlarge';
   iconLeft?: string;
   iconRight?: string;
   onClick?: () => void;
@@ -18,6 +18,7 @@ const variants = {
   xsmall: 'text-sm p-1',
   small: 'text-md px-4 py-2',
   large: 'text-xl px-4 py-2',
+  xlarge: 'text-7xl p-5',
 };
 
 export const Button: FC<ButtonProps> = ({ children, type, iconLeft, iconRight, size, onClick }) => {
