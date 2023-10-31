@@ -4,7 +4,7 @@ export async function privateGuard() {
   const token = localStorage.getItem('token');
   // TODO: decode jwt token and check if it's expired
   if (!token) {
-    throw redirect('/');
+    throw redirect('/login');
   }
   return null;
 }
