@@ -7,7 +7,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -17,7 +16,7 @@ import { WSAuthMiddleware } from '../auth/ws/ws.middleware';
 import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
 import { UserService } from '../user';
 import { ChannelsService } from './channels.service';
-import { CreateChannelDTO, JoinChannelDTO } from './chat.dto';
+import { CreateChannelDTO, JoinChannelDTO, LeaveChannelDTO, SendMessageDTO } from './chat.dto';
 import { ChatEvent } from './chat.state';
 
 @UsePipes(new ValidationPipe())
@@ -39,11 +38,12 @@ export class ChatGateway implements OnGatewayInit {
     const authMiddleware = WSAuthMiddleware(this.jwtService, this.userService);
     server.use(authMiddleware);
 
-    this.io.on('connection', (socket) => {
+    this.io.on('connection', async (socket) => {
       this.logger.log('Client connected: ' + socket.id);
-    });
 
-    setInterval(() => this.io.emit('message', 'hello'), 2000);
+      const channels = await this.channelsService.getJoinedChannels(socket.data.user);
+      socket.join(channels);
+    });
   }
 
   @SubscribeMessage(ChatEvent.Create)
@@ -52,17 +52,29 @@ export class ChatGateway implements OnGatewayInit {
     @ConnectedSocket() client: Socket,
   ) {
     await this.channelsService.createChannel(channel, client.data.user);
-    return { event: 'joinedChannel', data: channel.name };
+    client.join(channel.name);
+    return { event: 'youJoined', data: channel.name };
   }
 
   @SubscribeMessage(ChatEvent.Join)
   async onJoinChannel(@MessageBody() channel: JoinChannelDTO, @ConnectedSocket() client: Socket) {
-    await this.channelsService.joinChannel(channel, client.data.user);
-    //client.join(channel.channel);
+    const data = await this.channelsService.joinChannel(channel, client.data.user);
+    this.io.to(channel.name).emit(ChatEvent.Join, data);
+    client.join(channel.name);
+    return { event: 'youJoined', data: channel.name };
+  }
+
+  @SubscribeMessage(ChatEvent.Leave)
+  async onLeaveChannel(@MessageBody() channel: LeaveChannelDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.leaveChannel(channel, client.data.user);
+    client.leave(channel.name);
+    this.io.to(channel.name).emit(ChatEvent.Leave, data);
+    return { event: 'youLeft', data: data };
   }
 
   @SubscribeMessage(ChatEvent.Message)
-  onMessage(@MessageBody() message: string): WsResponse<string> {
-    return { event: ChatEvent.Message, data: 'You sent: ' + message };
+  async onMessage(@MessageBody() messageDTO: SendMessageDTO, @ConnectedSocket() client: Socket) {
+    const message = await this.channelsService.sendMessage(messageDTO, client.data.user);
+    this.io.to(messageDTO.channel).emit(ChatEvent.Message, message);
   }
 }

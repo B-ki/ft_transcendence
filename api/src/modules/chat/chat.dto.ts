@@ -31,3 +31,19 @@ export class JoinChannelDTO {
   @MaxLength(50)
   password: string;
 }
+
+export class LeaveChannelDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  name: string;
+}
+
+export class SendMessageDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+
+  @IsNotEmpty()
+  @MaxLength(1000)
+  content: string;
+}
