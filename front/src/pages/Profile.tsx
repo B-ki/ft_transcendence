@@ -5,7 +5,7 @@ import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
-import { Table } from '@/components/Table';
+import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { useAuth } from '@/hooks/useAuth';
@@ -92,7 +92,7 @@ function Profile() {
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
-        <Table></Table>
+        <GameHistoryTable></GameHistoryTable>
       </div>
     </div>
   );
