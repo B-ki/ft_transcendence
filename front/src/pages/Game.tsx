@@ -6,6 +6,7 @@ import background from '@/assets/layeredWavesBg.svg';
 function Game() {
   const { user } = useAuth();
 
+
   return (
     <div
       className="relative flex h-screen w-screen flex-col"

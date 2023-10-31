@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 import PicUploader from '@/components/PicUploader';
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
@@ -19,6 +20,7 @@ const inputs = [
 function Profile() {
   const [show, setShow] = useState(false);
   const { user } = useAuth();
+
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);

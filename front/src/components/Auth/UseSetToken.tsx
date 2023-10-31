@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
 
 import { tokenDto } from '@/dto/tokenDto';
 import { useLocalStorage } from '@/hooks/useLocalStorage';

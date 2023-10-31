@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 function Home() {
   const { user, logout } = useAuth();
+
   return (
     <div
       style={{

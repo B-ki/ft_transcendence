@@ -1,14 +1,10 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
-
-import { userDto } from '@/dto/userDto';
-import { useApi } from '@/hooks/useApi';
-import ApiClient, { getUser } from '@/utils/apiAxios';
 
 import UseSetUser from './UseSetUser';
 
 const fetchUserData = async (login: string, token: string | null) => {
-  const response = await fetch(`/api/user/id/${login}`, {
+  const response = await fetch(`/api/user/${login}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!response.ok) {
@@ -19,7 +15,7 @@ const fetchUserData = async (login: string, token: string | null) => {
 
 const UseGetUser = (props: { token: string; login: string }) => {
   // This doesn't work because enabled parameter isn't correctly use with useApi()
-  //const query = useApi().get('my user', `/user/id/${props.login}`, { enabled: !!props.token }) as UseQueryResult<userDto>;
+  //const query = useApi().get('my user', `/user/${props.login}`, { enabled: !!props.token }) as UseQueryResult<userDto>;
 
   const query = useQuery(['userData', props.login], () => fetchUserData(props.login, props.token), {
     enabled: !!props.token,

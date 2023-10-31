@@ -4,6 +4,7 @@ import { loggingMiddleware, PrismaModule } from 'nestjs-prisma';
 import { AuthModule } from './modules/auth';
 import { ChatModule } from './modules/chat';
 import { FakeModule } from './modules/fake';
+import { GameModule } from './modules/game';
 // import { GameModule } from './modules/game';
 import { UserModule } from './modules/user';
 
@@ -11,6 +12,7 @@ import { UserModule } from './modules/user';
   imports: [
     UserModule,
     AuthModule,
+    GameModule,
     FakeModule,
     ChatModule,
     // GameModule,

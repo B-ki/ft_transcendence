@@ -1,5 +1,4 @@
 import { Navbar } from '@/components/Navbar';
-import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 import ApiClient from '@/utils/apiAxios';
 import background from '@/assets/layeredWavesBg.svg';

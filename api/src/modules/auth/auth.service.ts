@@ -1,10 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import axios from 'axios';
 
 import { UserService } from '../user';
-import { FortyTwoProfile, JwtPayload } from './auth.interface';
+import { CreateUserDto, JwtPayload } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +18,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async login(profile: FortyTwoProfile): Promise<string> {
+  async login(profile: CreateUserDto): Promise<string> {
     try {
       await this.userService.getUnique(profile.login);
     } catch (err) {
@@ -38,7 +37,7 @@ export class AuthService {
     return token;
   }
 
-  async fetchProfileInformations(accessToken: string): Promise<FortyTwoProfile> {
+  async fetchProfileInformations(accessToken: string): Promise<CreateUserDto> {
     try {
       const response = await axios.get('https://api.intra.42.fr/v2/me', {
         headers: {
@@ -48,20 +47,24 @@ export class AuthService {
 
       const profile = response.data;
 
+      let displayName = profile.login;
+      while (await this.userService.isDisplayNameInUse(displayName)) {
+        displayName += '_';
+      }
+
       return {
         login: profile.login,
         email: profile.email,
         imageUrl: profile.image.versions.medium,
-        displayName: profile.login,
+        displayName: displayName,
         firstName: profile.first_name,
         lastName: profile.last_name,
+        description: 'No description atm.',
+        isConnected: true,
+        bannerUrl: 'Good banner to place here',
       };
     } catch (error) {
       throw new Error('Unable to fetch profile informations');
     }
-  }
-
-  async test(user: User): Promise<string | undefined> {
-    return await this.userService.testGetFirstName(user);
   }
 }
