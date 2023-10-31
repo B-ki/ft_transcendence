@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { useCallback, useState } from 'react';
 import { FC } from 'react';
-import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+
+import { useAuth } from '@/hooks/useAuth';
 
 interface InputProps {
   picture?: string | null;

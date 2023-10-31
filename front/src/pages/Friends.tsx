@@ -1,7 +1,7 @@
+import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
 import { useAuth } from '@/hooks/useAuth';
 import ApiClient from '@/utils/apiAxios';
-import background from '@/assets/layeredWavesBg.svg';
 
 function Friends() {
   const { user, logout } = useAuth();

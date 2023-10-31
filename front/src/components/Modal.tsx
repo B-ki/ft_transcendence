@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useCallback, useEffect } from 'react';
 import { FC } from 'react';
-import { Button } from '@/components/Button';
+
 import crossIcon from '@/assets/cross.svg';
+import { Button } from '@/components/Button';
 
 interface ModalProps {
   show: boolean;
