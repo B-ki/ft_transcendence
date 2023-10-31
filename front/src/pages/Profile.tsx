@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import background from '@/assets/blurry-gradient-haikei.png';
 import myImage from '@/assets/cool-profile-picture.jpg';
-import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
 // import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,11 +19,6 @@ function Profile() {
   // if (isLoading) return <div>Loading...</div>;
   // if (error) console.log(error);
   // if (data) console.log(data);
-
-  const handleClick = () => {
-    logout();
-    navigate('/');
-  };
 
   return (
     <div className="relative flex h-screen w-screen flex-col">

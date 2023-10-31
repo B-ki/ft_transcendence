@@ -1,9 +1,5 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { Navigate } from 'react-router-dom';
-
-import { userDto } from '@/dto/userDto';
-import { useApi } from '@/hooks/useApi';
-import ApiClient, { getUser } from '@/utils/apiAxios';
 
 import UseSetUser from './UseSetUser';
 
