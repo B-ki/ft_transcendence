@@ -36,6 +36,7 @@ model User {
     gamesLost   Game[]        @relation("GameLoser")
     friends     User[]        @relation("friends")
     friendOf    User[]        @relation("friends")
+    messages    Message[] // Not in ChannelUser for message persistance
 }
 
 model ChannelUser {
@@ -45,7 +46,6 @@ model ChannelUser {
     channel   Channel     @relation(fields: [channelId], references: [id])
     channelId Int
     role      ChannelRole
-    Message   Message[]
 
     @@unique([userId, channelId])
 }
@@ -63,11 +63,11 @@ model Channel {
 }
 
 model Message {
-    id        Int         @id @default(autoincrement())
-    createdAt DateTime    @default(now())
-    channel   Channel     @relation(fields: [channelId], references: [id])
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
     channelId Int
-    author    ChannelUser @relation(fields: [authorId], references: [id])
+    author    User     @relation(fields: [authorId], references: [id])
     authorId  Int
     content   String
 }
