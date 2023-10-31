@@ -18,6 +18,7 @@ export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
       <input
         className="rounded-md border border-dark-3 bg-white-3  invalid:border-red focus:border-blue focus:outline-none"
         type="text"
+        maxLength={30}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={inputText}

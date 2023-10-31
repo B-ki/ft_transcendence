@@ -1,8 +1,7 @@
-import { FC } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import gitLogo from '@/assets/github-mark.svg';
+import pongLogo from '@/assets/pongIconWhithe.png';
 import { useAuth } from '@/hooks/useAuth';
 
 import { Button } from './Button';
@@ -19,19 +18,20 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
+    // replace logout and delete local storage
     logout();
-    navigate('/');
+    navigate('/login');
   };
 
   const handleLogoClick = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   return (
-    <div className="flex h-16 items-center justify-between bg-darkBlue-2 px-10 py-2">
+    <div className="z-30 flex h-16 items-center justify-between bg-darkBlue-1 px-10 py-2">
       <div className="flex flex-row">
         <button onClick={handleLogoClick} className="flex gap-3">
-          <img src={gitLogo} alt="link to our github" className="h-9" />
+          <img src={pongLogo} alt="link to our github" className="h-9" />
           <span className="self-center whitespace-nowrap text-2xl font-semibold text-white-3">
             Our Pong
           </span>

@@ -14,6 +14,7 @@ import Login from '@/pages/Login';
 import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
 
+import { Navbar } from './components/Navbar';
 import OauthCallback from './pages/OauthCallback';
 
 const container = document.getElementById('root');
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
-        path: '',
+        path: '/login',
         element: <Login />,
       },
       {
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
         element: <OauthCallback />,
       },
       {
-        path: '/home',
+        path: '/',
         element: <Home />,
         loader: privateGuard,
       },

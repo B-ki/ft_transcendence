@@ -1,26 +1,25 @@
+import background from '@/assets/layeredWavesBg.svg';
+import { Button } from '@/components/Button';
 import { Navbar } from '@/components/Navbar';
-import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 function Game() {
-  const { user, login_42, logout } = useAuth();
-
-  //   if (isLoading) return <div>Loading...</div>;
-  //   console.log(data);
+  const { user } = useAuth();
 
   return (
-    <div>
+    <div
+      className="relative flex h-screen w-screen flex-col"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
       <Navbar />
-      <div className="mt-10 flex w-screen justify-center gap-8">
-        <h1>Profile page</h1>
-        <button className="w-fit" onClick={() => login_42()}>
-          Login
-        </button>
-        {user && (
-          <button className="w-fit" onClick={logout}>
-            Logout
-          </button>
-        )}
+      <div className="mt-10 flex h-2/3 w-screen items-center justify-center gap-8">
+        <Button type="primary" size="xlarge">
+          Game
+        </Button>
       </div>
     </div>
   );
