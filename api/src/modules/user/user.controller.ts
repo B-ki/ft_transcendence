@@ -25,7 +25,7 @@ export class UserController {
 
   @Get('/me')
   async getMyUser(@GetUser() user: User) {
-    return user;
+    return this.userService.getUnique(user.login);
   }
 
   @Get('/:login')
