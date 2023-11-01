@@ -16,7 +16,14 @@ import { WSAuthMiddleware } from '../auth/ws/ws.middleware';
 import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
 import { UserService } from '../user';
 import { ChannelsService } from './channels.service';
-import { CreateChannelDTO, JoinChannelDTO, LeaveChannelDTO, SendMessageDTO } from './chat.dto';
+import {
+  CreateChannelDTO,
+  JoinChannelDTO,
+  LeaveChannelDTO,
+  MessageHistoryDTO,
+  SendMessageDTO,
+  UpdateChannelDTO,
+} from './chat.dto';
 import { ChatEvent } from './chat.state';
 
 @UsePipes(new ValidationPipe())
@@ -76,5 +83,20 @@ export class ChatGateway implements OnGatewayInit {
   async onMessage(@MessageBody() messageDTO: SendMessageDTO, @ConnectedSocket() client: Socket) {
     const message = await this.channelsService.sendMessage(messageDTO, client.data.user);
     this.io.to(messageDTO.channel).emit(ChatEvent.Message, message);
+  }
+
+  @SubscribeMessage(ChatEvent.MessageHistory)
+  async onMessageHistory(@MessageBody() dto: MessageHistoryDTO) {
+    const history = await this.channelsService.getMessageHistory(dto.channel, dto.limit);
+    return { event: ChatEvent.MessageHistory, data: history };
+  }
+
+  @SubscribeMessage(ChatEvent.UpdateChannel)
+  async onUpdateChannel(
+    @MessageBody() updateData: UpdateChannelDTO,
+    @ConnectedSocket() client: Socket,
+  ) {
+    await this.channelsService.updateChannel(updateData, client.data.user);
+    this.io.to(updateData.name).emit(ChatEvent.UpdateChannel, { type: updateData.type });
   }
 }

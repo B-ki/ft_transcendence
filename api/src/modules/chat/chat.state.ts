@@ -6,4 +6,6 @@ export enum ChatEvent {
   Unblock = 'unblock',
   Invite = 'invite',
   Create = 'create',
+  MessageHistory = 'history',
+  UpdateChannel = 'updateChannel',
 }
