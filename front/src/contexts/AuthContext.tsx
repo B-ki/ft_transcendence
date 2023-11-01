@@ -18,7 +18,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export function AuthProvider({ children }: { children: React.ReactNode }): JSX.Element {
-  const [user, setUser] = useState<null | userDto>(null);
+  const [user, setUser] = useState<userDto | null>(null);
   const [error, setError] = useState<unknown>();
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingInitial, setLoadingInitial] = useState<boolean>(false);
@@ -28,19 +28,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   // const history = useHistory();
   const location = useLocation();
 
-  //const token = localStorage.getItem('token');
-
-  // TO DO : Query user everytime we reload the page
+  const { data, isError, isLoading } = useApi().get(
+    'get user profile',
+    '/user/me',
+  ) as UseQueryResult<userDto>;
 
   useEffect(() => {
-    async () => {
-      const token = localStorage.getItem('token');
-      console.log('[AuthContext]', token);
-      if (token) {
-        useApi().get('my user', `/user/${user?.login}`) as UseQueryResult<userDto>;
-        setUser(dummyUserDto);
-      }
-    };
+    console.log('[AuthContext] fetching User');
+    if (data) setUser(data);
   });
 
   useEffect(() => {
