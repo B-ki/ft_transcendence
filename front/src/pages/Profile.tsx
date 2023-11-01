@@ -16,6 +16,17 @@ const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
   { id: '1', labelTxt: 'Description', inputTxt: '30 character maximum', mandatory: false },
 ];
+function createGame() {
+  const query = useApi().post('game', '/game/create', {
+    data: {
+      winnerLogin: 'lbesnard',
+      loserLogin: 'rcarles',
+      winnerScore: 4,
+      loserScore: 2,
+    },
+  }) as UseQueryResult<userDto[]>;
+  return query.data;
+}
 
 function Profile() {
   const [show, setShow] = useState(false);
