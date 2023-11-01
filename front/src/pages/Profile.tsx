@@ -28,6 +28,33 @@ function createGame() {
   return query.data;
 }
 
+const fetchGame = () => {
+  const apiUrl = 'http://localhost:8080/api/game/create';
+  const requestData = {
+    winnerLogin: 'lbesnard',
+    loserLogin: 'rcarles',
+    winnerScore: 4,
+    loserScore: 2,
+  };
+
+  fetch(`${apiUrl}`, {
+    method: 'POST',
+    body: JSON.stringify(requestData),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('POST request successful', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+};
+
 function Profile() {
   const [show, setShow] = useState(false);
   let user: userDto | undefined = undefined;
@@ -45,16 +72,11 @@ function Profile() {
   }
   user = data;
 
-  const createGame = () => {
-    const query = useApi().post('game', '/game/create', {
-      data: {
-        winnerLogin: 'lbesnard',
-        loserLogin: 'rcarles',
-        winnerScore: 4,
-        loserScore: 2,
-      },
-    }) as UseQueryResult<userDto[]>;
-  };
+  console.log({ isLoading, isFetching });
+
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
@@ -122,7 +144,7 @@ function Profile() {
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
-        <Button type="primary" size="small" onClick={createGame}>
+        <Button type="primary" size="small" onClick={refetch}>
           Create game
         </Button>
       </div>
