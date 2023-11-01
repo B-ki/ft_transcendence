@@ -1,18 +1,34 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
-import { ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
+import { Channel, ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'nestjs-prisma';
 
 import { config } from '@/config';
 
-import { CreateChannelDTO, JoinChannelDTO, LeaveChannelDTO, SendMessageDTO } from './chat.dto';
+import {
+  CreateChannelDTO,
+  JoinChannelDTO,
+  LeaveChannelDTO,
+  SendMessageDTO,
+  UpdateChannelDTO,
+} from './chat.dto';
 
 type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 
 @Injectable()
 export class ChannelsService {
   constructor(private prisma: PrismaService) {}
+
+  // Used to join socket.io rooms when the user connects
+  async getJoinedChannels(user: User): Promise<string[]> {
+    const channelUsers = await this.prisma.channelUser.findMany({
+      where: { user: user },
+      include: { channel: true },
+    });
+
+    return channelUsers.map((x) => x.channel.name);
+  }
 
   async getChannel(channelName: string): Promise<ChannelWithUsers> {
     const channel = await this.prisma.channel.findUnique({
@@ -159,13 +175,46 @@ export class ChannelsService {
     };
   }
 
-  // Used to join socket.io rooms when the user connects
-  async getJoinedChannels(user: User): Promise<string[]> {
-    const channelUsers = await this.prisma.channelUser.findMany({
-      where: { user: user },
-      include: { channel: true },
-    });
+  async getMessageHistory(channelName: string, limit: number) {
+    // make sure the channel exists
+    await this.getChannel(channelName);
 
-    return channelUsers.map((x) => x.channel.name);
+    return await this.prisma.message.findMany({
+      where: {
+        channel: { name: channelName },
+      },
+      include: {
+        author: true,
+      },
+      take: limit,
+    });
+  }
+
+  async updateChannel(updateData: UpdateChannelDTO, user: User) {
+    const channel = await this.getChannel(updateData.name);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role !== ChannelRole.OWNER) {
+      throw new WsException('You must be the channel owner to modify the channel visibility');
+    }
+
+    let hashedPassword = null;
+    if (updateData.type === ChannelType.PROTECTED) {
+      hashedPassword = await bcrypt.hash(updateData.password, config.bcrypt.saltRounds);
+    }
+
+    await this.prisma.channel.update({
+      where: {
+        id: channel.id,
+      },
+      data: {
+        type: updateData.type,
+        password: hashedPassword,
+      },
+    });
   }
 }

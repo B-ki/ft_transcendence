@@ -1,5 +1,14 @@
 import { ChannelType } from '@prisma/client';
-import { IsEnum, IsNotEmpty, IsOptional, MaxLength, ValidateIf } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  Max,
+  MaxLength,
+  Min,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateChannelDTO {
   @IsNotEmpty()
@@ -15,6 +24,8 @@ export class CreateChannelDTO {
   @MaxLength(50)
   password: string;
 }
+
+export class UpdateChannelDTO extends CreateChannelDTO {}
 
 export class CreateDmDTO {
   @IsNotEmpty()
@@ -46,4 +57,16 @@ export class SendMessageDTO {
   @IsNotEmpty()
   @MaxLength(1000)
   content: string;
+}
+
+export class MessageHistoryDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Max(100)
+  @Min(1)
+  limit: number;
 }
