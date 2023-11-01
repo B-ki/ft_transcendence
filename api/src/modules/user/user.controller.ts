@@ -23,6 +23,11 @@ export class UserController {
     private friendService: FriendService,
   ) {}
 
+  @Get('/me')
+  async getMyUser(@GetUser() user: User) {
+    return this.userService.getUnique(user.login);
+  }
+
   @Get('/:login')
   async getUserByLogin(@Param('login') login: string) {
     return this.userService.getUnique(login);

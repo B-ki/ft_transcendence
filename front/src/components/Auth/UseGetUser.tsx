@@ -14,7 +14,8 @@ const fetchUserData = async (login: string, token: string | null) => {
 };
 
 const UseGetUser = (props: { token: string; login: string }) => {
-  // This doesn't work because enabled parameter isn't correctly use with useApi()
+  // TO DO : Check with Arthur
+  // Line below doesn't work because enabled parameter isn't correctly use with useApi()
   //const query = useApi().get('my user', `/user/${props.login}`, { enabled: !!props.token }) as UseQueryResult<userDto>;
 
   const query = useQuery(['userData', props.login], () => fetchUserData(props.login, props.token), {
