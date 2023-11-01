@@ -44,7 +44,7 @@ export function useApi() {
         });
         return response.json();
       } catch (err) {}
-    });
+    },);
   };
 
   const post = (label: string, endpoint: string, args?: RequestArgsType) =>

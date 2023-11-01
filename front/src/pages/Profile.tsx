@@ -10,6 +10,9 @@ import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
 import { useAuth } from '@/hooks/useAuth';
+import { useApi } from '@/hooks/useApi';
+import { UseQueryResult } from 'react-query';
+import { userDto } from '@/dto/userDto';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -19,6 +22,17 @@ const inputs = [
 function Profile() {
   const [show, setShow] = useState(false);
   const { user } = useAuth();
+
+  const createGame = () => {
+    const query = useApi().post('game', '/game/create', {
+      data: {
+        winnerLogin: 'lbesnard',
+        loserLogin: 'rcarles',
+        winnerScore: 4,
+        loserScore: 2,
+      },
+    }) as UseQueryResult<userDto[]>;
+  };
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
@@ -93,6 +107,9 @@ function Profile() {
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
+        <Button type="primary" size="small" onClick={createGame}>
+          Create game
+        </Button>
       </div>
     </div>
   );
