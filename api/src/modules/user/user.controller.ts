@@ -33,7 +33,7 @@ export class UserController {
     return this.userService.getUnique(login);
   }
 
-  @Patch('/:login/description')
+  @Patch('/description')
   async patchDescription(
     @Body() descriptionDto: UpdateUserDescriptionDto,
     @GetUser() user: User,
@@ -41,17 +41,17 @@ export class UserController {
     return this.userService.updateDescription(user, descriptionDto.description);
   }
 
-  @Patch('/:login/banner')
+  @Patch('/banner')
   async patchBanner(@Body() bannerDto: UpdateUserBannerDto, @GetUser() user: User): Promise<User> {
     return this.userService.updateBanner(user, bannerDto.bannerUrl);
   }
 
-  @Patch('/:login/image')
+  @Patch('/image')
   async patchImage(@Body() imageDto: UpdateUserImageDto, @GetUser() user: User): Promise<User> {
     return this.userService.updateImage(user, imageDto.imageUrl);
   }
 
-  @Patch('/:login/displayname')
+  @Patch('/displayname')
   async patchDisplayname(
     @Body() displaynameDto: UpdateDisplayNameDto,
     @GetUser() user: User,

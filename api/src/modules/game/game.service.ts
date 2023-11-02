@@ -44,15 +44,19 @@ export class GameService {
     return games;
   }
 
-  async getAllGames(user: User): Promise<Game[] | null> {
+  async getAllGames(userLogin: string): Promise<Game[] | null> {
     const games = await this.prisma.game.findMany({
       where: {
         OR: [
           {
-            winnerId: user.id,
+            winner: {
+              login: userLogin,
+            },
           },
           {
-            loserId: user.id,
+            loser: {
+              login: userLogin,
+            },
           },
         ],
       },
