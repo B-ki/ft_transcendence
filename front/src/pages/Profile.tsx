@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { UseQueryResult } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
@@ -9,8 +10,8 @@ import { Input } from '@/components/Input';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
+import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
-import { useAuth } from '@/hooks/useAuth';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -19,9 +20,21 @@ const inputs = [
 
 function Profile() {
   const [show, setShow] = useState(false);
-  const { user } = useAuth();
+  let user: userDto | undefined = undefined;
 
-  const { data } = useApi().get('test', '/user/friendlist');
+  const { data, isLoading, isError } = useApi().get(
+    'get user profile',
+    '/user/me',
+  ) as UseQueryResult<userDto>;
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
+
+  user = data;
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);

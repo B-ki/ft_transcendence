@@ -6,7 +6,7 @@ import { Button } from '@/components/Button';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Login() {
-  const { user, login_42 } = useAuth();
+  const { login_42 } = useAuth();
 
   return (
     <div

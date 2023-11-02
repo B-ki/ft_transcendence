@@ -1,10 +1,7 @@
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
-import { useAuth } from '@/hooks/useAuth';
 
 function Home() {
-  const { user, logout } = useAuth();
-
   return (
     <div
       style={{

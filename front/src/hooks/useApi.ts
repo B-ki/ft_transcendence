@@ -1,7 +1,7 @@
 import { SearchParamsOption } from 'ky';
 import { useQuery } from 'react-query';
 
-import api from '@/utils/api';
+import { api } from '@/utils/api';
 
 type RequestType = 'post' | 'get' | 'delete' | 'patch';
 
