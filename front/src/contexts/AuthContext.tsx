@@ -1,5 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
 import { dummyUserDto, userDto } from '@/dto/userDto';
