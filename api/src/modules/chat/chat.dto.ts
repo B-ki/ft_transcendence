@@ -70,3 +70,9 @@ export class MessageHistoryDTO {
   @Min(1)
   limit: number;
 }
+
+export class UserListInChannelDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+}

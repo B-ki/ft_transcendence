@@ -23,6 +23,7 @@ import {
   MessageHistoryDTO,
   SendMessageDTO,
   UpdateChannelDTO,
+  UserListInChannelDTO,
 } from './chat.dto';
 import { ChatEvent } from './chat.state';
 
@@ -98,6 +99,11 @@ export class ChatGateway implements OnGatewayInit {
   ) {
     await this.channelsService.updateChannel(updateData, client.data.user);
     this.io.to(updateData.name).emit(ChatEvent.UpdateChannel, { type: updateData.type });
+  }
+
+  @SubscribeMessage(ChatEvent.UserList)
+  async onUserList(@MessageBody() dto: UserListInChannelDTO, @ConnectedSocket() client: Socket) {
+    return await this.channelsService.getUserListInChannel(dto, client.data.user);
   }
 
   @SubscribeMessage(ChatEvent.ChannelList)
