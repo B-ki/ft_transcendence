@@ -49,7 +49,8 @@ export class ChatGateway implements OnGatewayInit {
       this.logger.log('Client connected: ' + socket.id);
 
       const channels = await this.channelsService.getJoinedChannels(socket.data.user);
-      socket.join(channels);
+      const channelsName = channels.map((c) => c.name);
+      socket.join(channelsName);
     });
   }
 
@@ -86,9 +87,8 @@ export class ChatGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage(ChatEvent.MessageHistory)
-  async onMessageHistory(@MessageBody() dto: MessageHistoryDTO) {
-    const history = await this.channelsService.getMessageHistory(dto.channel, dto.limit);
-    return { event: ChatEvent.MessageHistory, data: history };
+  async onMessageHistory(@MessageBody() dto: MessageHistoryDTO, @ConnectedSocket() client: Socket) {
+    return await this.channelsService.getMessageHistory(dto, client.data.user);
   }
 
   @SubscribeMessage(ChatEvent.UpdateChannel)
@@ -98,5 +98,15 @@ export class ChatGateway implements OnGatewayInit {
   ) {
     await this.channelsService.updateChannel(updateData, client.data.user);
     this.io.to(updateData.name).emit(ChatEvent.UpdateChannel, { type: updateData.type });
+  }
+
+  @SubscribeMessage(ChatEvent.ChannelList)
+  async onChannelList() {
+    return await this.channelsService.getChannelList();
+  }
+
+  @SubscribeMessage(ChatEvent.JoinedChannels)
+  async onGetJoinedChannels(@ConnectedSocket() client: Socket) {
+    return await this.channelsService.getJoinedChannels(client.data.user);
   }
 }
