@@ -1,19 +1,30 @@
+import { UseQueryResult } from 'react-query';
+
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
 
 function Friends() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
-  // TO DO : When reloading Friends page, user is null. How can we fix that ?
+  let user: userDto | undefined = undefined;
 
-  //console.log('[Friends] user = ', user);
-  console.log('[Friends] user login = ', user?.login);
+  const { data, isLoading, isError } = useApi().get(
+    'Get user infos',
+    '/user/me',
+  ) as UseQueryResult<userDto>;
 
-  //const { data, isLoading } = useApi().get('Get Me info', '/user');
-
-  //   if (isLoading) return <div>Loading...</div>;
-  //   console.log(data);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
+  if (data) {
+    user = data;
+  }
 
   return (
     <div

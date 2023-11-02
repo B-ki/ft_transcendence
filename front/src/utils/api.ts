@@ -6,6 +6,10 @@ const base = ky.create({ prefixUrl: url });
 
 const token = localStorage.getItem('token');
 
-const api = token ? base.extend({ headers: { Authorization: `Bearer ${token}` } }) : base;
+let api = token ? base.extend({ headers: { Authorization: `Bearer ${token}` } }) : base;
 
-export default api;
+const setApiToken = (token: string | null) => {
+  api = token ? base.extend({ headers: { Authorization: `Bearer ${token}` } }) : base;
+};
+
+export { api, setApiToken };
