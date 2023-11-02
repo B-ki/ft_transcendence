@@ -10,4 +10,5 @@ export enum ChatEvent {
   UpdateChannel = 'updateChannel',
   ChannelList = 'channelList',
   JoinedChannels = 'joinedChannels',
+  UserList = 'userList',
 }

@@ -13,6 +13,7 @@ import {
   MessageHistoryDTO,
   SendMessageDTO,
   UpdateChannelDTO,
+  UserListInChannelDTO,
 } from './chat.dto';
 
 type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
@@ -251,5 +252,39 @@ export class ChannelsService {
       const { password, ...channelWithoutPassword } = cu.channel;
       return channelWithoutPassword;
     });
+  }
+
+  async getUserListInChannel(dto: UserListInChannelDTO, user: User) {
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        name: dto.channel,
+      },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    if (!channel) {
+      throw new WsException(`Channel ${dto.channel} not found`);
+    }
+
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    const usersWithRole = channel.users.map(({ user, role }) => ({
+      ...user,
+      role,
+    }));
+
+    return {
+      channel: channel.name,
+      users: usersWithRole,
+    };
   }
 }
