@@ -8,4 +8,6 @@ export enum ChatEvent {
   Create = 'create',
   MessageHistory = 'history',
   UpdateChannel = 'updateChannel',
+  ChannelList = 'channelList',
+  JoinedChannels = 'joinedChannels',
 }

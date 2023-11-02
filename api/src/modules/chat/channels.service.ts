@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
-import { Channel, ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
+import { ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'nestjs-prisma';
 
@@ -10,6 +10,7 @@ import {
   CreateChannelDTO,
   JoinChannelDTO,
   LeaveChannelDTO,
+  MessageHistoryDTO,
   SendMessageDTO,
   UpdateChannelDTO,
 } from './chat.dto';
@@ -19,16 +20,6 @@ type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 @Injectable()
 export class ChannelsService {
   constructor(private prisma: PrismaService) {}
-
-  // Used to join socket.io rooms when the user connects
-  async getJoinedChannels(user: User): Promise<string[]> {
-    const channelUsers = await this.prisma.channelUser.findMany({
-      where: { user: user },
-      include: { channel: true },
-    });
-
-    return channelUsers.map((x) => x.channel.name);
-  }
 
   async getChannel(channelName: string): Promise<ChannelWithUsers> {
     const channel = await this.prisma.channel.findUnique({
@@ -108,8 +99,11 @@ export class ChannelsService {
     });
 
     return {
-      ...user,
-      role: ChannelRole.USER,
+      channel: channel.name,
+      user: {
+        ...user,
+        role: ChannelRole.USER,
+      },
     };
   }
 
@@ -175,18 +169,22 @@ export class ChannelsService {
     };
   }
 
-  async getMessageHistory(channelName: string, limit: number) {
-    // make sure the channel exists
-    await this.getChannel(channelName);
+  async getMessageHistory(dto: MessageHistoryDTO, user: User) {
+    const channel = await this.getChannel(dto.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
 
     return await this.prisma.message.findMany({
       where: {
-        channel: { name: channelName },
+        channel: { name: dto.channel },
       },
       include: {
         author: true,
       },
-      take: limit,
+      take: dto.limit,
     });
   }
 
@@ -215,6 +213,43 @@ export class ChannelsService {
         type: updateData.type,
         password: hashedPassword,
       },
+    });
+  }
+
+  async getChannelList() {
+    const channels = await this.prisma.channel.findMany({
+      where: {
+        type: {
+          not: ChannelType.PRIVATE,
+        },
+        isDM: {
+          not: true,
+        },
+      },
+      // exclude password and isDM field
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        type: true,
+        name: true,
+      },
+    });
+
+    return channels;
+  }
+
+  async getJoinedChannels(user: User) {
+    const channelUsers = await this.prisma.channelUser.findMany({
+      where: { user: user },
+      include: { channel: true },
+    });
+
+    // return the channel list without the password field
+    return channelUsers.map((cu) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...channelWithoutPassword } = cu.channel;
+      return channelWithoutPassword;
     });
   }
 }
