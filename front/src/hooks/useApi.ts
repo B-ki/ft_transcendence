@@ -35,16 +35,19 @@ export function useApi() {
       }
     })();
 
-    return useQuery(label, async () => {
-      try {
-        const response = await method(endpoint, {
-          json: args?.data,
-          searchParams: args?.params,
-          ...args?.options,
-        });
-        return response.json();
-      } catch (err) {}
-    });
+    return useQuery(
+      label,
+      async () => {
+        try {
+          const response = await method(endpoint, {
+            json: args?.data,
+            searchParams: args?.params,
+          });
+          return response.json();
+        } catch (err) {}
+      },
+      { ...args?.options },
+    );
   };
 
   const post = (label: string, endpoint: string, args?: RequestArgsType) =>

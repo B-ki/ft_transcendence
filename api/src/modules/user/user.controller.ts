@@ -71,6 +71,7 @@ export class UserController {
 
   @Get('/friendlist')
   async getFriendList(@GetUser() user: User): Promise<User[]> {
+    console.log('[UserController] Inside controller');
     return this.friendService.getFriendList(user);
   }
 

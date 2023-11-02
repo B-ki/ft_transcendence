@@ -10,6 +10,7 @@ import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
 import { useAuth } from '@/hooks/useAuth';
+import { useApi } from '@/hooks/useApi';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -19,6 +20,8 @@ const inputs = [
 function Profile() {
   const [show, setShow] = useState(false);
   const { user } = useAuth();
+
+  const { data } = useApi().get('test', '/user/friendlist');
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
