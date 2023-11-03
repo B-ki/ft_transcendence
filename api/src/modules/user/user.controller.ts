@@ -5,13 +5,7 @@ import { User } from '@prisma/client';
 import { GetUser } from '../auth/decorators';
 import { JwtAuthGuard } from '../auth/guards';
 import { FriendService } from './friend.service';
-import {
-  UpdateDisplayNameDto,
-  UpdateUserBannerDto,
-  UpdateUserDescriptionDto,
-  UpdateUserImageDto,
-  UserLoginDto,
-} from './user.dto';
+import { UpdateUserDto, UserLoginDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -28,30 +22,9 @@ export class UserController {
     return this.userService.getUnique(user.login);
   }
 
-  @Patch('/description')
-  async patchDescription(
-    @Body() descriptionDto: UpdateUserDescriptionDto,
-    @GetUser() user: User,
-  ): Promise<User> {
-    return this.userService.updateDescription(user, descriptionDto.description);
-  }
-
-  @Patch('/banner')
-  async patchBanner(@Body() bannerDto: UpdateUserBannerDto, @GetUser() user: User): Promise<User> {
-    return this.userService.updateBanner(user, bannerDto.bannerUrl);
-  }
-
-  @Patch('/image')
-  async patchImage(@Body() imageDto: UpdateUserImageDto, @GetUser() user: User): Promise<User> {
-    return this.userService.updateImage(user, imageDto.imageUrl);
-  }
-
-  @Patch('/displayname')
-  async patchDisplayname(
-    @Body() displaynameDto: UpdateDisplayNameDto,
-    @GetUser() user: User,
-  ): Promise<User> {
-    return this.userService.updateDisplayName(user, displaynameDto.displayName);
+  @Patch('/me')
+  async patchUser(@Body() updateDto: UpdateUserDto, @GetUser() user: User): Promise<User> {
+    return this.userService.updateUser(user, updateDto);
   }
 
   @Post('/friends/add')
@@ -73,15 +46,4 @@ export class UserController {
   async getUserByLogin(@Param('login') login: string) {
     return this.userService.getUnique(login);
   }
-
-  /*
-  TO DO : 
-  
-  - Create ladder when winning or losing games
-  
-  - Create tests for each
-
-  - Create github action for tests
-
-  */
 }

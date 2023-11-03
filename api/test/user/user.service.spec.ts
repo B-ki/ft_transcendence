@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { CreateUserDto } from '@/modules/auth';
+import { UpdateUserDto } from '@/modules/user/user.dto';
 
 import { FriendService, UserService } from '../../src/modules/user';
 import { PrismaService } from '../../src/prisma';
@@ -33,10 +34,7 @@ describe('UserService', () => {
   it('should have functions', () => {
     expect(userService.getUnique).toBeDefined();
     expect(userService.createUser).toBeDefined();
-    expect(userService.updateBanner).toBeDefined();
-    expect(userService.updateImage).toBeDefined();
-    expect(userService.updateDisplayName).toBeDefined();
-    expect(userService.updateDescription).toBeDefined();
+    expect(userService.updateUser).toBeDefined();
   });
 
   const user = {
@@ -65,6 +63,13 @@ describe('UserService', () => {
     description: 'description',
   };
 
+  const userDto: UpdateUserDto = {
+    displayName: 'Joe',
+    description: 'Nimp',
+    imageUrl: 'image',
+    bannerUrl: 'banner',
+  };
+
   it('should create users correctly', async () => {
     prismaService.user.create.mockResolvedValue(user); // result will be equal to user
     const result = await userService.createUser(profile);
@@ -87,67 +92,7 @@ describe('UserService', () => {
     }
   });
 
-  it('should update the description', async () => {
-    const userDescription = {
-      id: 1,
-      login: 'testLogin',
-      email: 'testMail',
-      imageUrl: 'testUrl',
-      displayName: 'testLogin',
-      firstName: 'testFirstName',
-      lastName: 'testLastName',
-      isConnected: true,
-      bannerUrl: 'bannerUrl',
-      description: 'newDescription',
-      createdAt: new Date(),
-    };
-
-    prismaService.user.update.mockResolvedValue(userDescription);
-    const result = await userService.updateImage(user, 'new Banner');
-    expect(result).toEqual(userDescription);
-  });
-
-  it('should update displayName', async () => {
-    const userDisplayName = {
-      id: 1,
-      login: 'testLogin',
-      email: 'testMail',
-      imageUrl: 'testUrl',
-      displayName: 'newDisplayName',
-      firstName: 'testFirstName',
-      lastName: 'testLastName',
-      isConnected: true,
-      bannerUrl: 'bannerUrl',
-      description: 'description',
-      createdAt: new Date(),
-    };
-
-    prismaService.user.update.mockResolvedValue(userDisplayName);
-    const result = await userService.updateImage(user, 'new displayName');
-    expect(result).toEqual(userDisplayName);
-  });
-
-  it('should update imageUrl', async () => {
-    const userImageUrl = {
-      id: 1,
-      login: 'testLogin',
-      email: 'testMail',
-      imageUrl: 'new imageUrl',
-      displayName: 'newDisplayName',
-      firstName: 'testFirstName',
-      lastName: 'testLastName',
-      isConnected: true,
-      bannerUrl: 'bannerUrl',
-      description: 'description',
-      createdAt: new Date(),
-    };
-
-    prismaService.user.update.mockResolvedValue(userImageUrl);
-    const result = await userService.updateImage(user, 'new displayName');
-    expect(result).toEqual(userImageUrl);
-  });
-
-  it('should update bannerUrl', async () => {
+  it('should update user', async () => {
     const userBannerUrl = {
       id: 1,
       login: 'testLogin',
@@ -163,7 +108,7 @@ describe('UserService', () => {
     };
 
     prismaService.user.update.mockResolvedValue(userBannerUrl);
-    const result = await userService.updateImage(user, 'new displayName');
+    const result = await userService.updateUser(user, userDto);
     expect(result).toEqual(userBannerUrl);
   });
 
