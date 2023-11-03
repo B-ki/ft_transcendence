@@ -5,9 +5,9 @@ import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../auth';
 import { GetUser } from '../auth/decorators';
 import { UserService } from '../user';
+import { UserLoginDto } from '../user/user.dto';
 import { CreateGameDto } from './game.dto';
 import { GameService } from './game.service';
-import { UserLoginDto } from '../user/user.dto';
 
 @Controller('game')
 @UseGuards(JwtAuthGuard)
