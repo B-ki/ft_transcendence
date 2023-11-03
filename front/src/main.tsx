@@ -31,10 +31,6 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/oauth-callback',
-        element: <OauthCallback />,
-      },
-      {
         path: '/',
         element: <Home />,
         loader: privateGuard,
@@ -55,6 +51,10 @@ const router = createBrowserRouter([
         loader: privateGuard,
       },
     ],
+  },
+  {
+    path: '/oauth-callback',
+    element: <OauthCallback />,
   },
 ]);
 

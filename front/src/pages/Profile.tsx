@@ -3,7 +3,6 @@ import { UseQueryResult } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
-import background from '@/assets/layeredWavesBg.svg';
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Input } from '@/components/Input';
@@ -33,7 +32,6 @@ function Profile() {
   if (isError) {
     return <div>Error...</div>;
   }
-
   user = data;
 
   const handleSaveChanges = () => {
@@ -43,14 +41,7 @@ function Profile() {
   };
 
   return (
-    <div
-      className="relative flex h-screen w-screen flex-col"
-      style={{
-        backgroundImage: `url(${background})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-      }}
-    >
+    <>
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center">
@@ -110,7 +101,7 @@ function Profile() {
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
       </div>
-    </div>
+    </>
   );
 }
 
