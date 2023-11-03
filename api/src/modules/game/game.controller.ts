@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { JwtAuthGuard } from '../auth';
 import { GetUser } from '../auth/decorators';
 import { UserService } from '../user';
+import { UserLoginDto } from '../user/user.dto';
 import { CreateGameDto } from './game.dto';
 import { GameService } from './game.service';
 
@@ -36,6 +37,11 @@ export class GameController {
 
   @Get('/all')
   async getAllGames(@GetUser() user: User) {
-    return this.gameService.getAllGames(user);
+    return this.gameService.getAllGames(user.login);
+  }
+
+  @Get('/all/:login')
+  async getAllGamesFromUser(@Param('login') login: string) {
+    return this.gameService.getAllGames(login);
   }
 }

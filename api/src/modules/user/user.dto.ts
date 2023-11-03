@@ -1,6 +1,4 @@
-import { IsNotEmpty, MaxLength } from 'class-validator';
-
-import { CreateUserDto } from '../auth';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class UserLoginDto {
   @IsNotEmpty()
@@ -8,24 +6,22 @@ export class UserLoginDto {
   login: string;
 }
 
-export class UpdateUserDescriptionDto implements Pick<CreateUserDto, 'description'> {
-  @IsNotEmpty()
-  @MaxLength(256)
-  description: string;
-}
-
-export class UpdateUserBannerDto implements Pick<CreateUserDto, 'bannerUrl'> {
-  @IsNotEmpty()
-  bannerUrl: string;
-}
-
-export class UpdateUserImageDto implements Pick<CreateUserDto, 'imageUrl'> {
-  @IsNotEmpty()
-  imageUrl: string;
-}
-
-export class UpdateDisplayNameDto implements Pick<CreateUserDto, 'displayName'> {
-  @IsNotEmpty()
+export class UpdateUserDto {
   @MaxLength(20)
+  @IsString()
+  @IsOptional()
   displayName: string;
+
+  @IsString()
+  @MaxLength(30)
+  @IsOptional()
+  description: string;
+
+  @IsString()
+  @IsOptional()
+  bannerUrl: string;
+
+  @IsString()
+  @IsOptional()
+  imageUrl: string;
 }

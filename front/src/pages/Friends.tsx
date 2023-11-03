@@ -13,7 +13,7 @@ function Friends() {
 
   const { data, isLoading, isError } = useApi().get(
     'Get user infos',
-    '/user/me',
+    '/user/friends/friendlist',
   ) as UseQueryResult<userDto>;
 
   if (isLoading) {

@@ -25,12 +25,10 @@ export class FriendService {
       throw new BadRequestException('Cant add user to its own friendlist');
     }
 
-    // Check if we're not already friend with that user
     if (newFriend.friendOf.find((f) => f.id === user.id)) {
       throw new BadRequestException('You already added this friend');
     }
 
-    // Add newFriend to user friends
     await this.prisma.user.update({
       where: {
         id: user.id,
@@ -44,7 +42,6 @@ export class FriendService {
       },
     });
 
-    // Add user to newFriend friendOf
     await this.prisma.user.update({
       where: {
         id: newFriend.id,
@@ -75,12 +72,10 @@ export class FriendService {
       throw new NotFoundException('Friend doesnt exists');
     }
 
-    // Check if we're friend with user
     if (!friendToRemove.friendOf.find((f) => f.id === user.id)) {
       throw new BadRequestException('You are not friend with this user');
     }
 
-    // Delete friendToRemove from user friendlist
     await this.prisma.user.update({
       where: {
         id: user.id,
@@ -94,7 +89,6 @@ export class FriendService {
       },
     });
 
-    // Delete user from user friendToRemove friendOf
     await this.prisma.user.update({
       where: {
         id: friendToRemove.id,
@@ -121,7 +115,7 @@ export class FriendService {
       },
     });
 
-    // user is never null since it's authenticated
+    // User is never null since he is authenticated
     return u!.friends;
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Game, User } from '@prisma/client';
-import { PrismaService } from 'nestjs-prisma';
+
+import { PrismaService } from '@/prisma';
 
 @Injectable()
 export class GameService {
@@ -44,18 +45,27 @@ export class GameService {
     return games;
   }
 
-  async getAllGames(user: User): Promise<Game[] | null> {
+  async getAllGames(userLogin: string): Promise<Game[] | null> {
     const games = await this.prisma.game.findMany({
       where: {
         OR: [
           {
-            winnerId: user.id,
+            winner: {
+              login: userLogin,
+            },
           },
           {
-            loserId: user.id,
+            loser: {
+              login: userLogin,
+            },
           },
         ],
       },
+      include: {
+        winner: true,
+        loser: true,
+      },
+      take: 30,
     });
     return games;
   }

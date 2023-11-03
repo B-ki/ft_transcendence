@@ -4,6 +4,7 @@ import { User } from '@prisma/client';
 import { PrismaService } from '@/prisma';
 
 import { CreateUserDto } from '../auth';
+import { UpdateUserDto } from './user.dto';
 
 @Injectable()
 export class UserService {
@@ -27,60 +28,14 @@ export class UserService {
     return await this.prisma.user.create({ data: profile });
   }
 
-  async updateDescription(user: User, newDescription: string): Promise<User> {
-    const updateUser = await this.prisma.user.update({
-      where: {
-        login: user.login,
-      },
-      data: {
-        description: newDescription,
-      },
-    });
-
-    if (!updateUser) {
-      throw new NotFoundException(`User ${user.login} not found`);
-    }
-
-    return updateUser;
-  }
-
-  async updateBanner(user: User, newBanner: string): Promise<User> {
-    const updateUser = await this.prisma.user.update({
-      where: {
-        login: user.login,
-      },
-      data: {
-        bannerUrl: newBanner,
-      },
-    });
-
-    if (!updateUser) {
-      throw new NotFoundException(`User ${user.login} not found`);
-    }
-
-    return updateUser;
-  }
-
-  async updateImage(user: User, newImage: string): Promise<User> {
-    const updateUser = await this.prisma.user.update({
-      where: {
-        login: user.login,
-      },
-      data: {
-        imageUrl: newImage,
-      },
-    });
-
-    if (!updateUser) {
-      throw new NotFoundException(`User ${user.login} not found`);
-    }
-
-    return updateUser;
-  }
-
-  async updateDisplayName(user: User, newName: string): Promise<User> {
-    if (await this.isDisplayNameInUse(newName)) {
-      throw new BadRequestException(`Display name ${newName} is already in use`);
+  async updateUser(user: User, updateDto: UpdateUserDto): Promise<User> {
+    console.log(updateDto);
+    if (
+      updateDto.displayName &&
+      (await this.isDisplayNameInUse(updateDto.displayName)) &&
+      user.displayName != updateDto.displayName
+    ) {
+      throw new BadRequestException(`Display name ${updateDto.displayName} is already in use`);
     }
 
     const updatedUser = await this.prisma.user.update({
@@ -88,7 +43,10 @@ export class UserService {
         login: user.login,
       },
       data: {
-        displayName: newName,
+        ...(updateDto.displayName !== undefined && { displayName: updateDto.displayName }),
+        ...(updateDto.bannerUrl !== undefined && { bannerUrl: updateDto.bannerUrl }),
+        ...(updateDto.imageUrl !== undefined && { imageUrl: updateDto.imageUrl }),
+        ...(updateDto.description !== undefined && { description: updateDto.description }),
       },
     });
 
