@@ -18,7 +18,6 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogoutClick = () => {
-    // replace logout and delete local storage
     logout();
     navigate('/login');
   };
@@ -28,15 +27,15 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="z-30 flex h-16 items-center justify-between bg-darkBlue-1 px-10 py-2">
+    <div className="fixed top-0 z-10 flex h-16 w-screen items-center justify-between bg-darkBlue-1 px-10 py-2">
       <div className="flex flex-row">
-        <button onClick={handleLogoClick} className="flex gap-3">
+        <button onClick={handleLogoClick} className="mr-14 flex items-center justify-center gap-3">
           <img src={pongLogo} alt="link to our github" className="h-9" />
           <span className="self-center whitespace-nowrap text-2xl font-semibold text-white-3">
             Our Pong
           </span>
         </button>
-        <div className="hidden space-x-4 px-2 py-1 sm:flex">
+        <div className="hidden space-x-4 sm:flex sm:items-center sm:justify-center">
           {navigation.map((item) => (
             <NavLink
               key={item.name}
@@ -61,7 +60,7 @@ export const Navbar = () => {
         </Button>
       </div>
       <div className="flex sm:hidden">
-        <Dropdown></Dropdown>
+        <Dropdown />
       </div>
     </div>
   );
