@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { UseQueryResult } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
@@ -9,10 +10,8 @@ import { Input } from '@/components/Input';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
-import { useAuth } from '@/hooks/useAuth';
-import { useApi } from '@/hooks/useApi';
-import { UseQueryResult, useQuery } from 'react-query';
 import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
@@ -59,16 +58,21 @@ const fetchGame = () => {
 
 function Profile() {
   const [show, setShow] = useState(false);
-  const { user } = useAuth();
-  const { isLoading, isFetching, refetch } = useQuery('create game', fetchGame, {
-    enabled: false,
-  });
+  let user: userDto | undefined = undefined;
 
-  console.log({ isLoading, isFetching });
+  const { data, isLoading, isError } = useApi().get(
+    'get user profile',
+    '/user/me',
+  ) as UseQueryResult<userDto>;
 
   if (isLoading) {
-    return <div>Loading</div>;
+    return <div>Loading...</div>;
   }
+  if (isError) {
+    return <div>Error...</div>;
+  }
+
+  user = data;
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
@@ -143,7 +147,7 @@ function Profile() {
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
-        <Button type="primary" size="small" onClick={refetch}>
+        <Button type="primary" size="small" onClick={}>
           Create game
         </Button>
       </div>

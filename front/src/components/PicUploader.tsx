@@ -3,8 +3,6 @@ import { FC } from 'react';
 import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-import { useAuth } from '@/hooks/useAuth';
-
 interface InputProps {
   picture?: string | null;
   name: 'Profile picture' | 'Banner';
@@ -12,7 +10,6 @@ interface InputProps {
 
 const PicUploader: FC<InputProps> = ({ picture, name }) => {
   const [image, setImage] = useState<string | null | undefined>(null);
-  const { user } = useAuth();
 
   useEffect(() => {
     setImage(picture);
