@@ -37,7 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   }, []);
 
   const login_42 = () => {
-    console.log('CACA');
     window.location.href = `${window.location.origin}/api/auth/42`;
   };
 
