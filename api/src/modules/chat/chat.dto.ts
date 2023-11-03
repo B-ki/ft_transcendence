@@ -33,6 +33,8 @@ export class CreateDmDTO {
   login: string;
 }
 
+export class BlockUserDTO extends CreateDmDTO {}
+
 export class JoinChannelDTO {
   @IsNotEmpty()
   @MaxLength(20)

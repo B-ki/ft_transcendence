@@ -7,6 +7,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -17,6 +18,7 @@ import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
 import { UserService } from '../user';
 import { ChannelsService } from './channels.service';
 import {
+  BlockUserDTO,
   CreateChannelDTO,
   JoinChannelDTO,
   LeaveChannelDTO,
@@ -114,5 +116,30 @@ export class ChatGateway implements OnGatewayInit {
   @SubscribeMessage(ChatEvent.JoinedChannels)
   async onGetJoinedChannels(@ConnectedSocket() client: Socket) {
     return await this.channelsService.getJoinedChannels(client.data.user);
+  }
+
+  @SubscribeMessage(ChatEvent.Block)
+  async onBlockUser(@MessageBody() toBlock: BlockUserDTO, @ConnectedSocket() client: Socket) {
+    try {
+      const user = await this.userService.blockUser(toBlock.login, client.data.user);
+      return user.blocked;
+    } catch (err) {
+      throw new WsException(err.message);
+    }
+  }
+
+  @SubscribeMessage(ChatEvent.Unblock)
+  async onUnblockUser(@MessageBody() toUnblock: BlockUserDTO, @ConnectedSocket() client: Socket) {
+    try {
+      const user = await this.userService.unblockUser(toUnblock.login, client.data.user);
+      return user.blocked;
+    } catch (err) {
+      throw new WsException(err.message);
+    }
+  }
+
+  @SubscribeMessage(ChatEvent.BlockedUsersList)
+  async onBlockedUsersList(@ConnectedSocket() client: Socket) {
+    return await this.userService.getBlockedList(client.data.user);
   }
 }
