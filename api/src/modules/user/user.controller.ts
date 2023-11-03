@@ -28,11 +28,6 @@ export class UserController {
     return this.userService.getUnique(user.login);
   }
 
-  @Get('/:login')
-  async getUserByLogin(@Param('login') login: string) {
-    return this.userService.getUnique(login);
-  }
-
   @Patch('/description')
   async patchDescription(
     @Body() descriptionDto: UpdateUserDescriptionDto,
@@ -59,26 +54,31 @@ export class UserController {
     return this.userService.updateDisplayName(user, displaynameDto.displayName);
   }
 
-  @Post('/addfriend')
+  @Post('/friends/add')
   async addFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User) {
     return this.friendService.addFriend(user, friendLoginDto.login);
   }
 
-  @Post('/removefriend')
+  @Post('/friends/remove')
   async removeFriend(@Body() friendLoginDto: UserLoginDto, @GetUser() user: User) {
     return this.friendService.removeFriend(user, friendLoginDto.login);
   }
 
-  @Get('/friendlist')
+  @Get('/friends/friendlist')
   async getFriendList(@GetUser() user: User): Promise<User[]> {
     return this.friendService.getFriendList(user);
   }
 
+  @Get('/profile/:login')
+  async getUserByLogin(@Param('login') login: string) {
+    return this.userService.getUnique(login);
+  }
+
   /*
   TO DO : 
-
+  
   - Create ladder when winning or losing games
-
+  
   - Create tests for each
 
   - Create github action for tests

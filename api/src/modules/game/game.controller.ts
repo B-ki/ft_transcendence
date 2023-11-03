@@ -7,7 +7,6 @@ import { GetUser } from '../auth/decorators';
 import { UserService } from '../user';
 import { CreateGameDto } from './game.dto';
 import { GameService } from './game.service';
-import { UserLoginDto } from '../user/user.dto';
 
 @Controller('game')
 @UseGuards(JwtAuthGuard)

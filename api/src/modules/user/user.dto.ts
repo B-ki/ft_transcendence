@@ -10,7 +10,7 @@ export class UserLoginDto {
 
 export class UpdateUserDescriptionDto implements Pick<CreateUserDto, 'description'> {
   @IsNotEmpty()
-  @MaxLength(256)
+  @MaxLength(30)
   description: string;
 }
 
