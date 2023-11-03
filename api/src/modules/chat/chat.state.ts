@@ -12,4 +12,7 @@ export enum ChatEvent {
   JoinedChannels = 'joinedChannels',
   UserList = 'userList',
   BlockedUsersList = 'blockList',
+  Promote = 'promote',
+  Demote = 'demote',
+  Mute = 'mute',
 }

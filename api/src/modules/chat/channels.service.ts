@@ -6,11 +6,14 @@ import { PrismaService } from 'nestjs-prisma';
 
 import { config } from '@/config';
 
+import { UserService } from '../user';
 import {
   CreateChannelDTO,
+  DemoteUserDTO,
   JoinChannelDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
+  PromoteUserDTO,
   SendMessageDTO,
   UpdateChannelDTO,
   UserListInChannelDTO,
@@ -20,7 +23,10 @@ type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 
 @Injectable()
 export class ChannelsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
 
   async getChannel(channelName: string): Promise<ChannelWithUsers> {
     const channel = await this.prisma.channel.findUnique({
@@ -91,18 +97,21 @@ export class ChannelsService {
       throw new WsException('You already joined this channel');
     }
 
-    await this.prisma.channelUser.create({
+    const channelUser = await this.prisma.channelUser.create({
       data: {
         user: { connect: user },
         role: ChannelRole.USER,
         channel: { connect: { name: channelDTO.name } },
+      },
+      include: {
+        user: true,
       },
     });
 
     return {
       channel: channel.name,
       user: {
-        ...user,
+        ...channelUser.user,
         role: ChannelRole.USER,
       },
     };
@@ -290,6 +299,96 @@ export class ChannelsService {
     return {
       channel: channel.name,
       users: usersWithRole,
+    };
+  }
+
+  async promoteUser(promotion: PromoteUserDTO, user: User) {
+    const channel = await this.getChannel(promotion.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role !== ChannelRole.OWNER) {
+      throw new WsException('You must be the channel owner to promote someone');
+    }
+
+    if (promotion.login === user.login) {
+      throw new WsException('You cannot promote yourself');
+    }
+
+    // to get user id from login and check if user exists
+    const toPromoteUser = await this.userService.getUnique(promotion.login);
+    const toPromoteChannelUser = channel.users.find((u) => u.userId === toPromoteUser.id);
+
+    if (!toPromoteChannelUser) {
+      throw new WsException(`${toPromoteUser.login} is not in channel ${channel.name}`);
+    }
+
+    const updatedChannelUser = await this.prisma.channelUser.update({
+      where: {
+        userId_channelId: {
+          channelId: channel.id,
+          userId: toPromoteUser.id,
+        },
+      },
+      data: {
+        role: ChannelRole.ADMIN,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return {
+      ...updatedChannelUser.user,
+      role: updatedChannelUser.role,
+    };
+  }
+
+  async demoteUser(demotion: DemoteUserDTO, user: User) {
+    const channel = await this.getChannel(demotion.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role !== ChannelRole.OWNER) {
+      throw new WsException('You must be the channel owner to demote someone');
+    }
+
+    if (demotion.login === user.login) {
+      throw new WsException('You cannot demote yourself');
+    }
+
+    // to get user id from login and check if user exists
+    const toDemoteUser = await this.userService.getUnique(demotion.login);
+    const toDemoteChannelUser = channel.users.find((u) => u.userId === toDemoteUser.id);
+
+    if (!toDemoteChannelUser) {
+      throw new WsException(`${toDemoteUser.login} is not in channel ${channel.name}`);
+    }
+
+    const updatedChannelUser = await this.prisma.channelUser.update({
+      where: {
+        userId_channelId: {
+          channelId: channel.id,
+          userId: toDemoteUser.id,
+        },
+      },
+      data: {
+        role: ChannelRole.USER,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return {
+      ...updatedChannelUser.user,
+      role: updatedChannelUser.role,
     };
   }
 }
