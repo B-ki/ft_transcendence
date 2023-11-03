@@ -14,7 +14,7 @@ import Login from '@/pages/Login';
 import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
 
-import { Navbar } from './components/Navbar';
+import Main from './components/Main';
 import OauthCallback from './pages/OauthCallback';
 
 const container = document.getElementById('root');
@@ -27,34 +27,40 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       {
+        element: <Main />,
+        children: [
+          {
+            path: '/',
+            element: <Home />,
+            loader: privateGuard,
+          },
+
+          {
+            path: '/profile',
+            element: <Profile />,
+            loader: privateGuard,
+          },
+          {
+            path: '/friends',
+            element: <Friends />,
+            loader: privateGuard,
+          },
+          {
+            path: '/game',
+            element: <Game />,
+            loader: privateGuard,
+          },
+        ],
+      },
+      {
+        path: '/oauth-callback',
+        element: <OauthCallback />,
+      },
+      {
         path: '/login',
         element: <Login />,
       },
-      {
-        path: '/',
-        element: <Home />,
-        loader: privateGuard,
-      },
-      {
-        path: '/profile',
-        element: <Profile />,
-        loader: privateGuard,
-      },
-      {
-        path: '/friends',
-        element: <Friends />,
-        loader: privateGuard,
-      },
-      {
-        path: '/game',
-        element: <Game />,
-        loader: privateGuard,
-      },
     ],
-  },
-  {
-    path: '/oauth-callback',
-    element: <OauthCallback />,
   },
 ]);
 

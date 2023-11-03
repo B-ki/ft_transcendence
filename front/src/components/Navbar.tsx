@@ -60,7 +60,7 @@ export const Navbar = () => {
         </Button>
       </div>
       <div className="flex sm:hidden">
-        <Dropdown></Dropdown>
+        <Dropdown />
       </div>
     </div>
   );
