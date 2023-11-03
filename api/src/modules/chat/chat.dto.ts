@@ -83,3 +83,15 @@ export class UserListInChannelDTO {
   @MaxLength(20)
   channel: string;
 }
+
+export class PromoteUserDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+
+  @IsNotEmpty()
+  @MaxLength(8)
+  login: string;
+}
+
+export class DemoteUserDTO extends PromoteUserDTO {}

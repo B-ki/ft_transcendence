@@ -7,11 +7,10 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { BadRequestTransformationFilter } from '@/utils/bad-request-exception.filter';
+import { HttpExceptionTransformationFilter } from '@/utils/ws-http-exception.filter';
 
 import { WSAuthMiddleware } from '../auth/ws/ws.middleware';
 import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
@@ -20,19 +19,21 @@ import { ChannelsService } from './channels.service';
 import {
   BlockUserDTO,
   CreateChannelDTO,
+  DemoteUserDTO,
   JoinChannelDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
+  PromoteUserDTO,
   SendMessageDTO,
   UpdateChannelDTO,
   UserListInChannelDTO,
 } from './chat.dto';
 import { ChatEvent } from './chat.state';
 
+@UseGuards(WsJwtGuard)
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ namespace: 'chat' })
-@UseFilters(BadRequestTransformationFilter)
-@UseGuards(WsJwtGuard)
+@UseFilters(HttpExceptionTransformationFilter)
 export class ChatGateway implements OnGatewayInit {
   @WebSocketServer()
   private io: Server;
@@ -120,26 +121,30 @@ export class ChatGateway implements OnGatewayInit {
 
   @SubscribeMessage(ChatEvent.Block)
   async onBlockUser(@MessageBody() toBlock: BlockUserDTO, @ConnectedSocket() client: Socket) {
-    try {
-      const user = await this.userService.blockUser(toBlock.login, client.data.user);
-      return user.blocked;
-    } catch (err) {
-      throw new WsException(err.message);
-    }
+    const user = await this.userService.blockUser(toBlock.login, client.data.user);
+    return user.blocked;
   }
 
   @SubscribeMessage(ChatEvent.Unblock)
   async onUnblockUser(@MessageBody() toUnblock: BlockUserDTO, @ConnectedSocket() client: Socket) {
-    try {
-      const user = await this.userService.unblockUser(toUnblock.login, client.data.user);
-      return user.blocked;
-    } catch (err) {
-      throw new WsException(err.message);
-    }
+    const user = await this.userService.unblockUser(toUnblock.login, client.data.user);
+    return user.blocked;
   }
 
   @SubscribeMessage(ChatEvent.BlockedUsersList)
   async onBlockedUsersList(@ConnectedSocket() client: Socket) {
     return await this.userService.getBlockedList(client.data.user);
+  }
+
+  @SubscribeMessage(ChatEvent.Promote)
+  async onPromoteUser(@MessageBody() promotion: PromoteUserDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.promoteUser(promotion, client.data.user);
+    this.io.to(promotion.channel).emit(ChatEvent.Promote, data);
+  }
+
+  @SubscribeMessage(ChatEvent.Demote)
+  async onDemoteUser(@MessageBody() demotion: DemoteUserDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.demoteUser(demotion, client.data.user);
+    this.io.to(demotion.channel).emit(ChatEvent.Demote, data);
   }
 }
