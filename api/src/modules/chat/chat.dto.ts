@@ -71,6 +71,11 @@ export class MessageHistoryDTO {
   @Max(100)
   @Min(1)
   limit: number;
+
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  offset: number;
 }
 
 export class UserListInChannelDTO {

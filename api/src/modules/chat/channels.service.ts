@@ -178,6 +178,10 @@ export class ChannelsService {
       throw new WsException(`You are not in channel ${channel.name}`);
     }
 
+    if (!dto.offset) {
+      dto.offset = 0;
+    }
+
     return await this.prisma.message.findMany({
       where: {
         channel: { name: dto.channel },
@@ -185,6 +189,7 @@ export class ChannelsService {
       include: {
         author: true,
       },
+      skip: dto.offset,
       take: dto.limit,
     });
   }
