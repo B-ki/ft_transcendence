@@ -36,14 +36,7 @@ function Friends() {
       }}
     >
       <Navbar />
-      <div className="mt-10 flex w-screen justify-center gap-8">
-        <h1>Friends page</h1>
-        {user && (
-          <button className="w-fit" onClick={logout}>
-            Logout
-          </button>
-        )}
-      </div>
+      <div className="mt-10 flex w-screen justify-center gap-8"></div>
     </div>
   );
 }

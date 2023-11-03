@@ -6,9 +6,10 @@ import { useDropzone } from 'react-dropzone';
 interface InputProps {
   picture?: string | null;
   name: 'Profile picture' | 'Banner';
+  ID: string;
 }
 
-const PicUploader: FC<InputProps> = ({ picture, name }) => {
+const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
   const [image, setImage] = useState<string | null | undefined>(null);
 
   useEffect(() => {
@@ -37,11 +38,11 @@ const PicUploader: FC<InputProps> = ({ picture, name }) => {
   return (
     <div>
       <div {...getRootProps()} style={{ cursor: 'pointer' }}>
-        <input {...getInputProps()} />
+        <input id={ID} {...getInputProps()} />
         {image ? (
           <div className="flex flex-col items-center">
             <span>{name}</span>
-            <img style={{ maxHeight: '100px' }} src={image} alt="Profile Picture" />
+            <img style={{ maxHeight: '100px' }} src={image} alt={name} />
           </div>
         ) : (
           <div style={{ maxWidth: '100px' }}>Click to upload a {name}</div>
