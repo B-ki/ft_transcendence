@@ -130,4 +130,19 @@ export class AuthService {
       secret: user.twoFactorAuthSecret,
     });
   }
+<<<<<<< HEAD
+=======
+
+  async loginWithTwoFA(user: User): Promise<string> {
+    const payload: JwtPayload2FA = {
+      login: user.login,
+      isTwoFAEnabled: !!user.isTwoFaEnabled,
+      isTwoFactorAuthenticated: true,
+    };
+    const token = this.generateJWT(payload);
+    this.logger.log(`${user.login} logged in`);
+
+    return token;
+  }
+>>>>>>> 475bf61 (Starting 2FA)
 }

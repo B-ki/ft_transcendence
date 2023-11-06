@@ -42,6 +42,12 @@ model User {
     blockedBy   User[]        @relation("blocked")
     bannedOf    Channel[]
     channelUser ChannelUser[]
+<<<<<<< HEAD
+=======
+    messages    Message[] // Not in ChannelUser for message persistence
+    twoFactorAuthSecret String?
+    isTwoFaEnabled      Boolean       @default(false)
+>>>>>>> 475bf61 (Starting 2FA)
 }
 
 model ChannelUser {

@@ -64,4 +64,21 @@ export class AuthController {
     if (!isCodeValid) throw new UnauthorizedException('Wrong 2FA code');
     this.userService.disableTwoFa(user);
   }
+
+  @Post('2fa/turn-on')
+  @UseGuards(JwtAuthGuard)
+  async turnOnTwoFA(@Body() body: twoFACodeDto, @GetUser() user: User) {
+    const isCodeValid = this.authService.isTwoFactorAuthCodeValid(body.twoFACode, user);
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong 2FA code');
+    } else await this.userService.enableTwoFa(user);
+  }
+
+  @Post('2fa/authenticate')
+  @UseGuards(JwtAuthGuard)
+  async authenticate(@Body() body: twoFACodeDto, @GetUser() user: User) {
+    const isCodeValid = this.authService.isTwoFactorAuthCodeValid(body.twoFACode, user);
+    if (!isCodeValid) throw new UnauthorizedException('Wrong 2FA code');
+    else return this.authService.loginWithTwoFA(user);
+  }
 }
