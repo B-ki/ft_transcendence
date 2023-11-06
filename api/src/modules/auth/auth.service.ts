@@ -1,10 +1,14 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserStatus } from '@prisma/client';
+import { User, UserStatus } from '@prisma/client';
 import axios from 'axios';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
+
+import { config } from '@/config';
 
 import { UserService } from '../user';
-import { CreateUserDto, JwtPayload } from './auth.dto';
+import { CreateUserDto, JwtPayload, JwtPayload2FA } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -67,5 +71,36 @@ export class AuthService {
     } catch (error) {
       throw new Error('Unable to fetch profile informations');
     }
+  }
+
+  async generateTwoFactorAuthSecret(user: User) {
+    const secret = authenticator.generateSecret();
+    const otpAuthUrl = authenticator.keyuri(user.email, config.twofa.name, secret);
+    await this.userService.setTwoFaSecret(secret, user);
+    return { secret, otpAuthUrl };
+  }
+
+  async generateQrCodeDataURL(otpAuthUrl: string) {
+    return toDataURL(otpAuthUrl);
+  }
+
+  isTwoFactorAuthCodeValid(twoFACode: string, user: User) {
+    if (!user.twoFactorAuthSecret) return false;
+    return authenticator.verify({
+      token: twoFACode,
+      secret: user.twoFactorAuthSecret,
+    });
+  }
+
+  async loginWithTwoFA(user: User): Promise<string> {
+    const payload: JwtPayload2FA = {
+      login: user.login,
+      isTwoFAEnabled: !!user.isTwoFaEnabled,
+      isTwoFactorAuthenticated: true,
+    };
+    const token = this.generateJWT(payload);
+    this.logger.log(`${user.login} logged in`);
+
+    return token;
   }
 }
