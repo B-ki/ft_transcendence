@@ -20,22 +20,24 @@ enum ChannelRole {
 }
 
 model User {
-    id          Int           @id @default(autoincrement())
-    createdAt   DateTime      @default(now())
-    login       String        @unique
-    email       String        @unique
-    isConnected Boolean
-    imageUrl    String?
-    displayName String        @unique
-    firstName   String
-    lastName    String
-    bannerUrl   String?
-    description String?
-    channelUser ChannelUser[]
-    gamesWon    Game[]        @relation("GameWinner")
-    gamesLost   Game[]        @relation("GameLoser")
-    friends     User[]        @relation("friends")
-    friendOf    User[]        @relation("friends")
+    id                  Int           @id @default(autoincrement())
+    createdAt           DateTime      @default(now())
+    login               String        @unique
+    email               String        @unique
+    isConnected         Boolean
+    imageUrl            String?
+    displayName         String        @unique
+    firstName           String
+    lastName            String
+    bannerUrl           String?
+    description         String?
+    channelUser         ChannelUser[]
+    gamesWon            Game[]        @relation("GameWinner")
+    gamesLost           Game[]        @relation("GameLoser")
+    friends             User[]        @relation("friends")
+    friendOf            User[]        @relation("friends")
+    twoFactorAuthSecret String?
+    isTwoFaEnabled      Boolean       @default(false)
 }
 
 model ChannelUser {

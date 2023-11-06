@@ -64,4 +64,55 @@ export class UserService {
       },
     }));
   }
+
+  async setTwoFaSecret(secret: string, user: User) {
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        twoFactorAuthSecret: secret,
+      },
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updatedUser;
+  }
+
+  async enableTwoFa(user: User) {
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        isTwoFaEnabled: true,
+      },
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updatedUser;
+  }
+
+  async disableTwoFa(user: User) {
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        login: user.login,
+      },
+      data: {
+        isTwoFaEnabled: false,
+      },
+    });
+
+    if (!updatedUser) {
+      throw new NotFoundException(`User ${user.login} not found`);
+    }
+
+    return updatedUser;
+  }
 }

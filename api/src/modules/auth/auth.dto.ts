@@ -4,6 +4,12 @@ export class JwtPayload {
   login: string;
 }
 
+export class JwtPayload2FA {
+  login: string;
+  isTwoFAEnabled: boolean;
+  isTwoFactorAuthenticated: boolean;
+}
+
 export class CreateUserDto {
   @IsNotEmpty()
   login: string;
@@ -26,4 +32,9 @@ export class CreateUserDto {
   bannerUrl: string;
 
   description: string;
+}
+
+export class twoFACodeDto {
+  @IsNotEmpty()
+  twoFACode: string;
 }
