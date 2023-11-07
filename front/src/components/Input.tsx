@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { FC } from 'react';
 
 interface InputProps {
+  Id: string;
   labelText: string;
   inputText: string;
   mandatory: boolean;
 }
 
-export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
+export const Input: FC<InputProps> = ({ Id, labelText, inputText, mandatory }) => {
   const [inputValue, setInputValue] = useState('');
 
   return (
@@ -16,8 +17,9 @@ export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
         {labelText}
       </span>
       <input
-        className="rounded-md border border-dark-3 bg-white-3  invalid:border-red focus:border-blue focus:outline-none"
+        className="rounded-md border border-dark-3 bg-white-3 p-1  invalid:border-red focus:border-blue focus:outline-none"
         type="text"
+        id={Id}
         maxLength={30}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}

@@ -5,21 +5,20 @@ import { userDto } from '@/dto/userDto';
 import { useState } from 'react';
 import { Button } from './Button';
 
+interface GameDto {
+  winnerLogin: string;
+  loserLogin: string;
+  winnerScore: number;
+  loserScore: number;
+}
+
 export const GameHistoryTable = () => {
-  const [gameHistory, setGameHistory] = useState<userDto[]>([]); // Define gameHistory as a state variable
-  const query = useApi().get('my games', `/game/all`) as UseQueryResult<userDto[]>;
+  const { data, isLoading, isFetched } = useApi().get('my games', `/game/all`) as UseQueryResult<
+    GameDto[]
+  >;
 
-  useEffect(() => {
-    if (query.data) {
-      setGameHistory(query.data);
-    }
-  }, [query.data]);
-
-  useEffect(() => {
-    // This will log the updated gameHistory whenever it changes.
-    console.log(gameHistory);
-    console.log();
-  }, [gameHistory]);
+  if (isLoading) return <div>Loading...</div>;
+  console.log(data);
 
   return (
     <table className="table-auto border-separate rounded border bg-dark-3 text-dark-1">
@@ -32,11 +31,11 @@ export const GameHistoryTable = () => {
         </tr>
       </thead>
       <tbody>
-        {gameHistory.map((game, index) => (
+        {data?.map((game, index) => (
           <tr key={index}>
-            <td className="border px-4 py-2">{game.login}</td>
             <td className="border px-4 py-2">{}</td>
-            <td className="border px-4 py-2">{}</td>
+            <td className="border px-4 py-2">{game.winnerLogin}</td>
+            <td className="border px-4 py-2">{game.loserLogin}</td>
             <td className="border px-4 py-2">{}</td>
           </tr>
         ))}

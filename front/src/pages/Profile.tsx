@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { UseQueryResult } from 'react-query';
+import React, { useEffect, useState } from 'react';
+import { UseQueryResult, useMutation } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
@@ -11,58 +11,43 @@ import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
+import { api } from '@/utils/api';
 
 const inputs = [
-  { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
-  { id: '1', labelTxt: 'Description', inputTxt: '30 character maximum', mandatory: false },
+  {
+    id: 'usernameInput',
+    labelTxt: 'Username',
+    inputTxt: 'Enter your username...',
+    mandatory: true,
+  },
+  {
+    id: 'descriptionInput',
+    labelTxt: 'Description',
+    inputTxt: '30 character maximum',
+    mandatory: false,
+  },
 ];
-function createGame() {
-  const query = useApi().post('game', '/game/create', {
-    data: {
-      winnerLogin: 'lbesnard',
-      loserLogin: 'rcarles',
-      winnerScore: 4,
-      loserScore: 2,
-    },
-  }) as UseQueryResult<userDto[]>;
-  return query.data;
-}
-
-const fetchGame = () => {
-  const apiUrl = 'http://localhost:8080/api/game/create';
-  const requestData = {
-    winnerLogin: 'lbesnard',
-    loserLogin: 'rcarles',
-    winnerScore: 4,
-    loserScore: 2,
-  };
-
-  fetch(`${apiUrl}`, {
-    method: 'POST',
-    body: JSON.stringify(requestData),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log('POST request successful', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-};
 
 function Profile() {
   const [show, setShow] = useState(false);
   let user: userDto | undefined = undefined;
+  let image: string | undefined;
+
+  const mutation = useMutation({
+    mutationFn: (userInfos) => {
+      return api.patch('/me/awhgbwa', { json: userInfos });
+    },
+  });
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
     '/user/me',
   ) as UseQueryResult<userDto>;
+
+  const displayNameQuery = useApi().patch('my games', `/user/me/displayName`, {
+    data: { displayName: '', description: '' },
+    options: { manual: true },
+  }) as UseQueryResult<userDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -72,6 +57,7 @@ function Profile() {
   }
   user = data;
 
+<<<<<<< HEAD
   console.log({ isLoading, isFetching });
 
   if (isLoading) {
@@ -80,6 +66,12 @@ function Profile() {
 
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
+=======
+  const handleSaveChanges = (event: React.SyntheticEvent) => {
+    event.preventDefault;
+    mutation.mutate();
+    //displayNameQuery.refetch({});
+>>>>>>> 720c75f (using user infos in profilePage)
     //setUserName
     //setUserDesciption
   };
@@ -89,31 +81,34 @@ function Profile() {
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center">
-            <PicUploader picture={myImage} name="Profile picture" />
+            <PicUploader ID="profilePic" picture={user?.imageUrl} name="Profile picture" />
           </div>
           <div className="flex flex-col items-center">
-            <PicUploader picture={banner} name="Banner" />
-          </div>
+            <PicUploader ID="profilePic" picture={user?.bannerUrl} name="Banner" />
+          </div>{' '}
         </div>
-        <div className="flex flex-col gap-2 pt-2">
-          {inputs.map((item) => (
-            <Input
-              key={item.id}
-              labelText={item.labelTxt}
-              inputText={item.inputTxt}
-              mandatory={item.mandatory}
-            ></Input>
-          ))}
-          <Button onClick={handleSaveChanges} type="primary" size="small">
-            Save Changes
-          </Button>
+        <div className="pt-2">
+          <form onSubmit={handleSaveChanges} className="flex flex-col items-center gap-2">
+            {inputs.map((item) => (
+              <Input
+                key={item.id}
+                Id={item.id}
+                labelText={item.labelTxt}
+                inputText={item.inputTxt}
+                mandatory={item.mandatory}
+              ></Input>
+            ))}
+            <Button size="small" type="primary">
+              Save Changes
+            </Button>
+          </form>
         </div>
       </Modal>
       <Navbar />
       <div
         className="h-40 w-screen"
         style={{
-          backgroundImage: `url(${banner})`,
+          backgroundImage: `url(${user?.bannerUrl})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
@@ -121,13 +116,13 @@ function Profile() {
       <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
         <img
           className="w-32 rounded-full hover:cursor-pointer"
-          src={myImage}
+          src={user?.imageUrl}
           alt="profile pic"
           onClick={() => setShow(true)}
         />
         <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
-          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
+          <span className="left-0 text-2xl font-bold text-white-1">{user?.displayName}</span>
+          <span className="text-white-3">{user?.description}</span>
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
@@ -138,15 +133,18 @@ function Profile() {
           onClick={() => setShow(true)}
         />
         <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
-          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
+          <span className="left-0 text-2xl font-bold text-white-1">{user?.displayName}</span>
+          <span className="text-white-3">{user?.description}</span>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
+<<<<<<< HEAD
         <Button type="primary" size="small" onClick={refetch}>
           Create game
         </Button>
+=======
+>>>>>>> 720c75f (using user infos in profilePage)
       </div>
     </>
   );
