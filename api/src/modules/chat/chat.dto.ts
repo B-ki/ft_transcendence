@@ -95,3 +95,19 @@ export class PromoteUserDTO {
 }
 
 export class DemoteUserDTO extends PromoteUserDTO {}
+
+export class KickUserDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+
+  @IsNotEmpty()
+  @MaxLength(8)
+  login: string;
+
+  @IsOptional()
+  @MaxLength(30)
+  reason: string;
+}
+
+export class BanUserDTO extends KickUserDTO {}

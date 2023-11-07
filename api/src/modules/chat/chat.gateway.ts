@@ -17,10 +17,12 @@ import { WsJwtGuard } from '../auth/ws/ws-jwt.guard';
 import { UserService } from '../user';
 import { ChannelsService } from './channels.service';
 import {
+  BanUserDTO,
   BlockUserDTO,
   CreateChannelDTO,
   DemoteUserDTO,
   JoinChannelDTO,
+  KickUserDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
   PromoteUserDTO,
@@ -38,6 +40,7 @@ export class ChatGateway implements OnGatewayInit {
   @WebSocketServer()
   private io: Server;
   private logger: Logger = new Logger(ChatGateway.name);
+  private socketsID: Map<string, string> = new Map<string, string>();
 
   constructor(
     private jwtService: JwtService,
@@ -51,6 +54,8 @@ export class ChatGateway implements OnGatewayInit {
 
     this.io.on('connection', async (socket) => {
       this.logger.log('Client connected: ' + socket.id);
+
+      this.socketsID.set(socket.data.user.login, socket.id);
 
       const channels = await this.channelsService.getJoinedChannels(socket.data.user);
       const channelsName = channels.map((c) => c.name);
@@ -146,5 +151,41 @@ export class ChatGateway implements OnGatewayInit {
   async onDemoteUser(@MessageBody() demotion: DemoteUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.demoteUser(demotion, client.data.user);
     this.io.to(demotion.channel).emit(ChatEvent.Demote, data);
+  }
+
+  @SubscribeMessage(ChatEvent.Kick)
+  async onKickUser(@MessageBody() kick: KickUserDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.kickUser(kick, client.data.user);
+
+    const socketID = this.socketsID.get(kick.login);
+
+    if (socketID) {
+      const socket = (this.io.sockets as any).get(socketID);
+
+      if (socket) {
+        socket.leave(kick.channel);
+        socket.emit('youLeft', data);
+      }
+    }
+
+    this.io.to(kick.channel).emit(ChatEvent.Leave, data);
+  }
+
+  @SubscribeMessage(ChatEvent.Ban)
+  async onBanUser(@MessageBody() ban: BanUserDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.banUser(ban, client.data.user);
+
+    const socketID = this.socketsID.get(ban.login);
+
+    if (socketID) {
+      const socket = (this.io.sockets as any).get(socketID);
+
+      if (socket) {
+        socket.leave(ban.channel);
+        socket.emit('youLeft', data);
+      }
+    }
+
+    this.io.to(ban.channel).emit(ChatEvent.Leave, data);
   }
 }
