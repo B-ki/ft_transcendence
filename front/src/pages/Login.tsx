@@ -17,7 +17,7 @@ export default function Login() {
         backgroundSize: 'cover',
       }}
     >
-      <div>
+      <div className="h-2/3">
         <h1 className="flex items-center justify-center text-6xl font-bold text-white-1">
           Our Pong
         </h1>

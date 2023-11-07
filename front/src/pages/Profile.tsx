@@ -34,6 +34,17 @@ function Profile() {
   }
   user = data;
 
+  const createGame = () => {
+    const query = useApi().post('game', '/game/create', {
+      data: {
+        winnerLogin: 'lbesnard',
+        loserLogin: 'rcarles',
+        winnerScore: 4,
+        loserScore: 2,
+      },
+    }) as UseQueryResult<userDto[]>;
+  };
+
   const handleSaveChanges = () => {
     console.log(user?.imageURL);
     //setUserName
@@ -100,6 +111,9 @@ function Profile() {
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
+        <Button type="primary" size="small" onClick={createGame}>
+          Create game
+        </Button>
       </div>
     </>
   );
