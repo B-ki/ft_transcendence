@@ -57,21 +57,10 @@ function Profile() {
   }
   user = data;
 
-<<<<<<< HEAD
-  console.log({ isLoading, isFetching });
-
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
-
-  const handleSaveChanges = () => {
-    console.log(user?.imageURL);
-=======
   const handleSaveChanges = (event: React.SyntheticEvent) => {
     event.preventDefault;
     mutation.mutate();
     //displayNameQuery.refetch({});
->>>>>>> 720c75f (using user infos in profilePage)
     //setUserName
     //setUserDesciption
   };
@@ -139,12 +128,6 @@ function Profile() {
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
         <GameHistoryTable></GameHistoryTable>
-<<<<<<< HEAD
-        <Button type="primary" size="small" onClick={refetch}>
-          Create game
-        </Button>
-=======
->>>>>>> 720c75f (using user infos in profilePage)
       </div>
     </>
   );
