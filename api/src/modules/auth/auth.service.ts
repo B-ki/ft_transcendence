@@ -84,6 +84,12 @@ export class AuthService {
     return toDataURL(otpAuthUrl);
   }
 
+  async turnOnTwoFA(user: User) {
+    const { otpAuthUrl } = await this.generateTwoFactorAuthSecret(user);
+    if (!otpAuthUrl) throw new Error('Error generating the QR code');
+    return this.generateQrCodeDataURL(otpAuthUrl);
+  }
+
   isTwoFactorAuthCodeValid(twoFACode: string, user: User) {
     if (!user.twoFactorAuthSecret) return false;
     return authenticator.verify({

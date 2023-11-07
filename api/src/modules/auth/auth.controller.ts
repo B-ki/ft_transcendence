@@ -27,13 +27,12 @@ export class AuthController {
     };
   }
 
-  @Post('2fa/turn-on')
+  @Get('2fa/qrcode')
   @UseGuards(JwtAuthGuard)
-  async turnOnTwoFA(@Body() body: twoFACodeDto, @GetUser() user: User) {
-    const isCodeValid = this.authService.isTwoFactorAuthCodeValid(body.twoFACode, user);
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong 2FA code');
-    } else await this.userService.enableTwoFa(user);
+  async turnOnTwoFA(@GetUser() user: User) {
+    const QrCodeUrl = await this.authService.turnOnTwoFA(user);
+    console.log(QrCodeUrl);
+    return { QrCodeUrl: QrCodeUrl };
   }
 
   @Post('2fa/authenticate')
