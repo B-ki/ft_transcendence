@@ -16,6 +16,7 @@ import { privateGuard } from '@/utils/privateGuard';
 
 import Main from './components/Main';
 import OauthCallback from './pages/OauthCallback';
+import TwoFa from './pages/TwoFa';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -48,6 +49,11 @@ const router = createBrowserRouter([
           {
             path: '/game',
             element: <Game />,
+            loader: privateGuard,
+          },
+          {
+            path: '/2fa',
+            element: <TwoFa />,
             loader: privateGuard,
           },
         ],

@@ -12,20 +12,25 @@ import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png'
+import { QRCodeSVG } from 'qrcode.react';
+import { QRcodeDto } from '@/dto/QRcodeDto';
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },
   { id: '1', labelTxt: 'Description', inputTxt: '30 character maximum', mandatory: false },
 ];
 
-function Profile() {
+function TwoFa() {
   const [show, setShow] = useState(false);
+  const [is2FAactivated, setIs2FAactivated] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
   let user: userDto | undefined = undefined;
 
   const { data, isLoading, isError } = useApi().get(
-    'get user profile',
-    '/user/me',
-  ) as UseQueryResult<userDto>;
+    'get 2 fa2',
+    '/auth/2fa/qrcode',
+    {params: {refetchOnWindowFocus: true},},
+  ) as UseQueryResult<QRcodeDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -33,14 +38,8 @@ function Profile() {
   if (isError) {
     return <div>Error...</div>;
   }
-  user = data;
-
-  const handleSaveChanges = () => {
-    console.log(user?.imageURL);
-    //setUserName
-    //setUserDesciption
-  };
-
+  if (data) 
+  console.log(data);
   return (
     <>
       <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
@@ -61,49 +60,16 @@ function Profile() {
               mandatory={item.mandatory}
             ></Input>
           ))}
-          <Button onClick={handleSaveChanges} type="primary" size="small">
-            Save Changes
-          </Button>
         </div>
       </Modal>
       <Navbar />
-      <div
-        className="h-40 w-screen"
-        style={{
-          backgroundImage: `url(${banner})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-        }}
-      ></div>
-      <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
-        <img
-          className="w-32 rounded-full hover:cursor-pointer"
-          src={myImage}
-          alt="profile pic"
-          onClick={() => setShow(true)}
-        />
-        <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
-          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-        </div>
-      </div>
-      <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
-        <img
-          className="w-32 rounded-full"
-          src={myImage}
-          alt="profile pic"
-          onClick={() => setShow(true)}
-        />
-        <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.login}</span>
-          <span className="text-white-3">{'Je me presente "Le Boss"'}</span>
-        </div>
-      </div>
-      <div className="flex w-screen items-center justify-center pt-32">
-        <GameHistoryTable></GameHistoryTable>
-      </div>
+        
+          <div>
+            <p>2FA is activated. Scan the QR code with an authenticator app.</p>
+            <img src={data!.QrCodeUrl}/>
+          </div>
     </>
   );
 }
 
-export default Profile;
+export default TwoFa;
