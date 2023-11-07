@@ -18,7 +18,6 @@ export const GameHistoryTable = () => {
   >;
 
   if (isLoading) return <div>Loading...</div>;
-  console.log(data);
 
   return (
     <table className="table-auto border-separate rounded border bg-dark-3 text-dark-1">

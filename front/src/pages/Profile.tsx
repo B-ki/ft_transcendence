@@ -15,12 +15,14 @@ import { api } from '@/utils/api';
 
 const inputs = [
   {
+    key: '0',
     id: 'usernameInput',
     labelTxt: 'Username',
     inputTxt: 'Enter your username...',
     mandatory: true,
   },
   {
+    key: '1',
     id: 'descriptionInput',
     labelTxt: 'Description',
     inputTxt: '30 character maximum',
@@ -57,10 +59,10 @@ function Profile() {
   }
   user = data;
 
-  const handleSaveChanges = (event: React.SyntheticEvent) => {
+  const handleSaveChanges = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault;
-    console.log(event.currentTarget);
-    mutation.mutate();
+    console.log(event.currentTarget.elements.length);
+    // mutation.mutate();
     //displayNameQuery.refetch({});
     //setUserName
     //setUserDesciption
@@ -80,14 +82,18 @@ function Profile() {
         <div className="pt-2">
           <form onSubmit={handleSaveChanges} className="flex flex-col items-center gap-2">
             {inputs.map((item) => (
-              <Input
-                key={item.id}
-                Id={item.id}
-                labelText={item.labelTxt}
-                inputText={item.inputTxt}
-                mandatory={item.mandatory}
-              ></Input>
+              <label>
+                {item.labelTxt}
+                <input
+                  key={item.key}
+                  id={item.id}
+                  type="text"
+                  value={item.inputTxt}
+                  mandatory={item.mandatory}
+                />
+              </label>
             ))}
+            <input type="submit" value="Submit"></input>
             <Button size="small" type="primary">
               Save Changes
             </Button>
@@ -111,8 +117,12 @@ function Profile() {
           onClick={() => setShow(true)}
         />
         <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.displayName}</span>
-          <span className="text-white-3">{user?.description}</span>
+          <span className="left-0 text-2xl font-bold text-white-1">
+            {user?.displayName ? user?.displayName : user?.login}
+          </span>
+          <span className="text-white-3">
+            {user?.description ? user?.description : 'Edit your desciption.'}
+          </span>
         </div>
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
@@ -123,8 +133,12 @@ function Profile() {
           onClick={() => setShow(true)}
         />
         <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">{user?.displayName}</span>
-          <span className="text-white-3">{user?.description}</span>
+          <span className="left-0 text-2xl font-bold text-white-1">
+            {user?.displayName ? user?.displayName : user?.login}
+          </span>
+          <span className="text-white-3">
+            {user?.description ? user?.description : 'Edit your desciption.'}
+          </span>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
