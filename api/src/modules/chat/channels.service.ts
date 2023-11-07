@@ -8,9 +8,11 @@ import { config } from '@/config';
 
 import { UserService } from '../user';
 import {
+  BanUserDTO,
   CreateChannelDTO,
   DemoteUserDTO,
   JoinChannelDTO,
+  KickUserDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
   PromoteUserDTO,
@@ -75,7 +77,16 @@ export class ChannelsService {
   }
 
   async joinChannel(channelDTO: JoinChannelDTO, user: User) {
-    const channel = await this.getChannel(channelDTO.name);
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        name: channelDTO.name,
+      },
+      include: { users: true, bans: true },
+    });
+
+    if (!channel) {
+      throw new WsException(`Channel ${channelDTO.name} not found`);
+    }
 
     if (channel.type === ChannelType.PRIVATE) {
       throw new WsException(`Channel ${channel.name} is private`);
@@ -91,6 +102,10 @@ export class ChannelsService {
       if (!isPasswordValid) {
         throw new WsException(`Invalid password for channel ${channel.name}`);
       }
+    }
+
+    if (channel.bans.some((u) => u.id === user.id)) {
+      throw new WsException('You are banned from this channel');
     }
 
     if (channel.users.some((u) => u.userId === user.id)) {
@@ -363,7 +378,6 @@ export class ChannelsService {
       throw new WsException('You cannot demote yourself');
     }
 
-    // to get user id from login and check if user exists
     const toDemoteUser = await this.userService.getUnique(demotion.login);
     const toDemoteChannelUser = channel.users.find((u) => u.userId === toDemoteUser.id);
 
@@ -390,5 +404,82 @@ export class ChannelsService {
       ...updatedChannelUser.user,
       role: updatedChannelUser.role,
     };
+  }
+
+  async kickUser(kick: KickUserDTO, user: User) {
+    const channel = await this.getChannel(kick.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role === ChannelRole.USER) {
+      throw new WsException('You must be an administrator to kick someone');
+    }
+
+    if (kick.login === user.login) {
+      throw new WsException('You cannot kick yourself');
+    }
+
+    const toKickUser = await this.userService.getUnique(kick.login);
+    const toKickChannelUser = channel.users.find((u) => u.userId === toKickUser.id);
+
+    if (!toKickChannelUser) {
+      throw new WsException(`${toKickUser.login} is not in channel ${channel.name}`);
+    }
+
+    if (toKickChannelUser.role !== ChannelRole.USER) {
+      throw new WsException('You can only kick regular users');
+    }
+
+    let reason = `Kicked by ${user.login}: `;
+    reason += kick.reason ? kick.reason : 'no reason specified';
+
+    return await this.leaveChannel({ name: kick.channel }, toKickUser, reason);
+  }
+
+  async banUser(ban: BanUserDTO, user: User) {
+    const channel = await this.getChannel(ban.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role === ChannelRole.USER) {
+      throw new WsException('You must be an administrator to ban someone');
+    }
+
+    if (ban.login === user.login) {
+      throw new WsException('You cannot ban yourself');
+    }
+
+    const toBanUser = await this.userService.getUnique(ban.login);
+    const toBanChannelUser = channel.users.find((u) => u.userId === toBanUser.id);
+
+    if (!toBanChannelUser) {
+      throw new WsException(`${toBanUser.login} is not in channel ${channel.name}`);
+    }
+
+    if (toBanChannelUser.role !== ChannelRole.USER) {
+      throw new WsException('You can only ban regular users');
+    }
+
+    let reason = `Banned by ${user.login}: `;
+    reason += ban.reason ? ban.reason : 'no reason specified';
+
+    await this.prisma.channel.update({
+      where: {
+        id: channel.id,
+      },
+      data: {
+        bans: {
+          connect: { id: toBanUser.id },
+        },
+      },
+    });
+
+    return await this.leaveChannel({ name: ban.channel }, toBanUser, reason);
   }
 }

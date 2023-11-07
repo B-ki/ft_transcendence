@@ -31,7 +31,6 @@ model User {
     lastName    String
     bannerUrl   String?
     description String?
-    channelUser ChannelUser[]
     gamesWon    Game[]        @relation("GameWinner")
     gamesLost   Game[]        @relation("GameLoser")
     friends     User[]        @relation("friends")
@@ -41,6 +40,8 @@ model User {
     messages    Message[] // Not in ChannelUser for message persistence
     blocked     User[]        @relation("blocked")
     blockedBy   User[]        @relation("blocked")
+    bannedOf    Channel[]
+    channelUser ChannelUser[]
 }
 
 model ChannelUser {
@@ -64,6 +65,7 @@ model Channel {
     users     ChannelUser[]
     messages  Message[]
     isDM      Boolean       @default(false) // is Direct Message
+    bans      User[]
 }
 
 model Message {
