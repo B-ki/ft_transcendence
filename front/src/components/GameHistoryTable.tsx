@@ -31,14 +31,14 @@ export const GameHistoryTable = () => {
         </tr>
       </thead>
       <tbody>
-        {data?.map((game, index) => (
+        {/* {data?.map((game, index) => (
           <tr key={index}>
             <td className="border px-4 py-2">{}</td>
             <td className="border px-4 py-2">{game.winnerLogin}</td>
             <td className="border px-4 py-2">{game.loserLogin}</td>
             <td className="border px-4 py-2">{}</td>
           </tr>
-        ))}
+        ))} */}
       </tbody>
     </table>
   );

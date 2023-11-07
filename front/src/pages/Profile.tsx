@@ -35,7 +35,7 @@ function Profile() {
 
   const mutation = useMutation({
     mutationFn: (userInfos) => {
-      return api.patch('/me/awhgbwa', { json: userInfos });
+      return api.patch('user/me', { json: userInfos });
     },
   });
 
@@ -44,7 +44,7 @@ function Profile() {
     '/user/me',
   ) as UseQueryResult<userDto>;
 
-  const displayNameQuery = useApi().patch('my games', `/user/me/displayName`, {
+  const displayNameQuery = useApi().patch('my games', `/user/me`, {
     data: { displayName: '', description: '' },
     options: { manual: true },
   }) as UseQueryResult<userDto>;
@@ -59,6 +59,7 @@ function Profile() {
 
   const handleSaveChanges = (event: React.SyntheticEvent) => {
     event.preventDefault;
+    console.log(event.currentTarget);
     mutation.mutate();
     //displayNameQuery.refetch({});
     //setUserName
