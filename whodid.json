@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    ".+.svg",
+    ".+/bower_components/.+",
+    ".+/node_modules/.+",
+    ".+/__libs__/.+"
+  ],
+  "line_accept_max": 1000,
+  "csv_seperator": ", "
+}
