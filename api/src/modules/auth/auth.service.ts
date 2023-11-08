@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User, UserStatus } from '@prisma/client';
 import axios from 'axios';
@@ -23,9 +23,11 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async login(profile: CreateUserDto): Promise<string> {
+  async login(profile: CreateUserDto) {
+    let isTwoFaEnabled = false;
     try {
-      await this.userService.getUnique(profile.login);
+      const user = await this.userService.getUnique(profile.login);
+      if (user.isTwoFaEnabled == true) isTwoFaEnabled = true;
     } catch (err) {
       if (err instanceof NotFoundException) {
         this.logger.log(`Creating new user ${profile.login}`);
@@ -38,6 +40,21 @@ export class AuthService {
     const payload: JwtPayload = { login: profile.login };
     const token = this.generateJWT(payload);
     this.logger.log(`${profile.login} logged in`);
+
+    return { token, isTwoFaEnabled };
+  }
+
+  async loginWithTwoFa(code: string, profile: CreateUserDto) {
+    // user is supposed to be created at this point
+    const user = await this.userService.getUnique(profile.login);
+    const isCodeValid = this.isTwoFactorAuthCodeValid(code, user);
+    if (!isCodeValid) throw new UnauthorizedException('Wrong 2FA code');
+    const payload: JwtPayload2FA = {
+      login: user.login,
+      isTwoFactorAuthenticated: true,
+    };
+    const token = this.generateJWT(payload);
+    this.logger.log(`${profile.login} logged in with 2FA`);
 
     return token;
   }
@@ -96,17 +113,5 @@ export class AuthService {
       token: twoFACode,
       secret: user.twoFactorAuthSecret,
     });
-  }
-
-  async loginWithTwoFA(user: User): Promise<string> {
-    const payload: JwtPayload2FA = {
-      login: user.login,
-      isTwoFAEnabled: !!user.isTwoFaEnabled,
-      isTwoFactorAuthenticated: true,
-    };
-    const token = this.generateJWT(payload);
-    this.logger.log(`${user.login} logged in`);
-
-    return token;
   }
 }

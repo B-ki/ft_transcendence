@@ -170,4 +170,8 @@ export class UserService {
 
     return updatedUser;
   }
+
+  async isTwoFaEnabled(user: User): Promise<boolean> {
+    return user.isTwoFaEnabled;
+  }
 }
