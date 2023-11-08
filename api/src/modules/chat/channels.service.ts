@@ -15,6 +15,7 @@ import {
   KickUserDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
+  MuteUserDTO,
   PromoteUserDTO,
   SendMessageDTO,
   UpdateChannelDTO,
@@ -25,6 +26,8 @@ type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 
 @Injectable()
 export class ChannelsService {
+  private muted = new Set<number>();
+
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
@@ -173,6 +176,10 @@ export class ChannelsService {
       throw new WsException('You are not in this channel');
     }
 
+    if (this.muted.has(user.id)) {
+      throw new WsException('You are muted in this channel');
+    }
+
     const created = await this.prisma.message.create({
       data: {
         content: message.content,
@@ -187,7 +194,7 @@ export class ChannelsService {
     return {
       content: message.content,
       channel: channel.name,
-      author: {
+      user: {
         ...created.author,
         role: channelUser.role,
       },
@@ -481,5 +488,48 @@ export class ChannelsService {
     });
 
     return await this.leaveChannel({ name: ban.channel }, toBanUser, reason);
+  }
+
+  async muteUser(mute: MuteUserDTO, user: User) {
+    const channel = await this.getChannel(mute.channel);
+    const channelUser = channel.users.find((u) => u.userId === user.id);
+
+    if (!channelUser) {
+      throw new WsException(`You are not in channel ${channel.name}`);
+    }
+
+    if (channelUser.role === ChannelRole.USER) {
+      throw new WsException('You must be an administrator to mute someone');
+    }
+
+    if (mute.login === user.login) {
+      throw new WsException('You cannot mute yourself');
+    }
+
+    const toMuteUser = await this.userService.getUnique(mute.login);
+    const toMuteChannelUser = channel.users.find((u) => u.userId === toMuteUser.id);
+
+    if (!toMuteChannelUser) {
+      throw new WsException(`${toMuteUser.login} is not in channel ${channel.name}`);
+    }
+
+    if (toMuteChannelUser.role !== ChannelRole.USER) {
+      throw new WsException('You can only ban regular users');
+    }
+
+    let reason = `Muted by ${user.login} for ${mute.duration} seconds: `;
+    reason += mute.reason ? mute.reason : 'no reason specified';
+
+    this.muted.add(toMuteUser.id);
+    setTimeout(() => {
+      this.muted.delete(toMuteUser.id);
+    }, mute.duration * 1000);
+
+    return {
+      channel: channel.name,
+      user: toMuteUser,
+      reason: reason,
+      duration: mute.duration,
+    };
   }
 }

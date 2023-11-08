@@ -25,6 +25,7 @@ import {
   KickUserDTO,
   LeaveChannelDTO,
   MessageHistoryDTO,
+  MuteUserDTO,
   PromoteUserDTO,
   SendMessageDTO,
   UpdateChannelDTO,
@@ -187,5 +188,11 @@ export class ChatGateway implements OnGatewayInit {
     }
 
     this.io.to(ban.channel).emit(ChatEvent.Leave, data);
+  }
+
+  @SubscribeMessage(ChatEvent.Mute)
+  async onMuteUser(@MessageBody() mute: MuteUserDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.muteUser(mute, client.data.user);
+    this.io.to(mute.channel).emit(ChatEvent.Mute, data);
   }
 }

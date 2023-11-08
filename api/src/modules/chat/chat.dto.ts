@@ -111,3 +111,23 @@ export class KickUserDTO {
 }
 
 export class BanUserDTO extends KickUserDTO {}
+
+export class MuteUserDTO {
+  @IsNotEmpty()
+  @MaxLength(20)
+  channel: string;
+
+  @IsNotEmpty()
+  @MaxLength(8)
+  login: string;
+
+  @IsOptional()
+  @MaxLength(30)
+  reason: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Max(3600)
+  @Min(1)
+  duration: number; // mute duration in seconds
+}
