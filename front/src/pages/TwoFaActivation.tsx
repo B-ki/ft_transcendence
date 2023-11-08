@@ -7,6 +7,7 @@ import { Input } from '@/components/Input';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
+import { TwoFACode } from '@/components/TwoFACode';
 import { QRcodeDto } from '@/dto/QRcodeDto';
 import { useApi } from '@/hooks/useApi';
 
@@ -15,12 +16,13 @@ const inputs = [
   { id: '1', labelTxt: 'Description', inputTxt: '30 character maximum', mandatory: false },
 ];
 
-function TwoFa() {
+function TwoFaActivation() {
   const [show, setShow] = useState(false);
 
-  const { data, isLoading, isError } = useApi().get('get 2 fa2', '/auth/2fa/qrcode', {
-    params: { refetchOnWindowFocus: true },
-  }) as UseQueryResult<QRcodeDto>;
+  const { data, isLoading, isError } = useApi().get(
+    'get 2 fa2',
+    '/auth/2fa/qrcode',
+  ) as UseQueryResult<QRcodeDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -51,12 +53,13 @@ function TwoFa() {
         </div>
       </Modal>
       <Navbar />
-      <div>
+      <div className="flex flex-col items-center">
         <p>2FA is activated. Scan the QR code with an authenticator app.</p>
         <img src={data!.QrCodeUrl} alt="QRcodeFor2FA" />
       </div>
+      <TwoFACode />
     </>
   );
 }
 
-export default TwoFa;
+export default TwoFaActivation;

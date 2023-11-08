@@ -1,0 +1,39 @@
+import 'react-notifications-component/dist/theme.css';
+
+import background from '@/assets/layeredWavesBg.svg';
+import { TwoFaLoginInput } from '@/components/TwoFaLoginInput';
+
+export default function TwoFaLogin({ ftApiCode }: { ftApiCode: string }) {
+  console.log('TwoFaLogin - code : ', ftApiCode);
+  return (
+    <div
+      className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40"
+      style={{
+        backgroundImage: `url(${background})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
+      <div>
+        <h1 className="flex items-center justify-center text-6xl font-bold text-white-1">
+          Our Pong
+        </h1>
+        <h2 className="flex items-center justify-center text-6xl font-bold text-white-1">Game</h2>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
+        <h1 className="text-2xl font-bold">Enter your 2FA code</h1>
+        <TwoFaLoginInput ftApiCode={ftApiCode} />
+        {/* {user && redirect()} */}
+        <div className="flex w-full justify-center border-t-[1px] border-accent pt-2">
+          <span className="text-grey">Our&nbsp;</span>{' '}
+          <a
+            className="text-grey underline underline-offset-1 hover:text-accent"
+            href="https://github.com/B-ki/ft_transcendence"
+          >
+            Github
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

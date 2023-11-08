@@ -6,7 +6,6 @@ export class JwtPayload {
 
 export class JwtPayload2FA {
   login: string;
-  isTwoFAEnabled: boolean;
   isTwoFactorAuthenticated: boolean;
 }
 
