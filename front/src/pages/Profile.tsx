@@ -12,23 +12,7 @@ import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { api } from '@/utils/api';
-
-const inputs = [
-  {
-    key: '0',
-    id: 'usernameInput',
-    labelTxt: 'Username',
-    inputTxt: 'Enter your username...',
-    mandatory: true,
-  },
-  {
-    key: '1',
-    id: 'descriptionInput',
-    labelTxt: 'Description',
-    inputTxt: '30 character maximum',
-    mandatory: false,
-  },
-];
+import Form from '@/components/Form';
 
 function Profile() {
   const [show, setShow] = useState(false);
@@ -80,24 +64,7 @@ function Profile() {
           </div>{' '}
         </div>
         <div className="pt-2">
-          <form onSubmit={handleSaveChanges} className="flex flex-col items-center gap-2">
-            {inputs.map((item) => (
-              <label>
-                {item.labelTxt}
-                <input
-                  key={item.key}
-                  id={item.id}
-                  type="text"
-                  value={item.inputTxt}
-                  mandatory={item.mandatory}
-                />
-              </label>
-            ))}
-            <input type="submit" value="Submit"></input>
-            <Button size="small" type="primary">
-              Save Changes
-            </Button>
-          </form>
+          <Form></Form>
         </div>
       </Modal>
       <Navbar />

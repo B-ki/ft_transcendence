@@ -4,33 +4,24 @@ import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface InputProps {
-  picture?: string | null;
+  picture?: File | null;
   name: 'Profile picture' | 'Banner';
   ID: string;
 }
 
 const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
-  const [image, setImage] = useState<string | null | undefined>(null);
+  const [image, setImage] = useState<File | null | undefined>(null);
 
   useEffect(() => {
     setImage(picture);
-  }, []);
+  }, [picture]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
     // Here, you can handle the file, for example, upload it to a server
     // For simplicity, we'll just update the state with the selected image.
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === 'string') {
-        setImage(result);
-      } else {
-        setImage(null);
-      }
-    };
-    reader.readAsDataURL(file);
+    setImage(file);
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -42,7 +33,7 @@ const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
         {image ? (
           <div className="flex flex-col items-center">
             <span>{name}</span>
-            <img style={{ maxHeight: '100px' }} src={image} alt={name} />
+            <img style={{ maxHeight: '100px' }} src={URL.createObjectURL(image)} alt={name} />
           </div>
         ) : (
           <div style={{ maxWidth: '100px' }}>Click to upload a {name}</div>

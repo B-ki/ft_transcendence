@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, SyntheticEvent } from 'react';
 import PicUploader from './PicUploader';
 import { UseQueryResult, useMutation } from 'react-query';
 import { api } from '@/utils/api';
@@ -38,9 +38,26 @@ function Form() {
     setDescription(event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutation.mutate({ displayName: 'test' });
+    console.log(event.currentTarget.elements.usernameInput.value);
+    if (
+      event.currentTarget.elements.usernameInput.value &&
+      event.currentTarget.elements.descriptionInput.value
+    )
+      mutation.mutate({
+        displayName: event.currentTarget.elements.usernameInput.value,
+        description: event.currentTarget.elements.descriptionInput.value,
+      });
+    else if (event.currentTarget.elements.usernameInput.value) {
+      mutation.mutate({
+        displayName: event.currentTarget.elements.usernameInput.value,
+      });
+    } else if (event.currentTarget.elements.descriptionInput.value) {
+      mutation.mutate({
+        description: event.currentTarget.elements.descriptionInput.value,
+      });
+    }
   };
 
   return (
