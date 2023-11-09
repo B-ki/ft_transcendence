@@ -94,15 +94,27 @@ export class AuthService {
     const secret = authenticator.generateSecret();
     const otpAuthUrl = authenticator.keyuri(user.email, config.twofa.name, secret);
     await this.userService.setTwoFaSecret(secret, user);
-    return { secret, otpAuthUrl };
+    return otpAuthUrl;
   }
 
   async generateQrCodeDataURL(otpAuthUrl: string) {
     return toDataURL(otpAuthUrl);
   }
 
+  async getQrCodeDataURL(user: User) {
+    if (!user.twoFactorAuthSecret) {
+      throw new Error('Cant generate a QrCode for 2FA without secret');
+    }
+    const otpAuthUrl = authenticator.keyuri(
+      user.email,
+      config.twofa.name,
+      user.twoFactorAuthSecret!,
+    );
+    return toDataURL(otpAuthUrl);
+  }
+
   async turnOnTwoFA(user: User) {
-    const { otpAuthUrl } = await this.generateTwoFactorAuthSecret(user);
+    const otpAuthUrl = await this.generateTwoFactorAuthSecret(user);
     if (!otpAuthUrl) throw new Error('Error generating the QR code');
     return this.generateQrCodeDataURL(otpAuthUrl);
   }
