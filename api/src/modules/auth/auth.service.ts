@@ -44,9 +44,9 @@ export class AuthService {
     return { token, isTwoFaEnabled };
   }
 
-  async loginWithTwoFa(code: string, profile: CreateUserDto) {
+  async loginWithTwoFa(code: string, login: string) {
     // user is supposed to be created at this point
-    const user = await this.userService.getUnique(profile.login);
+    const user = await this.userService.getUnique(login);
     const isCodeValid = this.isTwoFactorAuthCodeValid(code, user);
     if (!isCodeValid) throw new UnauthorizedException('Wrong 2FA code');
     const payload: JwtPayload2FA = {
@@ -54,8 +54,9 @@ export class AuthService {
       isTwoFactorAuthenticated: true,
     };
     const token = this.generateJWT(payload);
-    this.logger.log(`${profile.login} logged in with 2FA`);
+    this.logger.log(`${login} logged in with 2FA`);
 
+    console.log('[loginWith2FA] token =', token);
     return token;
   }
 

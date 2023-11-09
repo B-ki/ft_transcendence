@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } fr
 import { User } from '@prisma/client';
 
 import { UserService } from '../user';
-import { twoFACodeDto } from './auth.dto';
+import { loginTwoFaDto, twoFACodeDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators';
 import { FortyTwoAuthGuard, Jwt2faAuthGuard, JwtAuthGuard } from './guards';
@@ -28,14 +28,16 @@ export class AuthController {
     if (isTwoFaEnabled == false) {
       return { token, login };
     } else {
-      return { require2FA: true };
+      return { require2FA: true, login: login };
     }
   }
 
   @Post('42/2fa')
-  @UseGuards(FortyTwoAuthGuard)
-  async connectWith2FA(@Body() body: twoFACodeDto, @Req() req: any) {
-    return this.authService.loginWithTwoFa(body.twoFACode, req.user);
+  //@UseGuards(FortyTwoAuthGuard)
+  async connectWith2FA(@Body() body: loginTwoFaDto) {
+    console.log('[connectWith2FA]', body.twoFACode, body.login);
+    const token = this.authService.loginWithTwoFa(body.twoFACode, body.login);
+    return { token };
   }
 
   @Get('2fa/qrcode')

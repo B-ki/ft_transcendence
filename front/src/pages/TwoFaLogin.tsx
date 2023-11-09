@@ -2,9 +2,11 @@ import 'react-notifications-component/dist/theme.css';
 
 import background from '@/assets/layeredWavesBg.svg';
 import { TwoFaLoginInput } from '@/components/TwoFaLoginInput';
+import {useAuth} from '@/hooks/useAuth';
 
-export default function TwoFaLogin({ ftApiCode }: { ftApiCode: string }) {
-  console.log('TwoFaLogin - code : ', ftApiCode);
+export default function TwoFaLogin() {
+  const login = 'rmorel';
+  console.log('[TwoFaLogin] login : ', login);
   return (
     <div
       className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40"
@@ -22,7 +24,7 @@ export default function TwoFaLogin({ ftApiCode }: { ftApiCode: string }) {
       </div>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Enter your 2FA code</h1>
-        <TwoFaLoginInput ftApiCode={ftApiCode} />
+        <TwoFaLoginInput login={login} />
         {/* {user && redirect()} */}
         <div className="flex w-full justify-center border-t-[1px] border-accent pt-2">
           <span className="text-grey">Our&nbsp;</span>{' '}
