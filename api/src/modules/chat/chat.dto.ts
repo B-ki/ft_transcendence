@@ -1,5 +1,6 @@
 import { ChannelType } from '@prisma/client';
 import {
+  IsAlphanumeric,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -13,6 +14,7 @@ import {
 export class CreateChannelDTO {
   @IsNotEmpty()
   @MaxLength(20)
+  @IsAlphanumeric()
   name: string;
 
   @IsNotEmpty()
@@ -27,13 +29,21 @@ export class CreateChannelDTO {
 
 export class UpdateChannelDTO extends CreateChannelDTO {}
 
-export class CreateDmDTO {
+export class SendDmDTO {
+  @IsNotEmpty()
+  @MaxLength(8)
+  login: string;
+
+  @IsNotEmpty()
+  @MaxLength(1000)
+  content: string;
+}
+
+export class BlockUserDTO {
   @IsNotEmpty()
   @MaxLength(8)
   login: string;
 }
-
-export class BlockUserDTO extends CreateDmDTO {}
 
 export class JoinChannelDTO {
   @IsNotEmpty()

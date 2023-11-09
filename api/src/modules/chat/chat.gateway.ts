@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
@@ -27,6 +29,7 @@ import {
   MessageHistoryDTO,
   MuteUserDTO,
   PromoteUserDTO,
+  SendDmDTO,
   SendMessageDTO,
   UpdateChannelDTO,
   UserListInChannelDTO,
@@ -37,7 +40,7 @@ import { ChatEvent } from './chat.state';
 @UsePipes(new ValidationPipe())
 @WebSocketGateway({ namespace: 'chat' })
 @UseFilters(HttpExceptionTransformationFilter)
-export class ChatGateway implements OnGatewayInit {
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private io: Server;
   private logger: Logger = new Logger(ChatGateway.name);
@@ -52,16 +55,21 @@ export class ChatGateway implements OnGatewayInit {
   afterInit(server: Server) {
     const authMiddleware = WSAuthMiddleware(this.jwtService, this.userService);
     server.use(authMiddleware);
+  }
 
-    this.io.on('connection', async (socket) => {
-      this.logger.log('Client connected: ' + socket.id);
+  async handleConnection(socket: Socket) {
+    this.logger.log('Client connected: ' + socket.id);
 
-      this.socketsID.set(socket.data.user.login, socket.id);
+    this.socketsID.set(socket.data.user.login, socket.id);
 
-      const channels = await this.channelsService.getJoinedChannels(socket.data.user);
-      const channelsName = channels.map((c) => c.name);
-      socket.join(channelsName);
-    });
+    const channels = await this.channelsService.getJoinedChannels(socket.data.user);
+    const channelsName = channels.map((c) => c.name);
+    socket.join(channelsName);
+  }
+
+  handleDisconnect(socket: Socket) {
+    this.logger.log('Client disconnected: ' + socket.id);
+    this.socketsID.delete(socket.data.user.login);
   }
 
   @SubscribeMessage(ChatEvent.Create)
@@ -194,5 +202,17 @@ export class ChatGateway implements OnGatewayInit {
   async onMuteUser(@MessageBody() mute: MuteUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.muteUser(mute, client.data.user);
     this.io.to(mute.channel).emit(ChatEvent.Mute, data);
+  }
+
+  @SubscribeMessage(ChatEvent.DirectMessage)
+  async onDirectMessageUser(@MessageBody() dm: SendDmDTO, @ConnectedSocket() client: Socket) {
+    const data = await this.channelsService.sendDM(dm, client.data.user);
+
+    const socketID = this.socketsID.get(dm.login);
+    if (socketID) {
+      this.io.to(socketID).emit(ChatEvent.DirectMessage, data);
+    }
+
+    client.emit(ChatEvent.DirectMessage, data);
   }
 }

@@ -11,6 +11,7 @@ export enum ChatEvent {
   Message = 'message',
   Promote = 'promote',
   Unblock = 'unblock',
+  DirectMessage = 'dm',
   UserList = 'userList',
   MessageHistory = 'history',
   ChannelList = 'channelList',
