@@ -17,6 +17,7 @@ import {
   MessageHistoryDTO,
   MuteUserDTO,
   PromoteUserDTO,
+  SendDmDTO,
   SendMessageDTO,
   UpdateChannelDTO,
   UserListInChannelDTO,
@@ -137,6 +138,10 @@ export class ChannelsService {
 
   async leaveChannel(channelDTO: LeaveChannelDTO, user: User, reason?: string) {
     const channel = await this.getChannel(channelDTO.name);
+
+    if (channel.isDM) {
+      throw new WsException('You cannot leave a DM');
+    }
 
     const channelUser = channel.users.find((u) => u.userId === user.id);
     if (!channelUser) {
@@ -530,6 +535,72 @@ export class ChannelsService {
       user: toMuteUser,
       reason: reason,
       duration: mute.duration,
+    };
+  }
+
+  // Generate the DM channel name between 2 users
+  // No conflicts possible with an existing channel since '!'
+  // character is not authorized in regular channel names
+  getDmChannelName(login1: string, login2: string): string {
+    if (login1.localeCompare(login2) > 0) {
+      return `!${login2}_${login1}`;
+    } else {
+      return `!${login1}_${login2}`;
+    }
+  }
+
+  async sendDM(dm: SendDmDTO, user: User) {
+    const otherUser = await this.userService.getUnique(dm.login);
+
+    if (otherUser.id === user.id) {
+      throw new WsException('You cannot send a direct message to yourself');
+    }
+
+    const channelName = this.getDmChannelName(user.login, dm.login);
+    const channel = await this.prisma.channel.findUnique({
+      where: { name: channelName },
+    });
+
+    if (!channel) {
+      await this.prisma.channel.create({
+        data: {
+          name: channelName,
+          type: ChannelType.PRIVATE,
+          isDM: true,
+          users: {
+            create: [
+              {
+                user: { connect: { id: user.id } },
+                role: ChannelRole.USER,
+              },
+              {
+                user: { connect: { id: otherUser.id } },
+                role: ChannelRole.USER,
+              },
+            ],
+          },
+        },
+      });
+    }
+
+    const created = await this.prisma.message.create({
+      data: {
+        content: dm.content,
+        author: { connect: { id: user.id } },
+        channel: { connect: { name: channelName } },
+      },
+      include: {
+        author: true,
+      },
+    });
+
+    return {
+      content: created.content,
+      channel: channelName,
+      user: {
+        ...created.author,
+        role: ChannelRole.USER,
+      },
     };
   }
 }
