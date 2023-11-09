@@ -3,8 +3,11 @@ export interface userDto {
   first_name: string;
   last_name: string;
   email: string;
-  imageURL: string;
+  imageUrl: string;
   JWTtoken?: string;
+  displayName: string;
+  description: string;
+  bannerUrl: string;
 }
 
 export const dummyUserDto: userDto = {
@@ -12,5 +15,7 @@ export const dummyUserDto: userDto = {
   first_name: 'romain',
   last_name: 'morel',
   email: 'lorem@ipsum.fr',
-  imageURL: 'image',
+  imageUrl: 'image',
+  displayName: 'Noob Master',
+  description: '',
 };
