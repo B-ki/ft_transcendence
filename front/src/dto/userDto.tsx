@@ -5,6 +5,9 @@ export interface userDto {
   email: string;
   imagePath: string;
   JWTtoken?: string;
+  displayName: string;
+  description: string;
+  bannerUrl: string;
 }
 
 export const dummyUserDto: userDto = {

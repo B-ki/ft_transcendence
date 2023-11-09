@@ -4,11 +4,12 @@ import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface InputProps {
+  ID: string;
   picture?: string | null;
   name: 'Profile picture' | 'Banner';
 }
 
-const PicUploader: FC<InputProps> = ({ picture, name }) => {
+const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
   const [image, setImage] = useState<string | null | undefined>(null);
 
   useEffect(() => {
