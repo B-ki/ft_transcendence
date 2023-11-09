@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useApi } from '@/hooks/useApi';
 
 import { Button } from './Button';
 
-export const TwoFACode = () => {
+export const TwoFACode = ({ setShowInvalidate }) => {
   const [code, setCode] = useState('');
 
   const handleCodeChange = (e) => {
@@ -15,7 +15,7 @@ export const TwoFACode = () => {
     alert('Something was submitted: ' + code);
   };
 
-  const { data, isLoading, isError, refetch } = useApi().post(
+  const { status, data, isLoading, isError, refetch } = useApi().post(
     'post 2fa code',
     '/auth/2fa/authenticate',
     {
@@ -23,6 +23,11 @@ export const TwoFACode = () => {
       options: { enabled: false },
     },
   );
+
+  console.log('[TwoFACode] success:', status);
+  useEffect(() => {
+    if (status === 'success') setShowInvalidate(true);
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center">

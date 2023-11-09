@@ -106,6 +106,7 @@ export class UserService {
       },
       data: {
         isTwoFaEnabled: false,
+        twoFactorAuthSecret: '',
       },
     });
 
