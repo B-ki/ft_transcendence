@@ -519,7 +519,7 @@ export class ChannelsService {
     }
 
     if (toMuteChannelUser.role !== ChannelRole.USER) {
-      throw new WsException('You can only ban regular users');
+      throw new WsException('You can only mute regular users');
     }
 
     let reason = `Muted by ${user.login} for ${mute.duration} seconds: `;
