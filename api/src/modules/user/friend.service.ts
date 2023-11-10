@@ -18,11 +18,11 @@ export class FriendService {
     });
 
     if (!newFriend) {
-      throw new NotFoundException('Friend doesnt exists');
+      throw new NotFoundException(`User ${friendLogin} doesn't exist`);
     }
 
-    if (user === newFriend) {
-      throw new BadRequestException('Cant add user to its own friendlist');
+    if (user.id === newFriend.id) {
+      throw new BadRequestException('You cannot add yourself as a friend');
     }
 
     if (newFriend.friendOf.find((f) => f.id === user.id)) {
@@ -42,19 +42,6 @@ export class FriendService {
       },
     });
 
-    await this.prisma.user.update({
-      where: {
-        id: newFriend.id,
-      },
-      data: {
-        friendOf: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
-    });
-
     return { success: true };
   }
 
@@ -69,7 +56,7 @@ export class FriendService {
     });
 
     if (!friendToRemove) {
-      throw new NotFoundException('Friend doesnt exists');
+      throw new NotFoundException(`User ${friendToRemoveLogin} doesn't exist`);
     }
 
     if (!friendToRemove.friendOf.find((f) => f.id === user.id)) {
@@ -89,33 +76,21 @@ export class FriendService {
       },
     });
 
-    await this.prisma.user.update({
-      where: {
-        id: friendToRemove.id,
-      },
-      data: {
-        friendOf: {
-          disconnect: {
-            id: user.id,
-          },
-        },
-      },
-    });
-
     return { success: true };
   }
 
-  async getFriendList(user: User) {
+  async getFriendList(user: User, friendOf: boolean = false) {
     const u = await this.prisma.user.findUnique({
       where: {
         id: user.id,
       },
       include: {
         friends: true,
+        friendOf: true,
       },
     });
 
     // User is never null since he is authenticated
-    return u!.friends;
+    return friendOf ? u!.friendOf : u!.friends;
   }
 }
