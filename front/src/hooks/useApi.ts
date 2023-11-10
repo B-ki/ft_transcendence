@@ -2,6 +2,7 @@ import { SearchParamsOption } from 'ky';
 import { useQuery } from 'react-query';
 
 import { api } from '@/utils/api';
+import { AxiosError } from 'axios';
 
 type RequestType = 'post' | 'get' | 'delete' | 'patch';
 
@@ -44,7 +45,8 @@ export function useApi() {
             searchParams: args?.params,
           });
           return response.json();
-        } catch (err) {}
+        } catch (err) {
+        }
       },
       { ...args?.options },
     );

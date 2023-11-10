@@ -56,7 +56,6 @@ export class AuthService {
     const token = this.generateJWT(payload);
     this.logger.log(`${login} logged in with 2FA`);
 
-    console.log('[loginWith2FA] token =', token);
     return token;
   }
 

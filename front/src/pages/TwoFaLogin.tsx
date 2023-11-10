@@ -5,8 +5,7 @@ import { TwoFaLoginInput } from '@/components/TwoFaLoginInput';
 import {useAuth} from '@/hooks/useAuth';
 
 export default function TwoFaLogin() {
-  const login = 'rmorel';
-  console.log('[TwoFaLogin] login : ', login);
+  const { login } = useAuth();
   return (
     <div
       className="left-0 top-0 flex h-screen w-screen flex-col items-center justify-center gap-40"
@@ -18,14 +17,13 @@ export default function TwoFaLogin() {
     >
       <div>
         <h1 className="flex items-center justify-center text-6xl font-bold text-white-1">
-          Our Pong
+          2FA authentication required
         </h1>
         <h2 className="flex items-center justify-center text-6xl font-bold text-white-1">Game</h2>
       </div>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Enter your 2FA code</h1>
         <TwoFaLoginInput login={login} />
-        {/* {user && redirect()} */}
         <div className="flex w-full justify-center border-t-[1px] border-accent pt-2">
           <span className="text-grey">Our&nbsp;</span>{' '}
           <a

@@ -1,38 +1,32 @@
 import { useState } from 'react';
 
-import { useApi } from '@/hooks/useApi';
-
 import { Button } from './Button';
 import {Navigate, useNavigate} from 'react-router-dom';
 import {api} from '@/utils/api';
 import {useMutation} from 'react-query';
 import {useAuth} from '@/hooks/useAuth';
 
-export const TwoFaLoginInput = (props) => {
-	console.log('[TwoFaLoginInput] props:', props);
+export const TwoFaLoginInput = (props: any) => {
 	const login = props.login;
-	console.log('[TwoFaLoginInput] login:', login);
   const [code, setCode] = useState('');
   const { setToken } = useAuth();
 
-  const handleCodeChange = (e) => {
-    setCode(e.target.value);
+  const handleCodeChange = (event: any) => {
+    setCode(event.target.value);
   };
 
   const handleSubmit = () => {
-    alert('Something was submitted: ' + code);
   };
 
   const navigate = useNavigate();
+
   const mutation = useMutation({
-	mutationFn: (code: string, login: string) => {
-	  login = 'rmorel';
-	  console.log('[TwoFaLoginInput] code, login:', code, login);
-      return api.post('auth/42/2fa', { json: { twoFACode: code, login: login } });
+	mutationFn: async (code: string, login: string) => {
+      const response = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } });
+      return response;
     },
     onSuccess: () => {
-	console.log("mutation result =", mutation.data);
-	navigate("/");
+	    navigate("/");
     },
   });
 
