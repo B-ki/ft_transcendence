@@ -31,11 +31,15 @@ model User {
     lastName    String
     bannerUrl   String?
     description String?
-    channelUser ChannelUser[]
     gamesWon    Game[]        @relation("GameWinner")
     gamesLost   Game[]        @relation("GameLoser")
     friends     User[]        @relation("friends")
     friendOf    User[]        @relation("friends")
+    blocked     User[]        @relation("blocked")
+    blockedBy   User[]        @relation("blocked")
+    bannedOf    Channel[]
+    channelUser ChannelUser[]
+    messages    Message[] // Not in ChannelUser for message persistence
 }
 
 model ChannelUser {
@@ -45,7 +49,6 @@ model ChannelUser {
     channel   Channel     @relation(fields: [channelId], references: [id])
     channelId Int
     role      ChannelRole
-    Message   Message[]
 
     @@unique([userId, channelId])
 }
@@ -60,14 +63,15 @@ model Channel {
     users     ChannelUser[]
     messages  Message[]
     isDM      Boolean       @default(false) // is Direct Message
+    bans      User[]
 }
 
 model Message {
-    id        Int         @id @default(autoincrement())
-    createdAt DateTime    @default(now())
-    channel   Channel     @relation(fields: [channelId], references: [id])
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
     channelId Int
-    author    ChannelUser @relation(fields: [authorId], references: [id])
+    author    User     @relation(fields: [authorId], references: [id])
     authorId  Int
     content   String
 }

@@ -64,4 +64,59 @@ export class UserService {
       },
     }));
   }
+
+  async blockUser(blockedUserLogin: string, user: User) {
+    if (blockedUserLogin === user.login) {
+      throw new BadRequestException('You cannot block yourself');
+    }
+
+    // make sure that the other user exists
+    await this.getUnique(blockedUserLogin);
+
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        blocked: {
+          connect: { login: blockedUserLogin },
+        },
+      },
+      include: {
+        blocked: true,
+      },
+    });
+  }
+
+  async unblockUser(toUnblockLogin: string, user: User) {
+    // make sure that the other user exists
+    await this.getUnique(toUnblockLogin);
+
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        blocked: {
+          disconnect: { login: toUnblockLogin },
+        },
+      },
+      include: {
+        blocked: true,
+      },
+    });
+  }
+
+  async getBlockedList(user: User) {
+    const userWithBlocked = await this.prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      include: {
+        blocked: true,
+      },
+    });
+
+    return userWithBlocked!.blocked;
+  }
 }
