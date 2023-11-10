@@ -41,7 +41,7 @@ function Profile() {
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
-    '/user/me',
+    'user/me',
   ) as UseQueryResult<userDto>;
 
   // const displayNameQuery = useApi().patch('my games', `/user/me/displayName`, {
@@ -74,6 +74,7 @@ function Profile() {
         </div>
         <div className="pt-2">
           <form onSubmit={handleSaveChanges} className="flex flex-col items-center gap-2">
+            <PicUploader ID="ProfilePic" name="Profile picture" user={user} />
             {inputs.map((item) => (
               <Input
                 key={item.id}
@@ -116,7 +117,7 @@ function Profile() {
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
         <img
           className="w-32 rounded-full"
-          src={myImage}
+          src={user?.imageUrl}
           alt="profile pic"
           onClick={() => setShow(true)}
         />
