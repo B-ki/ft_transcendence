@@ -4,25 +4,13 @@ import { UseQueryResult, useMutation } from 'react-query';
 import { api } from '@/utils/api';
 import { useApi } from '@/hooks/useApi';
 import { userDto } from '@/dto/userDto';
+import { FC } from 'react';
 
-const inputs = [
-  {
-    key: '0',
-    id: 'usernameInput',
-    labelTxt: 'Username',
-    inputTxt: 'Enter your username...',
-    mandatory: true,
-  },
-  {
-    key: '1',
-    id: 'descriptionInput',
-    labelTxt: 'Description',
-    inputTxt: '30 character maximum',
-    mandatory: false,
-  },
-];
+interface InputProps {
+  user: userDto;
+}
 
-function Form() {
+export const Form: FC<InputProps> = ({}) => {
   const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState<FileList | null>(null);
@@ -30,7 +18,7 @@ function Form() {
 
   const mutation = useMutation({
     mutationFn: (userInfos) => {
-      return api.patch('/user/me', { json: userInfos });
+      return api.patch('user/me', { json: userInfos });
     },
   });
 
@@ -42,20 +30,51 @@ function Form() {
     setDescription(event.target.value);
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   const files = event.target.files;
+  //   if (files && files.length > 0) {
+  //     setFile(files);
+  //     const imageUrl = URL.createObjectURL(files[0]);
+  //     setImageUrl(imageUrl);
+  //     console.log(imageUrl);
+  //   }
+  // };
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
-      setFile(files);
-      const imageUrl = URL.createObjectURL(files[0]);
+      const file = files[0];
+
+      // Use FileReader to read the file content as a data URL
+      const imageUrl = await readAsDataURL(file);
+
+      // Update state with the data URL
       setImageUrl(imageUrl);
+      console.log(imageUrl);
     }
+  };
+
+  // Helper function to read file content as a data URL
+  const readAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result === 'string') {
+          resolve(result);
+        } else {
+          reject(new Error('Failed to read file as data URL.'));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const {
     data: user,
     isLoading,
     isError,
-  } = useApi().get('get user profile', '/user/me') as UseQueryResult<userDto>;
+  } = useApi().get('get user profile', 'user/me') as UseQueryResult<userDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -66,7 +85,7 @@ function Form() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(event.currentTarget.elements.usernameInput.value);
+    console.log(event.currentTarget.elements.ProfilePic.value);
     if (
       event.currentTarget.elements.usernameInput.value &&
       event.currentTarget.elements.descriptionInput.value
@@ -74,6 +93,7 @@ function Form() {
       mutation.mutate({
         displayName: event.currentTarget.elements.usernameInput.value,
         description: event.currentTarget.elements.descriptionInput.value,
+        imageUrl: event.currentTarget.elements.ProfilePic.value,
       });
     else if (event.currentTarget.elements.usernameInput.value) {
       mutation.mutate({
@@ -84,7 +104,8 @@ function Form() {
         description: event.currentTarget.elements.descriptionInput.value,
       });
     } else {
-      console.log(console.log(file));
+      console.log('test: ');
+      // console.log(event.currentTarget.elements.ProfilePic.value);
     }
   };
 
@@ -95,7 +116,7 @@ function Form() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
           <div className="flex">
             <div className="flex flex-col items-center justify-center">
-              <input type="file" onChange={handleFileChange} />
+              <input id="ProfilePic" type="file" onChange={handleFileChange} />
               <img style={{ maxWidth: '100px' }} src={imageUrl} alt="Profile Picture" />
             </div>
             <div className="flex flex-col items-center justify-center">
@@ -134,6 +155,6 @@ function Form() {
       </div>
     </div>
   );
-}
+};
 
 export default Form;

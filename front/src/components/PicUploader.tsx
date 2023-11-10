@@ -1,3 +1,4 @@
+import { userDto } from '@/dto/userDto';
 import React, { useCallback, useState } from 'react';
 import { FC } from 'react';
 import { useEffect } from 'react';
@@ -5,15 +6,22 @@ import { useDropzone } from 'react-dropzone';
 
 interface InputProps {
   ID: string;
-  picture?: string | null;
   name: 'Profile picture' | 'Banner';
+  user: userDto | undefined;
 }
 
-const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
+const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
   const [image, setImage] = useState<string | null | undefined>(null);
+  let data: string | undefined;
+
+  if (name === 'Profile picture') {
+    data = user?.imageUrl;
+  } else {
+    data = user?.bannerUrl;
+  }
 
   useEffect(() => {
-    setImage(picture);
+    setImage(data);
   }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -27,10 +35,11 @@ const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
       if (typeof result === 'string') {
         setImage(result);
       } else {
-        setImage(null);
+        setImage(data);
       }
     };
     reader.readAsDataURL(file);
+    // console.log(file);
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -38,7 +47,7 @@ const PicUploader: FC<InputProps> = ({ ID, picture, name }) => {
   return (
     <div>
       <div {...getRootProps()} style={{ cursor: 'pointer' }}>
-        <input {...getInputProps()} />
+        <input id={ID} type="file" {...getInputProps()} />
         {image ? (
           <div className="flex flex-col items-center">
             <span>{name}</span>
