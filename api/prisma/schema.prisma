@@ -19,12 +19,18 @@ enum ChannelRole {
     OWNER
 }
 
+enum UserStatus {
+    OFFLINE
+    ONLINE
+    INGAME
+}
+
 model User {
     id          Int           @id @default(autoincrement())
     createdAt   DateTime      @default(now())
     login       String        @unique
     email       String        @unique
-    isConnected Boolean
+    status      UserStatus
     imageUrl    String?
     displayName String        @unique
     firstName   String

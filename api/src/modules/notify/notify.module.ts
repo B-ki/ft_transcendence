@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
-import { FriendService, UserService } from '../user';
+import { UserModule } from '../user';
+import { NotifyGateway } from './notify.gateway';
 import { NotifyService } from './notify.service';
 
 @Module({
   controllers: [],
-  providers: [NotifyService, JwtService, UserService, FriendService],
+  providers: [NotifyGateway, NotifyService],
+  imports: [UserModule],
+  exports: [NotifyService],
 })
 export class NotifyModule {}

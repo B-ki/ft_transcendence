@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserStatus } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { CreateUserDto } from '@/modules/auth';
@@ -45,7 +45,7 @@ describe('UserService', () => {
     displayName: 'testLogin',
     firstName: 'testFirstName',
     lastName: 'testLastName',
-    isConnected: true,
+    status: UserStatus.ONLINE,
     bannerUrl: 'bannerUrl',
     description: 'description',
     createdAt: new Date(),
@@ -58,7 +58,7 @@ describe('UserService', () => {
     displayName: 'testLogin',
     firstName: 'testFirstName',
     lastName: 'testLastName',
-    isConnected: true,
+    status: UserStatus.ONLINE,
     bannerUrl: 'bannerUrl',
     description: 'description',
   };
@@ -101,7 +101,7 @@ describe('UserService', () => {
       displayName: 'newDisplayName',
       firstName: 'testFirstName',
       lastName: 'testLastName',
-      isConnected: true,
+      status: UserStatus.ONLINE,
       bannerUrl: 'new bannerUrl',
       description: 'description',
       createdAt: new Date(),
