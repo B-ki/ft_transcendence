@@ -34,7 +34,7 @@ import {
   UpdateChannelDTO,
   UserListInChannelDTO,
 } from './chat.dto';
-import { ChatEvent } from './chat.state';
+import { ChatEvent } from './chat.events';
 
 @UseGuards(WsJwtGuard)
 @UsePipes(new ValidationPipe())
