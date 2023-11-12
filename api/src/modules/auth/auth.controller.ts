@@ -5,7 +5,7 @@ import { UserService } from '../user';
 import { loginTwoFaDto, twoFACodeDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators';
-import { FortyTwoAuthGuard, Jwt2faAuthGuard, JwtAuthGuard } from './guards';
+import { FortyTwoAuthGuard, JwtTwoFaAuthGuard, JwtAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -31,7 +31,7 @@ export class AuthController {
   @Post('2fa/login')
   @UseGuards(JwtAuthGuard)
   async connectWith2FA(@Body() body: loginTwoFaDto) {
-    const token = this.authService.loginWithTwoFa(body.twoFACode, body.login);
+    const token = await this.authService.loginWithTwoFa(body.twoFACode, body.login);
     return { token };
   }
 

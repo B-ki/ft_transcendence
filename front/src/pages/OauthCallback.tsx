@@ -31,7 +31,7 @@ export default function OauthCallback() {
     setToken(data.token);
     return <Navigate to="/" />;
   } else {
-    alert("42 login failed, please check your secret or the redirection URL of your 42 API")
-    return <Navigate to="/" />
+    //alert("42 login failed, please check your secret or the redirection URL of your 42 API")
+    return <Navigate to="/login" />
   }
 }

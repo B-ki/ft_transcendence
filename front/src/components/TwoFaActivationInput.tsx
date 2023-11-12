@@ -17,8 +17,8 @@ const postTwoFaActivation = async (code: string) => {
 export const TwoFACode: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
   const [code, setCode] = useState('');
   
-  const mutation = useMutation<string, unknown, string>({
-    mutationFn: (code: string) => postTwoFaActivation(code),
+  const mutation = useMutation({
+    mutationFn: postTwoFaActivation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get 2fa qrcode'] });
       setShowInvalidate(false);

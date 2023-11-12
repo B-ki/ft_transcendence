@@ -19,7 +19,6 @@ export default function TwoFaLogin() {
         <h1 className="flex items-center justify-center text-6xl font-bold text-white-1">
           2FA authentication required
         </h1>
-        <h2 className="flex items-center justify-center text-6xl font-bold text-white-1">Game</h2>
       </div>
       <div className="flex flex-col items-center justify-center gap-4 rounded-md border-t-4 border-t-accent bg-white-1 p-8 shadow-md">
         <h1 className="text-2xl font-bold">Enter your 2FA code</h1>

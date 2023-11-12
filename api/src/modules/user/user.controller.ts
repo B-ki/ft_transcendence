@@ -3,13 +3,13 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 import { GetUser } from '../auth/decorators';
-import { JwtAuthGuard } from '../auth/guards';
+import { JwtTwoFaAuthGuard } from '../auth/guards';
 import { FriendService } from './friend.service';
 import { UpdateUserDto, UserLoginDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtTwoFaAuthGuard)
 @ApiBearerAuth()
 export class UserController {
   constructor(

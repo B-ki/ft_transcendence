@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from './Button';
-import {Navigate, useNavigate} from 'react-router-dom';
-import {api} from '@/utils/api';
-import {useMutation} from 'react-query';
+import { useNavigate} from 'react-router-dom';
+import {api, setApiToken} from '@/utils/api';
+import { useMutation} from 'react-query';
 import {useAuth} from '@/hooks/useAuth';
 
+const loginWithTwoFaCode = async ({code, login} : {code: string, login: string | undefined}) => {
+      const json = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } }).json();
+      return json;
+}
+
 export const TwoFaLoginInput = (props: any) => {
-	const login = props.login;
   const [code, setCode] = useState('');
-  const { setToken } = useAuth();
+  const { login, setToken } = useAuth();
 
   const handleCodeChange = (event: any) => {
     setCode(event.target.value);
@@ -21,21 +25,23 @@ export const TwoFaLoginInput = (props: any) => {
   const navigate = useNavigate();
 
   const mutation = useMutation({
-	mutationFn: async (code: string, login: string) => {
-      const response = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } });
-      return response;
-    },
-    onSuccess: () => {
+    mutationFn: loginWithTwoFaCode,     
+    onSuccess: data => {
+      if (data.token) {
+        setToken(data.token)
+      }
 	    navigate("/");
     },
-  });
+  })
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="flex flex-col items-center">
       <input type="test" name="2FAcode" onChange={handleCodeChange} />
-      <Button size="small" type="primary" onClick={() => mutation.mutate(code, login)}>
+    </form>
+      <Button size="small" type="primary" onClick={() => mutation.mutateAsync({code: code, login: login})}>
         Submit
       </Button>
-    </form>
+    </>
   );
 };
