@@ -13,8 +13,6 @@ interface InputProps {
 export const Form: FC<InputProps> = ({}) => {
   const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
-  const [file, setFile] = useState<FileList | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | undefined>();
 
   const mutation = useMutation({
     mutationFn: (userInfos) => {
@@ -28,46 +26,6 @@ export const Form: FC<InputProps> = ({}) => {
 
   const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDescription(event.target.value);
-  };
-
-  // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const files = event.target.files;
-  //   if (files && files.length > 0) {
-  //     setFile(files);
-  //     const imageUrl = URL.createObjectURL(files[0]);
-  //     setImageUrl(imageUrl);
-  //     console.log(imageUrl);
-  //   }
-  // };
-
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-
-      // Use FileReader to read the file content as a data URL
-      const imageUrl = await readAsDataURL(file);
-
-      // Update state with the data URL
-      setImageUrl(imageUrl);
-      console.log(imageUrl);
-    }
-  };
-
-  // Helper function to read file content as a data URL
-  const readAsDataURL = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        if (typeof result === 'string') {
-          resolve(result);
-        } else {
-          reject(new Error('Failed to read file as data URL.'));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
   };
 
   const {
@@ -85,7 +43,6 @@ export const Form: FC<InputProps> = ({}) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(event.currentTarget.elements.ProfilePic.value);
     if (
       event.currentTarget.elements.usernameInput.value &&
       event.currentTarget.elements.descriptionInput.value
@@ -93,7 +50,6 @@ export const Form: FC<InputProps> = ({}) => {
       mutation.mutate({
         displayName: event.currentTarget.elements.usernameInput.value,
         description: event.currentTarget.elements.descriptionInput.value,
-        imageUrl: event.currentTarget.elements.ProfilePic.value,
       });
     else if (event.currentTarget.elements.usernameInput.value) {
       mutation.mutate({
@@ -114,15 +70,8 @@ export const Form: FC<InputProps> = ({}) => {
       <h2>Edit your profile</h2>
       <div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-          <div className="flex">
-            <div className="flex flex-col items-center justify-center">
-              <input id="ProfilePic" type="file" onChange={handleFileChange} />
-              <img style={{ maxWidth: '100px' }} src={imageUrl} alt="Profile Picture" />
-            </div>
-            <div className="flex flex-col items-center justify-center">
-              <input type="file" onChange={handleFileChange} />
-              <img style={{ maxWidth: '100px' }} src={imageUrl} alt="Profile Picture" />
-            </div>
+          <div className="flex flex-col items-center justify-center">
+            <PicUploader ID="ProfilePic" name="Profile picture" user={user} />
           </div>
           <label className="flex flex-col">
             Username

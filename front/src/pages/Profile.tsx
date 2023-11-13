@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FormEvent, ChangeEvent, SyntheticEvent } from 'react';
 import { UseQueryResult, useMutation } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
@@ -12,6 +13,8 @@ import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { api } from '@/utils/api';
+import { Form } from 'react-router-dom';
+import { queryClient } from '@/main';
 
 const inputs = [
   {
@@ -30,6 +33,8 @@ const inputs = [
 
 function Profile() {
   const [show, setShow] = useState(false);
+  const [username, setUsername] = useState('');
+  const [description, setDescription] = useState('');
   let user: userDto | undefined = undefined;
   let image: string | undefined;
 
@@ -37,17 +42,16 @@ function Profile() {
     mutationFn: (userInfos) => {
       return api.patch('user/me', { json: userInfos });
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+      setShow(false);
+    },
   });
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
     'user/me',
   ) as UseQueryResult<userDto>;
-
-  // const displayNameQuery = useApi().patch('my games', `/user/me/displayName`, {
-  //   data: { displayName: '', description: '' },
-  //   options: { manual: true },
-  // }) as UseQueryResult<userDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -57,12 +61,35 @@ function Profile() {
   }
   user = data;
 
-  const handleSaveChanges = (event: React.SyntheticEvent) => {
-    event.preventDefault;
-    mutation.mutate();
-    //displayNameQuery.refetch({});
-    //setUserName
-    //setUserDesciption
+  const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
+  };
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription(event.target.value);
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (
+      event.currentTarget.elements.usernameInput.value &&
+      event.currentTarget.elements.descriptionInput.value
+    )
+      mutation.mutate({
+        displayName: event.currentTarget.elements.usernameInput.value,
+        description: event.currentTarget.elements.descriptionInput.value,
+      });
+    else if (event.currentTarget.elements.usernameInput.value) {
+      mutation.mutate({
+        displayName: event.currentTarget.elements.usernameInput.value,
+      });
+    } else if (event.currentTarget.elements.descriptionInput.value) {
+      mutation.mutate({
+        description: event.currentTarget.elements.descriptionInput.value,
+      });
+    } else {
+      console.log('test: ');
+    }
   };
 
   return (
@@ -73,20 +100,44 @@ function Profile() {
           <div className="flex flex-col items-center"></div>{' '}
         </div>
         <div className="pt-2">
-          <form onSubmit={handleSaveChanges} className="flex flex-col items-center gap-2">
-            <PicUploader ID="ProfilePic" name="Profile picture" user={user} />
-            {inputs.map((item) => (
-              <Input
-                key={item.id}
-                labelText={item.labelTxt}
-                inputText={item.inputTxt}
-                mandatory={item.mandatory}
-              ></Input>
-            ))}
-            <Button size="small" type="primary">
-              Save Changes
-            </Button>
-          </form>
+          <div className="flex flex-col items-center justify-center gap-2">
+            <div>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                <div className="flex flex-col items-center justify-center">
+                  <PicUploader ID="ProfilePic" name="Profile picture" user={user} />
+                </div>
+                <label className="flex flex-col">
+                  Username
+                  <input
+                    className="rounded-md border border-dark-3 bg-white-3 p-1  invalid:border-red focus:border-blue focus:outline-none"
+                    key="0"
+                    id="usernameInput"
+                    placeholder="Enter your username..."
+                    type="text"
+                    maxLength={30}
+                    value={username}
+                    onChange={handleUsernameChange}
+                  />
+                </label>
+                <label className="flex flex-col">
+                  Description
+                  <input
+                    className="rounded-md border border-dark-3 bg-white-3 p-1  invalid:border-red focus:border-blue focus:outline-none"
+                    key="1"
+                    id="descriptionInput"
+                    placeholder="30 character maximum"
+                    type="text"
+                    maxLength={30}
+                    value={description}
+                    onChange={handleDescriptionChange}
+                  />
+                </label>
+                <Button submit="submit" type="primary" size="small">
+                  Save Changes
+                </Button>
+              </form>
+            </div>
+          </div>
         </div>
       </Modal>
       <Navbar />
