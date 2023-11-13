@@ -3,11 +3,8 @@ import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class JwtPayload {
   login: string;
-}
-
-export class JwtPayload2FA {
-  login: string;
-  isTwoFactorAuthenticated: boolean;
+  isTwoFaEnabled: boolean;
+  isTwoFaAuthenticated: boolean;
 }
 
 export class CreateUserDto {

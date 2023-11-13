@@ -5,7 +5,7 @@ import { UserService } from '../user';
 import { loginTwoFaDto, twoFACodeDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { GetUser } from './decorators';
-import { FortyTwoAuthGuard, JwtTwoFaAuthGuard, JwtAuthGuard } from './guards';
+import { FortyTwoAuthGuard, JwtAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {

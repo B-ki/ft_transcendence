@@ -6,7 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { config } from '@/config';
 
 import { UserService } from '../../user';
-import { JwtPayload2FA } from '../auth.dto';
+import { JwtPayload } from '../auth.dto';
 
 @Injectable()
 export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
@@ -17,10 +17,10 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
     });
   }
 
-  async validate(payload: JwtPayload2FA): Promise<User | null> {
+  async validate(payload: JwtPayload): Promise<User | null> {
     const user: User = await this.userService.getUnique(payload.login);
     if (!user.isTwoFaEnabled) return user;
-    if (payload.isTwoFactorAuthenticated) return user;
+    if (payload.isTwoFaAuthenticated) return user;
     return null;
   }
 }

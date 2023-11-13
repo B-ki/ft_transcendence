@@ -8,7 +8,7 @@ import { toDataURL } from 'qrcode';
 import { config } from '@/config';
 
 import { UserService } from '../user';
-import { CreateUserDto, JwtPayload, JwtPayload2FA } from './auth.dto';
+import { CreateUserDto, JwtPayload } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +37,11 @@ export class AuthService {
       }
     }
 
-    const payload: JwtPayload = { login: profile.login };
+    const payload: JwtPayload = {
+      login: profile.login,
+      isTwoFaEnabled: isTwoFaEnabled,
+      isTwoFaAuthenticated: false,
+    };
     const token = this.generateJWT(payload);
     this.logger.log(`${profile.login} logged in`);
 
@@ -51,9 +55,10 @@ export class AuthService {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong 2FA code');
     }
-    const payload: JwtPayload2FA = {
+    const payload: JwtPayload = {
       login: user.login,
-      isTwoFactorAuthenticated: true,
+      isTwoFaEnabled: true,
+      isTwoFaAuthenticated: true,
     };
     const token = this.generateJWT(payload);
     this.logger.log(`${login} logged in with 2FA`);
