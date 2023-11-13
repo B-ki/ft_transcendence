@@ -3690,14 +3690,7 @@ packages:
     dev: true
 
   /cliui@6.0.0:
-<<<<<<< HEAD
     resolution: {integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==}
-=======
-    resolution:
-      {
-        integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==,
-      }
->>>>>>> 475bf61 (Starting 2FA)
     dependencies:
       string-width: 4.2.3
       strip-ansi: 6.0.1
