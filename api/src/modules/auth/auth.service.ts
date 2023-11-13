@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserStatus } from '@prisma/client';
 import axios from 'axios';
 
 import { UserService } from '../user';
@@ -60,7 +61,7 @@ export class AuthService {
         firstName: profile.first_name,
         lastName: profile.last_name,
         description: 'No description atm.',
-        isConnected: true,
+        status: UserStatus.OFFLINE,
         bannerUrl: 'Good banner to place here',
       };
     } catch (error) {

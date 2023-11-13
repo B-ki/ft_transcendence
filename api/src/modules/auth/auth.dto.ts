@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { UserStatus } from '@prisma/client';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 
 export class JwtPayload {
   login: string;
@@ -21,7 +22,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   lastName: string;
 
-  isConnected: boolean;
+  @IsEnum(UserStatus)
+  status: UserStatus;
 
   bannerUrl: string;
 

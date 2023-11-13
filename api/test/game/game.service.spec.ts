@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { Game, PrismaClient, User } from '@prisma/client';
+import { Game, PrismaClient, User, UserStatus } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 import { GameService } from '../../src/modules/game';
@@ -40,7 +40,7 @@ describe('Gameservice', () => {
     displayName: 'testLoginOne',
     firstName: 'testFirstNameOne',
     lastName: 'testLastNameOne',
-    isConnected: true,
+    status: UserStatus.ONLINE,
     bannerUrl: 'bannerUrlOne',
     description: 'descriptionOne',
     createdAt: new Date(),
@@ -54,7 +54,7 @@ describe('Gameservice', () => {
     displayName: 'testLoginTwo',
     firstName: 'testFirstNameTwo',
     lastName: 'testLastNameTwo',
-    isConnected: true,
+    status: UserStatus.ONLINE,
     bannerUrl: 'bannerUrlTwo',
     description: 'descriptionTwo',
     createdAt: new Date(),
