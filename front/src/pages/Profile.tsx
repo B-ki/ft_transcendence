@@ -3,6 +3,7 @@ import { UseQueryResult } from 'react-query';
 
 import banner from '@/assets/cool-profile-picture.jpg';
 import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
+import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Input } from '@/components/Input';
@@ -11,7 +12,6 @@ import { Navbar } from '@/components/Navbar';
 import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
-import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png'
 
 const inputs = [
   { id: '0', labelTxt: 'Username', inputTxt: 'Enter your username...', mandatory: true },

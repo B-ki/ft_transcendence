@@ -2,7 +2,7 @@ import 'react-notifications-component/dist/theme.css';
 
 import background from '@/assets/layeredWavesBg.svg';
 import { TwoFaLoginInput } from '@/components/TwoFaLoginInput';
-import {useAuth} from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function TwoFaLogin() {
   const { login } = useAuth();

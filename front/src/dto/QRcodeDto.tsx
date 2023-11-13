@@ -1,4 +1,4 @@
 export interface QRcodeDto {
-    QrCodeUrl: string,
-    QrCodeActivated: boolean,
+  QrCodeUrl: string;
+  QrCodeActivated: boolean;
 }

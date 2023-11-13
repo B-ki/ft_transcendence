@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useMutation } from 'react-query';
+
+import { queryClient } from '@/main';
+import { api } from '@/utils/api';
 
 import { Button } from './Button';
-import { api } from '@/utils/api';
-import { queryClient } from '@/main';
-import { useMutation } from 'react-query';
 
 export interface TwoFACodeProps {
   setShowInvalidate: (show: boolean) => void;
@@ -12,11 +13,11 @@ export interface TwoFACodeProps {
 const postTwoFaActivation = async (code: string) => {
   const response = await api.post('auth/2fa/activate', { json: { twoFACode: code } });
   return response;
-}
+};
 
 export const TwoFACode: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
   const [code, setCode] = useState('');
-  
+
   const mutation = useMutation({
     mutationFn: postTwoFaActivation,
     onSuccess: () => {
@@ -25,15 +26,15 @@ export const TwoFACode: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
     },
     onError: () => {
       alert('Wrong 2FA code');
-    }
+    },
   });
-  
+
   const handleCodeChange = (e: any) => {
     setCode(e.target.value);
   };
-  
+
   const handleSubmit = (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
   };
 
   return (

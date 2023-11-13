@@ -1,5 +1,6 @@
 import '@/styles/index.css';
 
+import { AxiosError } from 'axios';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -18,7 +19,6 @@ import Main from './components/Main';
 import OauthCallback from './pages/OauthCallback';
 import TwoFaActivation from './pages/TwoFaActivation';
 import TwoFaLogin from './pages/TwoFaLogin';
-import { AxiosError } from 'axios';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

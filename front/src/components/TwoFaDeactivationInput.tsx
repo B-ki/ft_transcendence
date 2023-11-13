@@ -13,7 +13,7 @@ export interface TwoFACodeProps {
 const postTwoFaDeactivation = async (code: string) => {
   const response = await api.post('auth/2fa/deactivate', { json: { twoFACode: code } });
   return response;
-}
+};
 
 export const TwoFADeactivation: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
   const [code, setCode] = useState('');
@@ -26,7 +26,7 @@ export const TwoFADeactivation: React.FC<TwoFACodeProps> = ({ setShowInvalidate 
     },
     onError: () => {
       alert('Wrong 2FA code');
-    }
+    },
   });
 
   const handleCodeChange = (event: any) => {
@@ -34,7 +34,7 @@ export const TwoFADeactivation: React.FC<TwoFACodeProps> = ({ setShowInvalidate 
   };
 
   const handleSubmit = (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
   };
 
   return (
