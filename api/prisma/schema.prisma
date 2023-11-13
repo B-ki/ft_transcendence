@@ -31,11 +31,11 @@ model User {
     login               String        @unique
     email               String        @unique
     status              UserStatus
-    imageUrl            String?
+    imagePath           String?
     displayName         String        @unique
     firstName           String
     lastName            String
-    bannerUrl           String?
+    bannerPath          String?
     description         String?
     gamesWon            Game[]        @relation("GameWinner")
     gamesLost           Game[]        @relation("GameLoser")

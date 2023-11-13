@@ -2,6 +2,7 @@ import { Logger as NestLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
 
 import { config } from '@/config';
 
@@ -19,6 +20,11 @@ async function bootstrap(): Promise<string> {
 
   // Enable validation globally
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+
+  // Serve static content from ../uploads
+  app.useStaticAssets(join(__dirname, '..', '..', config.app.uploadsPath), {
+    prefix: '/uploads/',
+  });
 
   // Add some middlewares
   middleware(app);
