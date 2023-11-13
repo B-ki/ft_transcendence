@@ -11,6 +11,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean | undefined;
   submit?: 'button' | 'reset' | 'submit' | undefined;
+  id?: string;
 }
 
 const variants = {
@@ -24,6 +25,7 @@ const variants = {
 };
 
 export const Button: FC<ButtonProps> = ({
+  id,
   children,
   type,
   iconLeft,
@@ -35,7 +37,7 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   return (
     <>
-      <button type={submit} disabled={disabled} onClick={onClick}>
+      <button id={id} className="" type={submit} disabled={disabled} onClick={onClick}>
         <div
           className={`${type ? variants[type] : 'bg-white-1 text-primary hover:bg-white-3'} ${
             size ? variants[size] : ''
