@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   }, []);
 
   const login_42 = () => {
-    window.location.href = `${window.location.origin}/api/auth/42`;
+    window.location.href = `${window.location.origin}/api/auth/42/login`;
   };
 
   const logout = () => {

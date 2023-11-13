@@ -3,8 +3,8 @@ import { UseQueryResult } from 'react-query';
 
 import background from '@/assets/layeredWavesBg.svg';
 import { Navbar } from '@/components/Navbar';
-import { TwoFACode } from '@/components/TwoFACode';
-import { TwoFADeactivation } from '@/components/TwoFADesactivation';
+import { TwoFACode } from '@/components/TwoFaActivationInput';
+import { TwoFADeactivation } from '@/components/TwoFaDeactivationInput';
 import { QRcodeDto } from '@/dto/QRcodeDto';
 import { useApi } from '@/hooks/useApi';
 
@@ -43,7 +43,7 @@ function TwoFaActivation() {
               <TwoFACode setShowInvalidate={setShowInvalidate} />
             </>
           )}
-          {data.QrCodeActivated == true && (
+          {data?.QrCodeActivated == true && (
             <>
               <h1 className="text-2xl font-bold">2FA is activated</h1>
               <TwoFADeactivation setShowInvalidate={setShowInvalidate} />

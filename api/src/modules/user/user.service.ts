@@ -29,7 +29,6 @@ export class UserService {
   }
 
   async updateUser(user: User, updateDto: UpdateUserDto): Promise<User> {
-    console.log(updateDto);
     if (
       updateDto.displayName &&
       (await this.isDisplayNameInUse(updateDto.displayName)) &&

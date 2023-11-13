@@ -3,3 +3,7 @@ export interface jwtToken {
   iat: number;
   exp: number;
 }
+
+export interface tokenDto {
+  token: string;
+}

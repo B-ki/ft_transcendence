@@ -48,7 +48,9 @@ export class AuthService {
     // user is supposed to be created at this point
     const user = await this.userService.getUnique(login);
     const isCodeValid = this.isTwoFactorAuthCodeValid(code, user);
-    if (!isCodeValid) throw new UnauthorizedException('Wrong 2FA code');
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong 2FA code');
+    }
     const payload: JwtPayload2FA = {
       login: user.login,
       isTwoFactorAuthenticated: true,
@@ -56,7 +58,6 @@ export class AuthService {
     const token = this.generateJWT(payload);
     this.logger.log(`${login} logged in with 2FA`);
 
-    console.log('[loginWith2FA] token =', token);
     return token;
   }
 

@@ -1,47 +1,50 @@
-import { useState } from 'react';
-
-import { useApi } from '@/hooks/useApi';
+import { useEffect, useState } from 'react';
 
 import { Button } from './Button';
-import {Navigate, useNavigate} from 'react-router-dom';
-import {api} from '@/utils/api';
-import {useMutation} from 'react-query';
-import {useAuth} from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { api, setApiToken } from '@/utils/api';
+import { useMutation } from 'react-query';
+import { useAuth } from '@/hooks/useAuth';
 
-export const TwoFaLoginInput = (props) => {
-	console.log('[TwoFaLoginInput] props:', props);
-	const login = props.login;
-	console.log('[TwoFaLoginInput] login:', login);
+const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string | undefined }) => {
+  const json = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } }).json();
+  return json;
+};
+
+export const TwoFaLoginInput = (props: any) => {
   const [code, setCode] = useState('');
-  const { setToken } = useAuth();
+  const { login, setToken } = useAuth();
 
-  const handleCodeChange = (e) => {
-    setCode(e.target.value);
+  const handleCodeChange = (event: any) => {
+    setCode(event.target.value);
   };
 
-  const handleSubmit = () => {
-    alert('Something was submitted: ' + code);
-  };
+  const handleSubmit = () => {};
 
   const navigate = useNavigate();
+
   const mutation = useMutation({
-	mutationFn: (code: string, login: string) => {
-	  login = 'rmorel';
-	  console.log('[TwoFaLoginInput] code, login:', code, login);
-      return api.post('auth/42/2fa', { json: { twoFACode: code, login: login } });
-    },
-    onSuccess: () => {
-	console.log("mutation result =", mutation.data);
-	navigate("/");
+    mutationFn: loginWithTwoFaCode,
+    onSuccess: (data) => {
+      if (data.token) {
+        setToken(data.token);
+      }
+      navigate('/');
     },
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center">
-      <input type="test" name="2FAcode" onChange={handleCodeChange} />
-      <Button size="small" type="primary" onClick={() => mutation.mutate(code, login)}>
+    <>
+      <form onSubmit={handleSubmit} className="flex flex-col items-center">
+        <input type="test" name="2FAcode" onChange={handleCodeChange} />
+      </form>
+      <Button
+        size="small"
+        type="primary"
+        onClick={() => mutation.mutateAsync({ code: code, login: login })}
+      >
         Submit
       </Button>
-    </form>
+    </>
   );
 };
