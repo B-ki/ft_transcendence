@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { useMutation } from 'react-query';
+
+import { queryClient } from '@/main';
+import { api } from '@/utils/api';
 
 import { Button } from './Button';
-import { api } from '@/utils/api';
-import { queryClient } from '@/main';
-import { useMutation } from 'react-query';
 
 export interface TwoFACodeProps {
   setShowInvalidate: (show: boolean) => void;

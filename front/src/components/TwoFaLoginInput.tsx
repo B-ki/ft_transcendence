@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+
+import { useAuth } from '@/hooks/useAuth';
+import { api, setApiToken } from '@/utils/api';
 
 import { Button } from './Button';
-import { useNavigate } from 'react-router-dom';
-import { api, setApiToken } from '@/utils/api';
-import { useMutation } from 'react-query';
-import { useAuth } from '@/hooks/useAuth';
 
 const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string | undefined }) => {
   const json = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } }).json();
