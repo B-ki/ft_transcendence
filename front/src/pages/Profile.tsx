@@ -36,7 +36,7 @@ function Profile() {
   user = data;
 
   const handleSaveChanges = () => {
-    console.log(user?.imageURL);
+    console.log(user?.imagePath);
     //setUserName
     //setUserDesciption
   };

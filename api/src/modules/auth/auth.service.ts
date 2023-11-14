@@ -84,13 +84,13 @@ export class AuthService {
       return {
         login: profile.login,
         email: profile.email,
-        imageUrl: profile.image.versions.medium,
+        imagePath: profile.image.versions.medium,
         displayName: displayName,
         firstName: profile.first_name,
         lastName: profile.last_name,
         description: 'No description atm.',
         status: UserStatus.OFFLINE,
-        bannerUrl: 'Good banner to place here',
+        bannerPath: 'Good banner to place here',
       };
     } catch (error) {
       throw new Error('Unable to fetch profile informations');

@@ -14,7 +14,7 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  imageUrl: string;
+  imagePath: string;
 
   displayName: string;
 
@@ -27,7 +27,7 @@ export class CreateUserDto {
   @IsEnum(UserStatus)
   status: UserStatus;
 
-  bannerUrl: string;
+  bannerPath: string;
 
   description: string;
 }
