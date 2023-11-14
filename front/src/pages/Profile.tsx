@@ -1,43 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { FormEvent, ChangeEvent, SyntheticEvent } from 'react';
+import { useState } from 'react';
+import { FormEvent, ChangeEvent } from 'react';
 import { UseQueryResult, useMutation } from 'react-query';
 
-import banner from '@/assets/cool-profile-picture.jpg';
-import myImage from '@/assets/d9569bbed4393e2ceb1af7ba64fdf86a.jpg';
 import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
-import { Input } from '@/components/Input';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
-import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { api } from '@/utils/api';
-import { Form } from 'react-router-dom';
 import { queryClient } from '@/main';
-
-const inputs = [
-  {
-    id: 'usernameInput',
-    labelTxt: 'Username',
-    inputTxt: 'Enter your username...',
-    mandatory: true,
-  },
-  {
-    id: 'descriptionInput',
-    labelTxt: 'Description',
-    inputTxt: '30 character maximum',
-    mandatory: false,
-  },
-];
+import PicUploader from '@/components/PicUploader';
 
 function Profile() {
   const [show, setShow] = useState(false);
   const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
   let user: userDto | undefined = undefined;
-  let image: string | undefined;
 
   const mutation = useMutation({
     mutationFn: (userInfos) => {
@@ -45,6 +25,8 @@ function Profile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+      setUsername('');
+      setDescription('');
       setShow(false);
     },
   });
@@ -72,30 +54,39 @@ function Profile() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (
-      event.currentTarget.elements.usernameInput.value &&
-      event.currentTarget.elements.descriptionInput.value
-    )
-      mutation.mutate({
-        displayName: event.currentTarget.elements.usernameInput.value,
-        description: event.currentTarget.elements.descriptionInput.value,
-      });
-    else if (event.currentTarget.elements.usernameInput.value) {
-      mutation.mutate({
-        displayName: event.currentTarget.elements.usernameInput.value,
-      });
-    } else if (event.currentTarget.elements.descriptionInput.value) {
-      mutation.mutate({
-        description: event.currentTarget.elements.descriptionInput.value,
-      });
-    } else {
-      console.log('test: ');
+
+    const usernameInput = document.querySelector<HTMLInputElement>('#usernameInput');
+    const descriptionInput = document.querySelector<HTMLInputElement>('#descriptionInput');
+
+    if (usernameInput && descriptionInput) {
+      if (usernameInput.value && descriptionInput.value) {
+        mutation.mutate({
+          displayName: usernameInput.value,
+          description: descriptionInput.value,
+        });
+      } else if (usernameInput.value) {
+        mutation.mutate({
+          displayName: usernameInput.value,
+        });
+      } else if (descriptionInput.value) {
+        mutation.mutate({
+          description: descriptionInput.value,
+        });
+      } else {
+        console.log('nothing done');
+      }
     }
+  };
+
+  const handleSetShow = () => {
+    setShow(false);
+    setUsername('');
+    setDescription('');
   };
 
   return (
     <>
-      <Modal onClose={() => setShow(false)} title="Edit your profile" show={show}>
+      <Modal onClose={handleSetShow} title="Edit your profile" show={show}>
         <div className="flex flex-row gap-4">
           <div className="flex flex-col items-center"></div>
           <div className="flex flex-col items-center"></div>{' '}
