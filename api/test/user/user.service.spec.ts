@@ -40,12 +40,10 @@ describe('UserService', () => {
   const user = {
     id: 1,
     login: 'testLogin',
-    email: 'testMail',
     imagePath: 'testUrl',
     displayName: 'testLogin',
-    firstName: 'testFirstName',
-    lastName: 'testLastName',
     status: UserStatus.ONLINE,
+    intraImageURL: 'intraimage',
     bannerPath: 'bannerPath',
     description: 'description',
     createdAt: new Date(),
@@ -53,12 +51,10 @@ describe('UserService', () => {
 
   const profile: CreateUserDto = {
     login: 'testLogin',
-    email: 'testMail',
     imagePath: 'testUrl',
     displayName: 'testLogin',
-    firstName: 'testFirstName',
-    lastName: 'testLastName',
     status: UserStatus.ONLINE,
+    intraImageURL: 'intraimage',
     bannerPath: 'bannerPath',
     description: 'description',
   };
@@ -66,7 +62,6 @@ describe('UserService', () => {
   const userDto: UpdateUserDto = {
     displayName: 'Joe',
     description: 'Nimp',
-    imagePath: 'image',
     bannerPath: 'banner',
   };
 
@@ -96,12 +91,10 @@ describe('UserService', () => {
     const userbannerPath = {
       id: 1,
       login: 'testLogin',
-      email: 'testMail',
       imagePath: 'new imagePath',
       displayName: 'newDisplayName',
-      firstName: 'testFirstName',
-      lastName: 'testLastName',
       status: UserStatus.ONLINE,
+      intraImageURL: 'intraimage',
       bannerPath: 'new bannerPath',
       description: 'description',
       createdAt: new Date(),

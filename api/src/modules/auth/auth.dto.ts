@@ -1,7 +1,7 @@
 import { UserStatus } from '@prisma/client';
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
 
-export class JwtPayload {
+export interface JwtPayload {
   login: string;
   isTwoFaEnabled: boolean;
   isTwoFaAuthenticated: boolean;
@@ -9,26 +9,32 @@ export class JwtPayload {
 
 export class CreateUserDto {
   @IsNotEmpty()
+  @MaxLength(8)
+  @IsString()
   login: string;
 
-  @IsEmail()
-  email: string;
-
-  imagePath: string;
-
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(20)
   displayName: string;
 
   @IsNotEmpty()
-  firstName: string;
-
-  @IsNotEmpty()
-  lastName: string;
-
   @IsEnum(UserStatus)
   status: UserStatus;
 
+  @IsString()
+  imagePath: string;
+
+  @IsString()
   bannerPath: string;
 
+  @IsNotEmpty()
+  @IsUrl()
+  intraImageURL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(30)
   description: string;
 }
 

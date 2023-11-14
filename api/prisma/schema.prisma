@@ -29,12 +29,10 @@ model User {
     id                  Int           @id @default(autoincrement())
     createdAt           DateTime      @default(now())
     login               String        @unique
-    email               String        @unique
     status              UserStatus
     imagePath           String?
+    intraImageURL       String
     displayName         String        @unique
-    firstName           String
-    lastName            String
     bannerPath          String?
     description         String?
     gamesWon            Game[]        @relation("GameWinner")
