@@ -6,15 +6,18 @@ import { useAuth } from '@/hooks/useAuth';
 import { api, setApiToken } from '@/utils/api';
 
 import { Button } from './Button';
+import { tokenDto } from '@/dto/tokenDto';
 
-const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string | undefined }) => {
+const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string | undefined }): Promise<tokenDto> => {
   const json = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } }).json();
-  return json;
+  const token: tokenDto = json as tokenDto;
+  return token;
 };
 
 export const TwoFaLoginInput = (props: any) => {
   const [code, setCode] = useState('');
   const { login, setToken } = useAuth();
+  console.log('TwoFaLogin', login)
 
   const handleCodeChange = (event: any) => {
     setCode(event.target.value);
@@ -32,6 +35,9 @@ export const TwoFaLoginInput = (props: any) => {
       }
       navigate('/');
     },
+    onError: () => {
+      alert('Wrong 2FA code')
+    }
   });
 
   return (

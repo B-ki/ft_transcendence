@@ -57,10 +57,6 @@ const router = createBrowserRouter([
             element: <TwoFaActivation />,
             loader: privateGuard,
           },
-          {
-            path: '/2falogin',
-            element: <TwoFaLogin />,
-          },
         ],
       },
       {
@@ -70,6 +66,10 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />,
+      },
+      {
+        path: '/2falogin',
+        element: <TwoFaLogin />,
       },
     ],
   },

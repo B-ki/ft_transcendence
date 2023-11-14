@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 export default function OauthCallback() {
   const queryParameters = new URLSearchParams(window.location.search);
   const code = queryParameters.get('code');
-  const { setToken } = useAuth();
+  const { setLogin, setToken } = useAuth();
 
   if (!code) {
     return <div>No code given</div>; // TO DO : Create pop up error, then redirect to '/'

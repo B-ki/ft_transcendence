@@ -23,6 +23,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   const [initialLoading, setInitialLoading] = useState<boolean>(false);
   const [login, setLogin] = useState<string | undefined>(undefined);
 
+  const setToken = (token: string | null) => {
+    localStorage.setItem('token', token || '');
+    setApiToken(token);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -34,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
       }
     }
     setInitialLoading(true);
-  }, []);
+  });
 
   const login_42 = () => {
     window.location.href = `${window.location.origin}/api/auth/42/login`;
@@ -43,11 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   const logout = () => {
     setLogin(undefined);
     setToken(null);
-  };
-
-  const setToken = (token: string | null) => {
-    localStorage.setItem('token', token || '');
-    setApiToken(token);
   };
 
   return (
