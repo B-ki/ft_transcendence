@@ -20,7 +20,12 @@ export const max_h_screen: number = 690;
 export const Pong: FC<Props> = () => {
   let app: PIXI.Application<HTMLCanvasElement>;
 
-  const socket = io('ws://localhost:3001/pong');
+  const socket = io('ws://localhost:3000/pong', {
+    auth: {
+      token: localStorage.getItem('token') as string,
+    },
+  });
+
   function game(bonus: boolean) {
     if (bonus) socket.emit('BonusQueue');
     else socket.emit('ClassicQueue');
