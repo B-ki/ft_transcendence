@@ -25,11 +25,7 @@ function Friends() {
     user = data;
   }
 
-  return (
-    <div className="mt-10 flex w-screen justify-center gap-8">
-      <Form></Form>
-    </div>
-  );
+  return <div className="mt-10 flex w-screen justify-center gap-8"></div>;
 }
 
 export default Friends;

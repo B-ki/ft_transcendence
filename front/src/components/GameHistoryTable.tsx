@@ -50,19 +50,67 @@ const gameHistory = [
   },
   {
     date: '2023-10-27 18:15',
-    player1Score: 5,
+    player1Score: 1,
     player2Score: 3,
     duration: '8 minutes',
   },
   {
     date: '2023-10-27 18:15',
-    player1Score: 5,
+    player1Score: 2,
     player2Score: 3,
     duration: '8 minutes',
   },
   {
     date: '2023-10-27 18:15',
-    player1Score: 5,
+    player1Score: 3,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
+    player2Score: 3,
+    duration: '8 minutes',
+  },
+  {
+    date: '2023-10-27 18:15',
+    player1Score: 2,
     player2Score: 3,
     duration: '8 minutes',
   },
@@ -83,7 +131,7 @@ export const GameHistoryTable = () => {
 
   return (
     <>
-      <div className="border-separate rounded border bg-dark-3 p-1 text-dark-1">
+      <div className="border-separate rounded border bg-grey p-1 text-dark-1">
         <table className=" m-2 table-auto">
           <thead>
             <tr>
@@ -94,13 +142,33 @@ export const GameHistoryTable = () => {
           </thead>
           <tbody>
             {visibleGameHistory.map((game, index) => (
-              <tr key={index} className="border">
-                <td className="px-4 py-1">{game.date}</td>
-                <td className="px-5 py-1">
-                  {game.player1Score} - {game.player2Score}
-                </td>
-                <td className="px-4 py-1">{game.duration}</td>
-              </tr>
+              <>
+                {game.player1Score > game.player2Score ? (
+                  <tr key={index} className="border bg-blue">
+                    <td className="px-4 py-1">{game.date}</td>
+                    <td className="px-5 py-1">
+                      {game.player1Score} - {game.player2Score}
+                    </td>
+                    <td className="px-4 py-1">{game.duration}</td>
+                  </tr>
+                ) : game.player1Score < game.player2Score ? (
+                  <tr key={index} className="border bg-red">
+                    <td className="px-4 py-1">{game.date}</td>
+                    <td className="px-5 py-1">
+                      {game.player1Score} - {game.player2Score}
+                    </td>
+                    <td className="px-4 py-1">{game.duration}</td>
+                  </tr>
+                ) : (
+                  <tr key={index} className="border ">
+                    <td className="px-4 py-1">{game.date}</td>
+                    <td className="px-5 py-1">
+                      {game.player1Score} - {game.player2Score}
+                    </td>
+                    <td className="px-4 py-1">{game.duration}</td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
