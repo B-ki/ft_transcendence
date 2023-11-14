@@ -24,4 +24,7 @@ export const config = {
   bcrypt: {
     saltRounds: 10,
   },
+  twofa: {
+    name: process.env.AUTH_APP_NAME || 'ft_transcendence',
+  },
 } as const;

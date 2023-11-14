@@ -1,7 +1,11 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserStatus } from '@prisma/client';
+import { User, UserStatus } from '@prisma/client';
 import axios from 'axios';
+import { authenticator } from 'otplib';
+import { toDataURL } from 'qrcode';
+
+import { config } from '@/config';
 
 import { UserService } from '../user';
 import { CreateUserDto, JwtPayload } from './auth.dto';
@@ -19,9 +23,11 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async login(profile: CreateUserDto): Promise<string> {
+  async login(profile: CreateUserDto) {
+    let isTwoFaEnabled = false;
     try {
-      await this.userService.getUnique(profile.login);
+      const user = await this.userService.getUnique(profile.login);
+      if (user.isTwoFaEnabled == true) isTwoFaEnabled = true;
     } catch (err) {
       if (err instanceof NotFoundException) {
         this.logger.log(`Creating new user ${profile.login}`);
@@ -31,9 +37,31 @@ export class AuthService {
       }
     }
 
-    const payload: JwtPayload = { login: profile.login };
+    const payload: JwtPayload = {
+      login: profile.login,
+      isTwoFaEnabled: isTwoFaEnabled,
+      isTwoFaAuthenticated: false,
+    };
     const token = this.generateJWT(payload);
     this.logger.log(`${profile.login} logged in`);
+
+    return { token, isTwoFaEnabled };
+  }
+
+  async loginWithTwoFa(code: string, login: string) {
+    // user is supposed to be created at this point
+    const user = await this.userService.getUnique(login);
+    const isCodeValid = this.isTwoFactorAuthCodeValid(code, user);
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong 2FA code');
+    }
+    const payload: JwtPayload = {
+      login: user.login,
+      isTwoFaEnabled: true,
+      isTwoFaAuthenticated: true,
+    };
+    const token = this.generateJWT(payload);
+    this.logger.log(`${login} logged in with 2FA`);
 
     return token;
   }
@@ -67,5 +95,42 @@ export class AuthService {
     } catch (error) {
       throw new Error('Unable to fetch profile informations');
     }
+  }
+
+  async generateTwoFactorAuthSecret(user: User) {
+    const secret = authenticator.generateSecret();
+    const otpAuthUrl = authenticator.keyuri(user.email, config.twofa.name, secret);
+    await this.userService.setTwoFaSecret(secret, user);
+    return otpAuthUrl;
+  }
+
+  async generateQrCodeDataURL(otpAuthUrl: string) {
+    return toDataURL(otpAuthUrl);
+  }
+
+  async getQrCodeDataURL(user: User) {
+    if (!user.twoFactorAuthSecret) {
+      throw new Error('Cant generate a QrCode for 2FA without secret');
+    }
+    const otpAuthUrl = authenticator.keyuri(
+      user.email,
+      config.twofa.name,
+      user.twoFactorAuthSecret!,
+    );
+    return toDataURL(otpAuthUrl);
+  }
+
+  async turnOnTwoFA(user: User) {
+    const otpAuthUrl = await this.generateTwoFactorAuthSecret(user);
+    if (!otpAuthUrl) throw new Error('Error generating the QR code');
+    return this.generateQrCodeDataURL(otpAuthUrl);
+  }
+
+  isTwoFactorAuthCodeValid(twoFACode: string, user: User) {
+    if (!user.twoFactorAuthSecret) return false;
+    return authenticator.verify({
+      token: twoFACode,
+      secret: user.twoFactorAuthSecret,
+    });
   }
 }

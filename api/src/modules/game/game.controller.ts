@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-import { JwtAuthGuard } from '../auth';
+import { JwtTwoFaAuthGuard } from '../auth';
 import { GetUser } from '../auth/decorators';
 import { UserService } from '../user';
 import { UserLoginDto } from '../user/user.dto';
@@ -10,7 +10,7 @@ import { CreateGameDto } from './game.dto';
 import { GameService } from './game.service';
 
 @Controller('game')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtTwoFaAuthGuard)
 @ApiBearerAuth()
 export class GameController {
   constructor(

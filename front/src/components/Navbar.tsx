@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Game', href: '/game' },
   { name: 'Profile', href: '/profile' },
   { name: 'Friends', href: '/friends' },
+  { name: '2FA', href: '/2fa' },
 ];
 
 export const Navbar = () => {

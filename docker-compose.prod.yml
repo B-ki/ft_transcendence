@@ -50,6 +50,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:?err}
       APP_ID: ${APP_ID:?err}
       APP_SECRET: ${APP_SECRET:?err}
+      AUTH_APP_NAME: ${AUTH_APP_NAME:?err}
       HOST: ${HOST:?err}
       PORT: 3000
     networks:
