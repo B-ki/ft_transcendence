@@ -13,10 +13,13 @@ export default defineConfig({
     strictPort: true,
     port: 8080,
     proxy: {
-      '/api': {
+      '^/(api|uploads)': {
         target: 'http://api:3000',
         changeOrigin: true,
         secure: false,
+      },
+      '/socket.io': {
+        target: 'ws://api:3000',
         ws: true,
       },
     },
