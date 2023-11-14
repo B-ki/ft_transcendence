@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
+import { tokenDto } from '@/dto/tokenDto';
 import { useAuth } from '@/hooks/useAuth';
 import { api, setApiToken } from '@/utils/api';
 
 import { Button } from './Button';
-import { tokenDto } from '@/dto/tokenDto';
 
-const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string | undefined }): Promise<tokenDto> => {
+const loginWithTwoFaCode = async ({
+  code,
+  login,
+}: {
+  code: string;
+  login: string | undefined;
+}): Promise<tokenDto> => {
   const json = await api.post('auth/2fa/login', { json: { twoFACode: code, login: login } }).json();
   const token: tokenDto = json as tokenDto;
   return token;
@@ -17,7 +23,7 @@ const loginWithTwoFaCode = async ({ code, login }: { code: string; login: string
 export const TwoFaLoginInput = (props: any) => {
   const [code, setCode] = useState('');
   const { login, setToken } = useAuth();
-  console.log('TwoFaLogin', login)
+  console.log('TwoFaLogin', login);
 
   const handleCodeChange = (event: any) => {
     setCode(event.target.value);
@@ -36,8 +42,8 @@ export const TwoFaLoginInput = (props: any) => {
       navigate('/');
     },
     onError: () => {
-      alert('Wrong 2FA code')
-    }
+      alert('Wrong 2FA code');
+    },
   });
 
   return (
