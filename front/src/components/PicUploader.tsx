@@ -1,13 +1,18 @@
 import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 import React, { useCallback, useState } from 'react';
 import { FC } from 'react';
 import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { UseQueryResult, useMutation } from 'react-query';
+import { api } from '@/utils/api';
+import { queryClient } from '@/main';
 
 interface InputProps {
   ID: string;
   name: 'Profile picture' | 'Banner';
   user: userDto | undefined;
+  file: File[] | undefined;
 }
 
 const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
@@ -15,7 +20,7 @@ const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
   let data: string | undefined;
 
   if (name === 'Profile picture') {
-    data = user?.imageUrl;
+    data = user?.imagePath;
   } else {
     data = user?.bannerUrl;
   }
@@ -39,7 +44,6 @@ const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
       }
     };
     reader.readAsDataURL(file);
-    // console.log(file);
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });

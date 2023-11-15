@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormEvent, ChangeEvent } from 'react';
 import { UseQueryResult, useMutation } from 'react-query';
 
@@ -12,14 +12,17 @@ import { useApi } from '@/hooks/useApi';
 import { api } from '@/utils/api';
 import { queryClient } from '@/main';
 import PicUploader from '@/components/PicUploader';
+import { useDropzone } from 'react-dropzone';
 
 function Profile() {
   const [show, setShow] = useState(false);
   const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
+  const [Afile, setAfile] = useState<File>();
+  const [image, setImage] = useState<string | null | undefined>(null);
   let user: userDto | undefined = undefined;
 
-  const mutation = useMutation({
+  const mutation1 = useMutation({
     mutationFn: (userInfos) => {
       return api.patch('user/me', { json: userInfos });
     },
@@ -30,6 +33,38 @@ function Profile() {
       setShow(false);
     },
   });
+  const updateImage = (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('user/me/image', { body: formData });
+  };
+
+  const mutation2 = useMutation({
+    mutationFn: updateImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+    },
+  });
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+
+    // Here, you can handle the file, for example, upload it to a server
+    // For simplicity, we'll just update the state with the selected image.
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setImage(result);
+      } else {
+        setImage(null);
+      }
+    };
+    reader.readAsDataURL(file);
+    setAfile(file);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
@@ -57,19 +92,25 @@ function Profile() {
 
     const usernameInput = document.querySelector<HTMLInputElement>('#usernameInput');
     const descriptionInput = document.querySelector<HTMLInputElement>('#descriptionInput');
+    const ProfilePic = document.querySelector<HTMLFormElement>('#ProfilePic');
+    console.log('test', ProfilePic);
+
+    if (ProfilePic) {
+      mutation2.mutate(Afile);
+    }
 
     if (usernameInput && descriptionInput) {
       if (usernameInput.value && descriptionInput.value) {
-        mutation.mutate({
+        mutation1.mutate({
           displayName: usernameInput.value,
           description: descriptionInput.value,
         });
       } else if (usernameInput.value) {
-        mutation.mutate({
+        mutation1.mutate({
           displayName: usernameInput.value,
         });
       } else if (descriptionInput.value) {
-        mutation.mutate({
+        mutation1.mutate({
           description: descriptionInput.value,
         });
       } else {
@@ -96,7 +137,17 @@ function Profile() {
             <div>
               <form onSubmit={handleSubmit} className="flex flex-col gap-2">
                 <div className="flex flex-col items-center justify-center">
-                  <PicUploader ID="ProfilePic" name="Profile picture" user={user} />
+                  <div {...getRootProps()} style={{ cursor: 'pointer' }}>
+                    <input id="ProfilePic" type="file" accept=".jgp, .png" {...getInputProps()} />
+                    {image ? (
+                      <div className="flex flex-col items-center">
+                        <span>{'Profile picture'}</span>
+                        <img style={{ maxHeight: '100px' }} src={image} alt="Profile Picture" />
+                      </div>
+                    ) : (
+                      <div style={{ maxWidth: '100px' }}>Click to upload a {'Profile Pic'}</div>
+                    )}
+                  </div>
                 </div>
                 <label className="flex flex-col">
                   Username
@@ -143,8 +194,8 @@ function Profile() {
       ></div>
       <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
         <img
-          className="w-32 rounded-full hover:cursor-pointer"
-          src={user?.imageUrl}
+          className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
+          src={user?.imagePath}
           alt="profile pic"
           onClick={() => setShow(true)}
         />
@@ -159,8 +210,8 @@ function Profile() {
       </div>
       <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
         <img
-          className="w-32 rounded-full"
-          src={user?.imageUrl}
+          className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
+          src={user?.imagePath}
           alt="profile pic"
           onClick={() => setShow(true)}
         />
