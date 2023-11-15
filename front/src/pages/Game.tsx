@@ -46,10 +46,6 @@ export const Pong: FC<Props> = () => {
   app.view.style.visibility = 'hidden';
   document.body.appendChild(app.view);
 
-  window.onresize = () => {
-    resize_game(app);
-  };
-
   const middleLine = new DashLine(app);
 
   const ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
@@ -185,6 +181,7 @@ export const Pong: FC<Props> = () => {
   socket.on(GameEvent.Start, () => screenManager.playScreen());
 
   function launchGame(bonus: boolean) {
+    window.onresize = () => resize_game(app);
     screenManager.setMode(bonus);
     if (bonus) {
       socket.emit(GameEvent.BonusQueue);
