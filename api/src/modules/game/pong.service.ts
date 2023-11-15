@@ -22,7 +22,7 @@ export class PongService {
           this.clock.deltaMS,
           new PIXI.Rectangle(0, 0, config.game.width, config.game.heigth),
         );
-        if (this.games[i].player1.score >= 45 || this.games[i].player2.score >= 45) {
+        if (this.games[i].isFinished()) {
           this.games.splice(i, 1);
         }
       }
@@ -40,8 +40,11 @@ export class PongService {
     const sender = this.users.get(socket.id);
     this.users.delete(socket.id);
 
-    this.classicQueue = this.classicQueue.filter((player) => player == sender);
-    this.bonusQueue = this.bonusQueue.filter((player) => player == sender);
+    this.classicQueue = this.classicQueue.filter((player) => player != sender);
+    this.bonusQueue = this.bonusQueue.filter((player) => player != sender);
+    if (sender?.opponent) {
+      sender.opponent.opponent = null;
+    }
   }
 
   movePaddle(socket: Socket, newY: number) {

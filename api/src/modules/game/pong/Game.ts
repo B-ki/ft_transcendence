@@ -217,6 +217,19 @@ export class Game {
       this.needEmit = false;
     }
   }
+
+  isFinished() {
+    if (this.player1.score >= 15) {
+      return true;
+    } else if (this.player2.score >= 15) {
+      return true;
+    } else if (this.player1.opponent == null) {
+      return true;
+    } else if (this.player2.opponent == null) {
+      return true;
+    }
+    return false;
+  }
 }
 
 function reverse_position(arg: PIXI.Rectangle): PIXI.Rectangle {
