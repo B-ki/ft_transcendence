@@ -303,7 +303,12 @@ export class ChannelsService {
       include: {
         channel: {
           include: {
-            messages: true,
+            messages: {
+              orderBy: {
+                id: 'desc',
+              },
+              take: 1,
+            },
           },
         },
       },
