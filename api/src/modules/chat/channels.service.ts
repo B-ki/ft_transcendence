@@ -285,7 +285,10 @@ export class ChannelsService {
     });
 
     channels.forEach((channel: any) => {
-      channel.lastMessage = channel.messages[0];
+      if (channel.type === ChannelType.PUBLIC) {
+        channel.lastMessage = channel.messages[0];
+      }
+
       delete channel.messages;
     });
 
@@ -309,7 +312,10 @@ export class ChannelsService {
     // return the channel list without the password field
     // and with last message
     return channelUsers.map((cu: any) => {
-      cu.channel.lastMessage = cu.channel.messages[0];
+      if (cu.channel.type === ChannelType.PUBLIC) {
+        cu.channel.lastMessage = cu.channel.messages[0];
+      }
+
       delete cu.channel.messages;
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
