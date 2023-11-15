@@ -14,9 +14,6 @@ function TwoFaActivation() {
     options: { refetchOnMount: 'always' },
   }) as UseQueryResult<QRcodeDto>;
 
-  console.log('[TwoFaActivation] data :', data);
-  console.log('[TwoFaActivation] showInvalidate :', showInvalidate);
-
   if (isLoading) {
     return <div></div>;
   }

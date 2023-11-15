@@ -23,7 +23,6 @@ const loginWithTwoFaCode = async ({
 export const TwoFaLoginInput = (props: any) => {
   const [code, setCode] = useState('');
   const { login, setToken } = useAuth();
-  console.log('TwoFaLogin', login);
 
   const handleCodeChange = (event: any) => {
     setCode(event.target.value);
