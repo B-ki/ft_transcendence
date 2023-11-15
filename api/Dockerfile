@@ -34,4 +34,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENV NODE_ENV production
 EXPOSE 8081
 
-CMD [ "dumb-init", "node", "dist/main.js" ]
+CMD [ "dumb-init", "node", "dist/src/main.js" ]

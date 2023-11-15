@@ -43,8 +43,6 @@ export class UserService {
       },
       data: {
         ...(updateDto.displayName !== undefined && { displayName: updateDto.displayName }),
-        ...(updateDto.bannerUrl !== undefined && { bannerUrl: updateDto.bannerUrl }),
-        ...(updateDto.imageUrl !== undefined && { imageUrl: updateDto.imageUrl }),
         ...(updateDto.description !== undefined && { description: updateDto.description }),
       },
     });
@@ -173,5 +171,27 @@ export class UserService {
 
   async isTwoFaEnabled(user: User): Promise<boolean> {
     return user.isTwoFaEnabled;
+  }
+
+  async setProfilePicturePath(path: string, user: User) {
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        imagePath: '/' + path,
+      },
+    });
+  }
+
+  async setBannerPath(path: string, user: User) {
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        bannerPath: '/' + path,
+      },
+    });
   }
 }

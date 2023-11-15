@@ -16,12 +16,4 @@ export class UpdateUserDto {
   @MaxLength(30)
   @IsOptional()
   description: string;
-
-  @IsString()
-  @IsOptional()
-  bannerUrl: string;
-
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
 }

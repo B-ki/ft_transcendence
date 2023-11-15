@@ -40,34 +40,29 @@ describe('UserService', () => {
   const user = {
     id: 1,
     login: 'testLogin',
-    email: 'testMail',
-    imageUrl: 'testUrl',
+    imagePath: 'testUrl',
     displayName: 'testLogin',
-    firstName: 'testFirstName',
-    lastName: 'testLastName',
     status: UserStatus.ONLINE,
-    bannerUrl: 'bannerUrl',
+    intraImageURL: 'intraimage',
+    bannerPath: 'bannerPath',
     description: 'description',
     createdAt: new Date(),
   };
 
   const profile: CreateUserDto = {
     login: 'testLogin',
-    email: 'testMail',
-    imageUrl: 'testUrl',
+    imagePath: 'testUrl',
     displayName: 'testLogin',
-    firstName: 'testFirstName',
-    lastName: 'testLastName',
     status: UserStatus.ONLINE,
-    bannerUrl: 'bannerUrl',
+    intraImageURL: 'intraimage',
+    bannerPath: 'bannerPath',
     description: 'description',
   };
 
   const userDto: UpdateUserDto = {
     displayName: 'Joe',
     description: 'Nimp',
-    imageUrl: 'image',
-    bannerUrl: 'banner',
+    bannerPath: 'banner',
   };
 
   it('should create users correctly', async () => {
@@ -93,23 +88,21 @@ describe('UserService', () => {
   });
 
   it('should update user', async () => {
-    const userBannerUrl = {
+    const userbannerPath = {
       id: 1,
       login: 'testLogin',
-      email: 'testMail',
-      imageUrl: 'new imageUrl',
+      imagePath: 'new imagePath',
       displayName: 'newDisplayName',
-      firstName: 'testFirstName',
-      lastName: 'testLastName',
       status: UserStatus.ONLINE,
-      bannerUrl: 'new bannerUrl',
+      intraImageURL: 'intraimage',
+      bannerPath: 'new bannerPath',
       description: 'description',
       createdAt: new Date(),
     };
 
-    prismaService.user.update.mockResolvedValue(userBannerUrl);
+    prismaService.user.update.mockResolvedValue(userbannerPath);
     const result = await userService.updateUser(user, userDto);
-    expect(result).toEqual(userBannerUrl);
+    expect(result).toEqual(userbannerPath);
   });
 
   /*it('addFriend and getFriendList', async () => {
@@ -117,12 +110,12 @@ describe('UserService', () => {
       id: 2,
       login: 'copaing',
       email: 'email@ducopaing.fr',
-      imageUrl: 'imageDuCopaing',
+      imagePath: 'imageDuCopaing',
       displayName: 'Tony labricot',
       firstName: 'Tony',
       lastName: 'Labricot',
       isConnected: true,
-      bannerUrl: 'Abricot banner',
+      bannerPath: 'Abricot banner',
       description: 'Abricot cest beau la vie',
       createdAt: new Date(),
       friendOf: [],

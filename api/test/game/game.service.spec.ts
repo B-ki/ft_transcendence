@@ -35,13 +35,11 @@ describe('Gameservice', () => {
   const dummyUserOne: User = {
     id: 1,
     login: 'testLoginOne',
-    email: 'testMailOne',
-    imageUrl: 'testUrlOne',
+    imagePath: 'testUrlOne',
     displayName: 'testLoginOne',
-    firstName: 'testFirstNameOne',
-    lastName: 'testLastNameOne',
     status: UserStatus.ONLINE,
-    bannerUrl: 'bannerUrlOne',
+    intraImageURL: 'intraImage',
+    bannerPath: 'bannerUrlOne',
     description: 'descriptionOne',
     createdAt: new Date(),
   };
@@ -49,13 +47,11 @@ describe('Gameservice', () => {
   const dummyUserTwo: User = {
     id: 2,
     login: 'testLoginTwo',
-    email: 'testMailTwo',
-    imageUrl: 'testUrlTwo',
+    imagePath: 'testUrlTwo',
     displayName: 'testLoginTwo',
-    firstName: 'testFirstNameTwo',
-    lastName: 'testLastNameTwo',
+    intraImageURL: 'intraImage2',
     status: UserStatus.ONLINE,
-    bannerUrl: 'bannerUrlTwo',
+    bannerPath: 'bannerUrlTwo',
     description: 'descriptionTwo',
     createdAt: new Date(),
   };

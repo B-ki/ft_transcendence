@@ -1,6 +1,23 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  FileTypeValidator,
+  Get,
+  MaxFileSizeValidator,
+  Param,
+  ParseFilePipe,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+
+import { config } from '@/config';
+import { multerOptions } from '@/utils/multerOptions';
 
 import { GetUser } from '../auth/decorators';
 import { JwtTwoFaAuthGuard } from '../auth/guards';
@@ -25,6 +42,40 @@ export class UserController {
   @Patch('/me')
   async patchUser(@Body() updateDto: UpdateUserDto, @GetUser() user: User): Promise<User> {
     return this.userService.updateUser(user, updateDto);
+  }
+
+  @Post('/me/image')
+  @UseInterceptors(FileInterceptor('image', multerOptions))
+  async updateImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: config.app.maxFileSize }),
+          new FileTypeValidator({ fileType: '(png|jpeg|jpg|gif)' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @GetUser() user: User,
+  ) {
+    return await this.userService.setProfilePicturePath(file.path, user);
+  }
+
+  @Post('/me/banner')
+  @UseInterceptors(FileInterceptor('banner', multerOptions))
+  async updateBanner(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: config.app.maxFileSize }),
+          new FileTypeValidator({ fileType: '(png|jpeg|jpg)' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @GetUser() user: User,
+  ) {
+    return await this.userService.setBannerPath(file.path, user);
   }
 
   @Post('/friends/add')

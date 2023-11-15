@@ -51,15 +51,18 @@ export class AuthService {
   async loginWithTwoFa(code: string, login: string) {
     // user is supposed to be created at this point
     const user = await this.userService.getUnique(login);
+
     const isCodeValid = this.isTwoFactorAuthCodeValid(code, user);
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong 2FA code');
     }
+
     const payload: JwtPayload = {
       login: user.login,
       isTwoFaEnabled: true,
       isTwoFaAuthenticated: true,
     };
+
     const token = this.generateJWT(payload);
     this.logger.log(`${login} logged in with 2FA`);
 
@@ -83,14 +86,12 @@ export class AuthService {
 
       return {
         login: profile.login,
-        email: profile.email,
-        imageUrl: profile.image.versions.medium,
+        imagePath: '',
+        intraImageURL: profile.image.versions.medium,
         displayName: displayName,
-        firstName: profile.first_name,
-        lastName: profile.last_name,
         description: 'No description atm.',
         status: UserStatus.OFFLINE,
-        bannerUrl: 'Good banner to place here',
+        bannerPath: '',
       };
     } catch (error) {
       throw new Error('Unable to fetch profile informations');
@@ -99,7 +100,7 @@ export class AuthService {
 
   async generateTwoFactorAuthSecret(user: User) {
     const secret = authenticator.generateSecret();
-    const otpAuthUrl = authenticator.keyuri(user.email, config.twofa.name, secret);
+    const otpAuthUrl = authenticator.keyuri(user.login, config.twofa.name, secret);
     await this.userService.setTwoFaSecret(secret, user);
     return otpAuthUrl;
   }
@@ -113,7 +114,7 @@ export class AuthService {
       throw new Error('Cant generate a QrCode for 2FA without secret');
     }
     const otpAuthUrl = authenticator.keyuri(
-      user.email,
+      user.login,
       config.twofa.name,
       user.twoFactorAuthSecret!,
     );

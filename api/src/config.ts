@@ -10,6 +10,8 @@ export const config = {
   app: {
     port: process.env.PORT || 3000,
     host: process.env.HOST || 'localhost',
+    maxFileSize: 2 * 1024 * 1024,
+    uploadsPath: './uploads',
   },
   front: {
     port: process.env.FRONT_PORT || 80,
