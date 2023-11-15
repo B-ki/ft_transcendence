@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 import { useCallback, useState } from 'react';
 import { FormEvent, ChangeEvent } from 'react';
 import { UseQueryResult, useMutation } from 'react-query';
 
 import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
+=======
+import { useState } from 'react';
+import { FormEvent, ChangeEvent } from 'react';
+import { UseQueryResult, useMutation } from 'react-query';
+>>>>>>> 95a3702a64f74725ab9051c8cd8e77b596b608dc
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';

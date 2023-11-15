@@ -12,7 +12,6 @@ interface InputProps {
   ID: string;
   name: 'Profile picture' | 'Banner';
   user: userDto | undefined;
-  file: File[] | undefined;
 }
 
 const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
@@ -44,6 +43,7 @@ const PicUploader: FC<InputProps> = ({ ID, name, user }) => {
       }
     };
     reader.readAsDataURL(file);
+    console.log(file);
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
