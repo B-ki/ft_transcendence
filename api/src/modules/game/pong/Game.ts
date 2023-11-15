@@ -2,6 +2,7 @@ import '@pixi/math-extras';
 
 import * as PIXI from 'pixi.js';
 import { Socket } from 'socket.io';
+import { GameEvent } from './game.events';
 
 const w_screen: number = 840;
 const h_screen: number = 460;
@@ -14,6 +15,12 @@ export class Player {
 
   constructor(socket: Socket) {
     this.socket = socket;
+  }
+
+  reset() {
+    this.rect.y = 0;
+    this.score = 0;
+    this.opponent = null;
   }
 }
 
@@ -49,8 +56,8 @@ export class Game {
 
     this.player1 = p1;
     this.player2 = p2;
-    this.player1.socket.emit('bounce', this.sprite, this.direction);
-    this.player2.socket.emit('bounce', this.sprite, this.direction);
+    this.player1.socket.emit(GameEvent.Bounce, this.sprite, this.direction);
+    this.player2.socket.emit(GameEvent.Bounce, this.sprite, this.direction);
 
     if (bonus) {
       this.placePickOnLeft();
@@ -68,8 +75,8 @@ export class Game {
 
     this.onFire = true;
 
-    this.player1.socket.emit('fireball');
-    this.player2.socket.emit('fireball');
+    this.player1.socket.emit(GameEvent.Fireball);
+    this.player2.socket.emit(GameEvent.Fireball);
   }
 
   setOfFire() {
@@ -77,8 +84,8 @@ export class Game {
 
     this.onFire = false;
 
-    this.player1.socket.emit('classic_ball');
-    this.player2.socket.emit('classic_ball');
+    this.player1.socket.emit(GameEvent.ClassicBall);
+    this.player2.socket.emit(GameEvent.ClassicBall);
   }
 
   isOnFire() {
@@ -87,28 +94,28 @@ export class Game {
 
   scoreP1() {
     this.player1.score++;
-    this.player1.socket.emit('y_point');
-    this.player2.socket.emit('op_point');
+    this.player1.socket.emit(GameEvent.YourPoint);
+    this.player2.socket.emit(GameEvent.OpponentPoint);
   }
 
   scoreP2() {
     this.player2.score++;
-    this.player1.socket.emit('op_point');
-    this.player2.socket.emit('y_point');
+    this.player1.socket.emit(GameEvent.OpponentPoint);
+    this.player2.socket.emit(GameEvent.YourPoint);
   }
 
   placePickOnLeft() {
     this.pick1.y = Math.random() * (h_screen - this.pick1.height);
 
-    this.player1.socket.emit('l_pick', this.pick1);
-    this.player2.socket.emit('r_pick', reverse_position(this.pick1));
+    this.player1.socket.emit(GameEvent.LeftPick, this.pick1);
+    this.player2.socket.emit(GameEvent.RightPick, reverse_position(this.pick1));
   }
 
   placePickOnRight() {
     this.pick2.y = Math.random() * (h_screen - this.pick2.height);
 
-    this.player1.socket.emit('r_pick', this.pick2);
-    this.player2.socket.emit('l_pick', reverse_position(this.pick2));
+    this.player1.socket.emit(GameEvent.RightPick, this.pick2);
+    this.player2.socket.emit(GameEvent.LeftPick, reverse_position(this.pick2));
   }
 
   bounce(mapRect: PIXI.Rectangle) {
@@ -195,12 +202,12 @@ export class Game {
   move(delta: number, mapRect: PIXI.Rectangle) {
     this.elapsedTime += delta;
     if (this.elapsedTime >= 5000 && !this.started) {
-      this.player1.socket.emit('start');
-      this.player2.socket.emit('start');
+      this.player1.socket.emit(GameEvent.Start);
+      this.player2.socket.emit(GameEvent.Start);
       this.started = true;
     } else if (!this.started) {
-      this.player1.socket.emit('remaining', 5000 - this.elapsedTime);
-      this.player2.socket.emit('remaining', 5000 - this.elapsedTime);
+      this.player1.socket.emit(GameEvent.Remaining, 5000 - this.elapsedTime);
+      this.player2.socket.emit(GameEvent.Remaining, 5000 - this.elapsedTime);
       return;
     }
     this.sprite.x += this.direction.x * delta * this.speed;
@@ -211,21 +218,33 @@ export class Game {
       const rev_dire: PIXI.Point = this.direction.clone();
       rev_dire.x = -rev_dire.x;
 
-      this.player1.socket.emit('bounce', this.sprite, this.direction);
-      this.player2.socket.emit('bounce', reverse_position(this.sprite), rev_dire);
+      this.player1.socket.emit(GameEvent.Bounce, this.sprite, this.direction);
+      this.player2.socket.emit(GameEvent.Bounce, reverse_position(this.sprite), rev_dire);
 
       this.needEmit = false;
     }
   }
 
   isFinished() {
-    if (this.player1.score >= 15) {
-      return true;
-    } else if (this.player2.score >= 15) {
-      return true;
-    } else if (this.player1.opponent == null) {
+    if (this.player1.opponent == null) {
+      this.player1.reset();
+      this.player1.socket.emit(GameEvent.Victory);
       return true;
     } else if (this.player2.opponent == null) {
+      this.player2.reset();
+      this.player2.socket.emit(GameEvent.Victory);
+      return true;
+    } else if (this.player1.score >= 5) {
+      this.player1.reset();
+      this.player2.reset();
+      this.player1.socket.emit(GameEvent.Victory);
+      this.player2.socket.emit(GameEvent.Defeat);
+      return true;
+    } else if (this.player2.score >= 5) {
+      this.player1.reset();
+      this.player2.reset();
+      this.player1.socket.emit(GameEvent.Defeat);
+      this.player2.socket.emit(GameEvent.Victory);
       return true;
     }
     return false;

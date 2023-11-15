@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Socket } from 'socket.io-client';
 
-import { h_screen } from '../Game';
+import { game } from './config';
 
 export class Paddle {
   sprite: PIXI.Graphics = new PIXI.Graphics();
@@ -15,14 +15,15 @@ export class Paddle {
     this.sprite.beginFill(0x1a49c4);
     this.sprite.drawRoundedRect(0, 0, w, h, 15);
     this.sprite.endFill();
+    this.sprite.visible = false;
   }
 
   move(dist: number, socket: Socket) {
     this.sprite.y += dist * this.speed;
     if (this.sprite.y < 0) this.sprite.y = 0;
-    else if (this.sprite.y + this.sprite.height > h_screen)
-      this.sprite.y = h_screen - this.sprite.height;
-    socket.emit('paddle', this.sprite.y);
+    else if (this.sprite.y + this.sprite.height > game.screen.height)
+      this.sprite.y = game.screen.height - this.sprite.height;
+    socket.emit('Paddle', this.sprite.y);
   }
 }
 
@@ -41,6 +42,7 @@ export class Ball {
     this.sprite.endFill();
     this.direction.set(1 + Math.random(), 1 + Math.random());
     this.direction.normalize(this.direction);
+    this.sprite.visible = false;
   }
 
   setOnFire() {

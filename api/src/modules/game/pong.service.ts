@@ -83,6 +83,24 @@ export class PongService {
     }
   }
 
+  leaveQueue(socket: Socket) {
+    const sender = this.users.get(socket.id);
+
+    let length: number = this.classicQueue.length;
+    this.classicQueue = this.classicQueue.filter((player) => player != sender);
+    if (this.classicQueue.length != length) {
+      socket.emit(GameEvent.LeaveQueue);
+      return;
+    }
+
+    length = this.bonusQueue.length;
+    this.bonusQueue = this.bonusQueue.filter((player) => player != sender);
+    if (this.bonusQueue.length != length) {
+      socket.emit(GameEvent.LeaveQueue);
+      return;
+    }
+  }
+
   createGame(player1: Player, player2: Player, bonus: boolean): void {
     player1.opponent = player2;
     player2.opponent = player1;

@@ -8,275 +8,200 @@ import { io } from 'socket.io-client';
 import { Button } from '@/components/Button';
 
 import { Ball, Paddle } from './pong/BallPaddle';
+import { game } from './pong/config';
+import { GameEvent } from './pong/game.events';
+import {
+  bounceBall,
+  buttonScreen,
+  createPickable,
+  createText,
+  gameScreen,
+  movePickable,
+  resize_game,
+  updateScore,
+} from './pong/utils';
 
 interface Props {}
 
-export const w_screen: number = 840;
-export const max_w_screen: number = 1260;
-export const min_screen_w: number = 500;
-export const h_screen: number = 460;
-export const max_h_screen: number = 690;
-
 export const Pong: FC<Props> = () => {
-  let app: PIXI.Application<HTMLCanvasElement>;
-
+  console.log(GameEvent.BonusQueue);
   const socket = io('ws://localhost:3000/pong', {
     auth: {
       token: localStorage.getItem('token') as string,
     },
   });
 
-  function game(bonus: boolean) {
-    if (bonus) socket.emit('BonusQueue');
-    else socket.emit('ClassicQueue');
-    document.getElementById('ClassicQueue').style.visibility = 'hidden';
-    document.getElementById('BonusQueue').style.visibility = 'hidden';
-    let scorePlayer1 = 0;
-    let scorePlayer2 = 0;
+  const app = new PIXI.Application<HTMLCanvasElement>({
+    width: game.screen.width,
+    height: game.screen.height,
+    backgroundColor: 0x171717,
+    antialias: true,
+  });
 
-    app = new PIXI.Application<HTMLCanvasElement>({
-      width: w_screen,
-      height: h_screen,
-      backgroundColor: 0x171717,
-      antialias: true,
-    });
-    app.renderer.view.style.position = 'absolute';
-    app.renderer.view.style.left = '50%';
-    app.renderer.view.style.top = '50%';
-    app.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+  app.renderer.view.style.position = 'absolute';
+  app.renderer.view.style.left = '50%';
+  app.renderer.view.style.top = '50%';
+  app.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+  app.ticker.maxFPS = 60;
+  app.view.style.visibility = 'hidden';
+  document.body.appendChild(app.view);
 
-    for (let i: number = 0; i < 50; i++) {
-      const dash: PIXI.Graphics = new PIXI.Graphics();
-      dash.beginFill(0xaeb8b1);
-      dash.drawRoundedRect(w_screen / 2 - 1, i * 30, 2, 15, 3);
-      dash.endFill();
-      app.stage.addChild(dash);
-    }
+  window.onresize = () => {
+    resize_game(app);
+  };
 
-    function resize_game() {
-      const real_window_h = window.innerHeight - 64; // remove navbar height
-      if (
-        window.innerWidth >= max_w_screen &&
-        real_window_h >= max_h_screen &&
-        app.renderer.width == max_w_screen &&
-        app.renderer.height == max_h_screen
-      )
-        return;
-      let coeff_w: number = window.innerWidth / app.renderer.width;
-      let coeff_h: number = real_window_h / app.renderer.height;
-      if (coeff_w < coeff_h) {
-        coeff_w =
-          app.renderer.width * coeff_w < max_w_screen ? coeff_w : max_w_screen / app.renderer.width;
-        coeff_w =
-          app.renderer.width * coeff_w > min_screen_w ? coeff_w : min_screen_w / app.renderer.width;
-        app.stage.width *= coeff_w;
-        app.stage.height *= coeff_w;
-        app.renderer.resize(app.renderer.width * coeff_w, app.renderer.height * coeff_w);
-      } else {
-        coeff_h =
-          app.renderer.height * coeff_h < max_h_screen
-            ? coeff_h
-            : max_h_screen / app.renderer.height;
-        coeff_h =
-          app.renderer.width * coeff_h > min_screen_w ? coeff_h : min_screen_w / app.renderer.width;
-        app.stage.width *= coeff_h;
-        app.stage.height *= coeff_h;
-        app.renderer.resize(app.renderer.width * coeff_h, app.renderer.height * coeff_h);
+  const middleLine = new DashLine(app);
+
+  const ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
+  app.stage.addChild(ball.sprite);
+  socket.on(GameEvent.Bounce, (arg: PIXI.Rectangle, dir: PIXI.Point) => bounceBall(arg, dir, ball));
+  socket.on(GameEvent.ClassicBall, () => ball.setOfFire());
+  socket.on(GameEvent.Fireball, () => ball.setOnFire());
+
+  const pad1 = new Paddle(-game.paddle.width / 2, game.paddle.width, game.paddle.height);
+  const pad2 = new Paddle(
+    game.screen.width - game.paddle.width / 2,
+    game.paddle.width,
+    game.paddle.height,
+  );
+  socket.on(GameEvent.Paddle, (arg: number) => (pad2.sprite.y = arg));
+
+  window.addEventListener('blur', () => {
+    pad1.keyUP = false;
+    pad1.keyDOWN = false;
+  });
+
+  document.addEventListener('keydown', (key: KeyboardEvent) => {
+    if (key.key == 'q') pad1.keyUP = true;
+    if (key.key == 'a') pad1.keyDOWN = true;
+  });
+
+  document.addEventListener('keyup', (key: KeyboardEvent) => {
+    if (key.key == 'q') pad1.keyUP = false;
+    if (key.key == 'a') pad1.keyDOWN = false;
+  });
+
+  app.stage.addChild(pad1.sprite);
+  app.stage.addChild(pad2.sprite);
+
+  let scorePlayer1 = 0;
+  let scorePlayer2 = 0;
+
+  socket.on(GameEvent.YourPoint, () => (scorePlayer1 = updateScore(scorePlayer1, p1Score)));
+  socket.on(GameEvent.OpponentPoint, () => (scorePlayer2 = updateScore(scorePlayer2, p2Score)));
+
+  const pick1 = createPickable(app);
+  const pick2 = createPickable(app);
+
+  socket.on(GameEvent.LeftPick, (arg: PIXI.Rectangle) => movePickable(arg, pick1));
+  socket.on(GameEvent.RightPick, (arg: PIXI.Rectangle) => movePickable(arg, pick2));
+
+  const countdownText = createText(5, 60, 0xaeb8b1, app);
+  countdownText.anchor.set(0.5, 0.5);
+  countdownText.x = app.renderer.width * 0.5;
+  countdownText.y = app.renderer.height * 0.5;
+
+  let remainingTime: number = 5000;
+
+  socket.on(GameEvent.Remaining, (remaining: number) => (remainingTime = remaining));
+  socket.on(GameEvent.Countdown, () => {
+    remainingTime = 5000;
+    countdownText.text = (remainingTime / 1000.0).toFixed(1);
+    screenManager.countdownScreen();
+  });
+  app.ticker.add(() => {
+    if (remainingTime > 0) {
+      remainingTime -= app.ticker.deltaMS;
+      countdownText.text = (remainingTime / 1000.0).toFixed(1);
+      if (remainingTime <= 0) {
+        remainingTime = 0;
+        countdownText.visible = false;
       }
     }
+  });
 
-    window.onresize = resize_game;
-    app.ticker.maxFPS = 60;
-    document.body.appendChild(app.view);
+  const p1Score = createText(scorePlayer1, 24, 0xaeb8b1, app);
+  p1Score.anchor.set(1, 0);
+  p1Score.x = game.screen.width / 2 - 50;
+  p1Score.y = 0;
 
-    const pad1: Paddle = new Paddle(-30, 60, 100);
-    app.stage.addChild(pad1.sprite);
-    const pad2: Paddle = new Paddle(w_screen - 30, 60, 100);
-    app.stage.addChild(pad2.sprite);
+  const p2Score = createText(scorePlayer2, 24, 0xaeb8b1, app);
+  p2Score.x = game.screen.width / 2 + 50;
+  p2Score.y = 0;
 
-    const pick1: PIXI.Graphics = new PIXI.Graphics();
-    const pick2: PIXI.Graphics = new PIXI.Graphics();
+  const loadingText = createText('Waiting for an opponent', 44, 0xaeb8b1, app);
+  loadingText.anchor.set(0.5, 0.5);
+  loadingText.x = game.screen.width / 2;
+  loadingText.y = game.screen.height / 2;
 
-    pick1.beginFill(0xfc5603);
-    pick1.drawCircle(0, 0, 10);
-    pick1.endFill();
+  const endingText = createText('End', 84, 0xaeb8b1, app);
+  endingText.anchor.set(0.5, 0.5);
+  endingText.x = game.screen.width / 2;
+  endingText.y = game.screen.height / 2;
 
-    pick2.beginFill(0xfc5603);
-    pick2.drawCircle(0, 0, 10);
-    pick2.endFill();
+  socket.on(GameEvent.Victory, () => {
+    endingText.text = 'Victory';
+    endingText.style.fill = 0x5ab555;
+    screenManager.endScreen();
+  });
 
-    app.stage.addChild(pick1);
-    app.stage.addChild(pick2);
+  socket.on(GameEvent.Defeat, () => {
+    endingText.text = 'Defeat';
+    endingText.style.fill = 0xb52828;
+    screenManager.endScreen();
+  });
 
-    socket.on('paddle', (arg: number) => {
-      pad2.sprite.y = arg;
-    });
+  app.ticker.add(() => {
+    ball.move(app.ticker.deltaMS);
+    if (pad1.keyUP) pad1.move(-app.ticker.deltaMS, socket);
+    if (pad1.keyDOWN) pad1.move(app.ticker.deltaMS, socket);
+  });
 
-    socket.on('start', () => {
-      hideLoadingScreen(pad1, pad2, ball, pick1, pick2, loading_text, bonus);
-    });
+  const buttonQuit = new TextButton('Quit', game.screen.width / 2, game.screen.height * 0.8, app);
+  const buttonLeave = new TextButton('Leave', game.screen.width / 2, game.screen.height * 0.8, app);
 
-    socket.on('l_pick', (arg: PIXI.Rectangle) => {
-      pick1.x = arg.x + pick1.width / 2;
-      pick1.y = arg.y + pick1.height / 2;
-    });
+  const screenManager = new ScreenManager(
+    ball.sprite,
+    pad1.sprite,
+    pad2.sprite,
+    pick1,
+    pick2,
+    middleLine,
+    countdownText,
+    p1Score,
+    p2Score,
+    loadingText,
+    endingText,
+    buttonQuit.graphics,
+    buttonQuit.text,
+    buttonLeave.graphics,
+    buttonLeave.text,
+  );
 
-    socket.on('r_pick', (arg: PIXI.Rectangle) => {
-      pick2.x = arg.x + pick2.width / 2;
-      pick2.y = arg.y + pick2.height / 2;
-    });
+  buttonQuit.onClick(() => buttonScreen(app, screenManager));
+  buttonLeave.onClick(() => socket.emit(GameEvent.LeaveQueue));
+  socket.on(GameEvent.LeaveQueue, () => buttonScreen(app, screenManager));
 
-    socket.on('bounce', (arg: PIXI.Rectangle, dir: PIXI.Point) => {
-      ball.sprite.x = arg.x + 10;
-      ball.sprite.y = arg.y + 10;
-      ball.direction.x = dir.x;
-      ball.direction.y = dir.y;
-    });
+  socket.on(GameEvent.Start, () => screenManager.playScreen());
 
-    let remainingTime: number = 5000;
-
-    const countdownText: PIXI.Text = new PIXI.Text(5, {
-      fontFamily: 'Arial',
-      fontSize: 50,
-      fill: 0xaeb8b1,
-      align: 'center',
-    });
-    countdownText.anchor.set(0.5, 0.5);
-    countdownText.x = app.renderer.width * 0.25;
-    countdownText.y = app.renderer.height * 0.5;
-
-    socket.on('countdown', () => {
-      app.stage.addChild(countdownText);
-      app.ticker.add(() => {
-        if (remainingTime > 0) {
-          remainingTime -= app.ticker.deltaMS;
-          if (remainingTime <= 0) {
-            remainingTime = 0;
-            countdownText.visible = false;
-          }
-          countdownText.text = (remainingTime / 1000.0).toFixed(1);
-        }
-      });
-    });
-
-    socket.on('remaining', (remaining: number) => {
-      remainingTime = remaining;
-    });
-
-    const ball: Ball = new Ball(w_screen / 2, h_screen / 2, 10);
-    app.stage.addChild(ball.sprite);
-
-    socket.on('classic_ball', () => {
-      ball.setOfFire();
-    });
-
-    socket.on('fireball', () => {
-      ball.setOnFire();
-    });
-
-    const score_1_text: PIXI.Text = new PIXI.Text(scorePlayer1, {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0xaeb8b1,
-      align: 'center',
-    });
-
-    score_1_text.anchor.set(1, 0);
-
-    const score_2_text: PIXI.Text = new PIXI.Text(scorePlayer2, {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0xaeb8b1,
-      align: 'center',
-    });
-
-    const loading_text: PIXI.Text = new PIXI.Text('Waiting...', {
-      fontFamily: 'Arial',
-      fontSize: 24,
-      fill: 0xaeb8b1,
-      align: 'center',
-    });
-
-    loading_text.anchor.set(0.5, 0.5);
-    loading_text.x = app.renderer.width * 0.75;
-    loading_text.y = app.renderer.height * 0.5;
-
-    socket.on('y_point', () => {
-      scorePlayer1++;
-      score_1_text.text = scorePlayer1;
-    });
-
-    socket.on('op_point', () => {
-      scorePlayer2++;
-      score_2_text.text = scorePlayer2;
-    });
-
-    score_1_text.x = w_screen / 2 - 50;
-    score_1_text.y = 0;
-
-    score_2_text.x = w_screen / 2 + 50;
-    score_2_text.y = 0;
-
-    app.stage.addChild(score_1_text);
-    app.stage.addChild(score_2_text);
-    app.stage.addChild(loading_text);
-
-    window.addEventListener('blur', () => {
-      pad1.keyUP = false;
-      pad1.keyDOWN = false;
-    });
-
-    document.addEventListener('keydown', (key: KeyboardEvent) => {
-      if (key.key == 'q') pad1.keyUP = true;
-      if (key.key == 'a') pad1.keyDOWN = true;
-    });
-
-    document.addEventListener('keyup', (key: KeyboardEvent) => {
-      if (key.key == 'q') pad1.keyUP = false;
-      if (key.key == 'a') pad1.keyDOWN = false;
-    });
-
-    app.ticker.add(() => {
-      ball.move(app.ticker.deltaMS);
-      if (pad1.keyUP) pad1.move(-app.ticker.deltaMS, socket);
-      if (pad1.keyDOWN) pad1.move(app.ticker.deltaMS, socket);
-    });
-    resize_game();
-    showLoadingScreen(pad1, pad2, ball, pick1, pick2, loading_text);
-  }
-
-  function showLoadingScreen(
-    pad1: Paddle,
-    pad2: Paddle,
-    ball: Ball,
-    pick1: PIXI.Graphics,
-    pick2: PIXI.Graphics,
-    loadingText: PIXI.Text,
-  ) {
-    pad1.sprite.visible = false;
-    pad2.sprite.visible = false;
-    ball.sprite.visible = false;
-    pick1.visible = false;
-    pick2.visible = false;
-    loadingText.visible = true;
-  }
-  function hideLoadingScreen(
-    pad1: Paddle,
-    pad2: Paddle,
-    ball: Ball,
-    pick1: PIXI.Graphics,
-    pick2: PIXI.Graphics,
-    loadingText: PIXI.Text,
-    bonus: boolean,
-  ) {
-    pad1.sprite.visible = true;
-    pad2.sprite.visible = true;
-    ball.sprite.visible = true;
+  function launchGame(bonus: boolean) {
+    screenManager.setMode(bonus);
     if (bonus) {
-      pick1.visible = true;
-      pick2.visible = true;
+      socket.emit(GameEvent.BonusQueue);
+    } else {
+      socket.emit(GameEvent.ClassicQueue);
     }
-    loadingText.visible = false;
+
+    pad1.sprite.y = 0;
+    pad2.sprite.y = 0;
+    scorePlayer1 = 0;
+    scorePlayer2 = 0;
+    p1Score.text = scorePlayer1;
+    p2Score.text = scorePlayer2;
+
+    gameScreen(app);
+    screenManager.queueScreen();
+    resize_game(app);
   }
 
   useEffect(() => {
@@ -287,10 +212,10 @@ export const Pong: FC<Props> = () => {
   }, []);
   return (
     <div className="mt-10 flex h-2/3 w-screen items-center justify-center gap-8">
-      <Button id="ClassicQueue" type="primary" size="xlarge" onClick={() => game(false)}>
+      <Button id="ClassicQueue" type="primary" size="xlarge" onClick={() => launchGame(false)}>
         Classic Game
       </Button>
-      <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => game(true)}>
+      <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => launchGame(true)}>
         Bonus Game
       </Button>
     </div>
@@ -298,10 +223,12 @@ export const Pong: FC<Props> = () => {
 };
 
 import { Navbar } from '@/components/Navbar';
-import { useAuth } from '@/hooks/useAuth';
+
+import { DashLine } from './pong/DashLine';
+import { ScreenManager } from './pong/ScreenManager';
+import { TextButton } from './pong/SwitchButton';
 
 function Game() {
-  const { logout } = useAuth();
   return (
     <div>
       <Navbar />

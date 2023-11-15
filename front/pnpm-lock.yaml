@@ -11,6 +11,9 @@ dependencies:
   '@pixi/react':
     specifier: ^7.1.1
     version: 7.1.1(@babel/runtime@7.23.2)(@pixi/app@7.3.2)(@pixi/constants@7.3.2)(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/extensions@7.3.2)(@pixi/graphics@7.3.2)(@pixi/math@7.3.2)(@pixi/mesh-extras@7.3.2)(@pixi/mesh@7.3.2)(@pixi/particle-container@7.3.2)(@pixi/sprite-animated@7.3.2)(@pixi/sprite-tiling@7.3.2)(@pixi/sprite@7.3.2)(@pixi/text-bitmap@7.3.2)(@pixi/text@7.3.2)(@pixi/ticker@7.3.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+  '@pixi/ui':
+    specifier: ^0.10.1
+    version: 0.10.1(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/events@7.3.2)(@pixi/graphics@7.3.2)(@pixi/sprite@7.3.2)(@pixi/text-bitmap@7.3.2)(@pixi/text-html@7.3.2)(@pixi/text@7.3.2)
   axios:
     specifier: ^1.6.0
     version: 1.6.0
@@ -1071,6 +1074,30 @@ packages:
       '@pixi/extensions': 7.3.2
       '@pixi/settings': 7.3.2
       '@pixi/utils': 7.3.2
+    dev: false
+
+  /@pixi/ui@0.10.1(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/events@7.3.2)(@pixi/graphics@7.3.2)(@pixi/sprite@7.3.2)(@pixi/text-bitmap@7.3.2)(@pixi/text-html@7.3.2)(@pixi/text@7.3.2):
+    resolution: {integrity: sha512-PzE9Y/GX0inw5n+9lYcvYI++QMIDVf9hLEd5CNc/lIlimnyOuNHdNJuRCJHfDmBVtWZa9kMWzqIetv0a7k+0tQ==}
+    peerDependencies:
+      '@pixi/core': ^7.3.1
+      '@pixi/display': ^7.3.1
+      '@pixi/events': ^7.3.1
+      '@pixi/graphics': ^7.3.1
+      '@pixi/sprite': ^7.3.1
+      '@pixi/text': ^7.3.1
+      '@pixi/text-bitmap': ^7.3.1
+      '@pixi/text-html': ^7.3.1
+    dependencies:
+      '@pixi/core': 7.3.2
+      '@pixi/display': 7.3.2(@pixi/core@7.3.2)
+      '@pixi/events': 7.3.2(@pixi/core@7.3.2)(@pixi/display@7.3.2)
+      '@pixi/graphics': 7.3.2(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/sprite@7.3.2)
+      '@pixi/sprite': 7.3.2(@pixi/core@7.3.2)(@pixi/display@7.3.2)
+      '@pixi/text': 7.3.2(@pixi/core@7.3.2)(@pixi/sprite@7.3.2)
+      '@pixi/text-bitmap': 7.3.2(@pixi/assets@7.3.2)(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/mesh@7.3.2)(@pixi/text@7.3.2)
+      '@pixi/text-html': 7.3.2(@pixi/core@7.3.2)(@pixi/display@7.3.2)(@pixi/sprite@7.3.2)(@pixi/text@7.3.2)
+      tweedle.js: 2.1.0
+      typed-signals: 2.5.0
     dev: false
 
   /@pixi/utils@7.3.2:
@@ -4108,6 +4135,10 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  /tweedle.js@2.1.0:
+    resolution: {integrity: sha512-0ReQgVjepoZkE6t0upWNgCRbplHkQJQYk1LStXugwSR728GLFmGDRuaQJlxeC/iBlxud6+P1RdODjaO25vHAqw==}
+    dev: false
+
   /type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -4157,6 +4188,10 @@ packages:
       for-each: 0.3.3
       is-typed-array: 1.1.12
     dev: true
+
+  /typed-signals@2.5.0:
+    resolution: {integrity: sha512-m9lHc3eBCJerXYdx+G0uWZihyUXdqTzzgOdqiDDsoUo75WjhFJH6vP5/6w/xhyu04zoxHUqgYhf9FEt85dk/Ng==}
+    dev: false
 
   /typescript@5.2.2:
     resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}

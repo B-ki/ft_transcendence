@@ -15,6 +15,7 @@
   "dependencies": {
     "@pixi/math-extras": "^7.3.2",
     "@pixi/react": "^7.1.1",
+    "@pixi/ui": "^0.10.1",
     "axios": "^1.6.0",
     "jwt-decode": "^3.1.2",
     "ky": "^0.33.3",

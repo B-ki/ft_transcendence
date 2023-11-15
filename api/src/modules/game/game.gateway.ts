@@ -59,4 +59,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   joinBonusQueue(@ConnectedSocket() socket: Socket) {
     this.pongService.joinBonusQueue(socket);
   }
+
+  @SubscribeMessage(GameEvent.LeaveQueue)
+  leaveQueue(@ConnectedSocket() socket: Socket) {
+    this.pongService.leaveQueue(socket);
+  }
 }
