@@ -75,6 +75,7 @@ function Profile() {
   }
   user = data;
 
+
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
@@ -122,6 +123,7 @@ function Profile() {
     setShow(false);
     setUsername('');
     setDescription('');
+
   };
 
   return (

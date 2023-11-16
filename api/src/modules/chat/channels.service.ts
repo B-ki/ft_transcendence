@@ -259,7 +259,7 @@ export class ChannelsService {
   }
 
   async getChannelList() {
-    const channels = await this.prisma.channel.findMany({
+    const channels: any = await this.prisma.channel.findMany({
       where: {
         type: {
           not: ChannelType.PRIVATE,
@@ -275,7 +275,21 @@ export class ChannelsService {
         updatedAt: true,
         type: true,
         name: true,
+        messages: {
+          orderBy: {
+            id: 'desc',
+          },
+          take: 1,
+        },
       },
+    });
+
+    channels.forEach((channel: any) => {
+      if (channel.type === ChannelType.PUBLIC) {
+        channel.lastMessage = channel.messages[0];
+      }
+
+      delete channel.messages;
     });
 
     return channels;
@@ -283,12 +297,32 @@ export class ChannelsService {
 
   async getJoinedChannels(user: User) {
     const channelUsers = await this.prisma.channelUser.findMany({
-      where: { user: user },
-      include: { channel: true },
+      where: {
+        user: user,
+      },
+      include: {
+        channel: {
+          include: {
+            messages: {
+              orderBy: {
+                id: 'desc',
+              },
+              take: 1,
+            },
+          },
+        },
+      },
     });
 
     // return the channel list without the password field
-    return channelUsers.map((cu) => {
+    // and with last message
+    return channelUsers.map((cu: any) => {
+      if (cu.channel.type === ChannelType.PUBLIC) {
+        cu.channel.lastMessage = cu.channel.messages[0];
+      }
+
+      delete cu.channel.messages;
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...channelWithoutPassword } = cu.channel;
       return channelWithoutPassword;
