@@ -1,14 +1,8 @@
-<<<<<<< HEAD
 import { useCallback, useState } from 'react';
 import { FormEvent, ChangeEvent } from 'react';
 import { UseQueryResult, useMutation } from 'react-query';
 
 import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
-=======
-import { useState } from 'react';
-import { FormEvent, ChangeEvent } from 'react';
-import { UseQueryResult, useMutation } from 'react-query';
->>>>>>> 95a3702a64f74725ab9051c8cd8e77b596b608dc
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
@@ -24,8 +18,8 @@ function Profile() {
   const [show, setShow] = useState(false);
   const [username, setUsername] = useState('');
   const [description, setDescription] = useState('');
-  const [Afile, setAfile] = useState<File>();
-  const [image, setImage] = useState<string | null | undefined>(null);
+  const [File, setFile] = useState<File | null>(null);
+  const [banner, setBanner] = useState<File | null>(null);
   let user: userDto | undefined = undefined;
 
   const mutation1 = useMutation({
@@ -39,6 +33,7 @@ function Profile() {
       setShow(false);
     },
   });
+
   const updateImage = (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
@@ -49,28 +44,23 @@ function Profile() {
     mutationFn: updateImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+      setShow(false);
     },
   });
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
+  const updateBanner = (file: File) => {
+    const formData = new FormData();
+    formData.append('banner', file);
+    return api.post('user/me/banner', { body: formData });
+  };
 
-    // Here, you can handle the file, for example, upload it to a server
-    // For simplicity, we'll just update the state with the selected image.
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result === 'string') {
-        setImage(result);
-      } else {
-        setImage(null);
-      }
-    };
-    reader.readAsDataURL(file);
-    setAfile(file);
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const mutation3 = useMutation({
+    mutationFn: updateBanner,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+      setShow(false);
+    },
+  });
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
@@ -99,10 +89,13 @@ function Profile() {
     const usernameInput = document.querySelector<HTMLInputElement>('#usernameInput');
     const descriptionInput = document.querySelector<HTMLInputElement>('#descriptionInput');
     const ProfilePic = document.querySelector<HTMLFormElement>('#ProfilePic');
-    console.log('test', ProfilePic);
+    const Banner = document.querySelector<HTMLFormElement>('#Banner');
 
     if (ProfilePic) {
-      mutation2.mutate(Afile);
+      mutation2.mutate(File);
+    }
+    if (Banner) {
+      mutation3.mutate(banner);
     }
 
     if (usernameInput && descriptionInput) {
@@ -142,18 +135,14 @@ function Profile() {
           <div className="flex flex-col items-center justify-center gap-2">
             <div>
               <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                <div className="flex flex-col items-center justify-center">
-                  <div {...getRootProps()} style={{ cursor: 'pointer' }}>
-                    <input id="ProfilePic" type="file" accept=".jgp, .png" {...getInputProps()} />
-                    {image ? (
-                      <div className="flex flex-col items-center">
-                        <span>{'Profile picture'}</span>
-                        <img style={{ maxHeight: '100px' }} src={image} alt="Profile Picture" />
-                      </div>
-                    ) : (
-                      <div style={{ maxWidth: '100px' }}>Click to upload a {'Profile Pic'}</div>
-                    )}
-                  </div>
+                <div className="flex flex-row items-center justify-center gap-4">
+                  <PicUploader
+                    ID="ProfilePic"
+                    name="Profile picture"
+                    user={user}
+                    setFile={setFile}
+                  />
+                  <PicUploader ID="Banner" name="Banner" user={user} setFile={setBanner} />
                 </div>
                 <label className="flex flex-col">
                   Username
@@ -193,7 +182,7 @@ function Profile() {
       <div
         className="h-40 w-screen"
         style={{
-          backgroundImage: `url(${user?.bannerUrl})`,
+          backgroundImage: `url(${user?.bannerPath})`,
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
         }}
@@ -201,8 +190,8 @@ function Profile() {
       <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
         <img
           className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
-          src={user?.imagePath}
-          alt="profile pic"
+          src={user?.imagePath ? user?.imagePath : user?.intraImageURL}
+          alt="Profile picture"
           onClick={() => setShow(true)}
         />
         <div className="flex flex-col items-start justify-end gap-2">
@@ -214,7 +203,7 @@ function Profile() {
           </span>
         </div>
       </div>
-      <div className="absolute left-16 top-40 flex gap-4 sm:hidden">
+      <div className="absolute left-16 top-40 flex items-center justify-center gap-4 sm:hidden">
         <img
           className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
           src={user?.imagePath}

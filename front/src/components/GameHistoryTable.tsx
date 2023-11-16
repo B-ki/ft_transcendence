@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from './Button';
+import background from '@/assets/low-poly-grid-haikei.svg';
 
 const PAGE_SIZE = 5; // Number of records per page
 
@@ -131,10 +132,13 @@ export const GameHistoryTable = () => {
 
   return (
     <>
-      <div className="border-separate rounded border bg-grey p-1 text-dark-1">
+      <div
+        className="border-separate rounded border bg-grey p-1 text-dark-1"
+        style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}
+      >
         <table className=" m-2 table-auto">
           <thead>
-            <tr>
+            <tr className="text-white-2">
               <th>Date</th>
               <th>Score</th>
               <th>Duration</th>
@@ -160,7 +164,7 @@ export const GameHistoryTable = () => {
                     <td className="px-4 py-1">{game.duration}</td>
                   </tr>
                 ) : (
-                  <tr key={index} className="border ">
+                  <tr key={index} className="border bg-grey">
                     <td className="px-4 py-1">{game.date}</td>
                     <td className="px-5 py-1">
                       {game.player1Score} - {game.player2Score}
@@ -182,7 +186,7 @@ export const GameHistoryTable = () => {
           >
             Previous
           </Button>
-          <span>{`Page ${currentPage} of ${totalPages}`}</span>
+          <span className="text-white-2">{`Page ${currentPage} of ${totalPages}`}</span>
           <Button
             size="xsmall"
             type="primary"

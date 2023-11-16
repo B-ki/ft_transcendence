@@ -7,7 +7,8 @@ export interface userDto {
   JWTtoken?: string;
   displayName: string;
   description: string;
-  bannerUrl: string;
+  bannerPath: string;
+  intraImageURL: string;
 }
 
 export const dummyUserDto: userDto = {
