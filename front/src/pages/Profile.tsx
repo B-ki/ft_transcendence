@@ -84,7 +84,9 @@ function Profile() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const usernameInput = document.querySelector<HTMLInputElement>('#usernameInput');
+    const usernameInput = document.querySelector<HTMLInputElement>(
+      '#usernameInput',
+    ) as HTMLInputElement;
     const descriptionInput = document.querySelector<HTMLInputElement>('#descriptionInput');
     const ProfilePic = document.querySelector<HTMLFormElement>('#ProfilePic');
     const Banner = document.querySelector<HTMLFormElement>('#Banner');
