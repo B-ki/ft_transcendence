@@ -4,8 +4,6 @@ import { User } from '@prisma/client';
 
 import { JwtTwoFaAuthGuard } from '../auth';
 import { GetUser } from '../auth/decorators';
-import { UserService } from '../user';
-import { UserLoginDto } from '../user/user.dto';
 import { CreateGameDto } from './game.dto';
 import { GameService } from './game.service';
 
@@ -13,16 +11,16 @@ import { GameService } from './game.service';
 @UseGuards(JwtTwoFaAuthGuard)
 @ApiBearerAuth()
 export class GameController {
-  constructor(
-    private gameService: GameService,
-    private userService: UserService,
-  ) {}
+  constructor(private gameService: GameService) {}
 
   @Post('/create')
   async createGame(@Body() game: CreateGameDto) {
-    const winner = await this.userService.getUnique(game.winnerLogin);
-    const loser = await this.userService.getUnique(game.loserLogin);
-    this.gameService.createGame(winner, loser, game.winnerScore, game.loserScore);
+    this.gameService.createGame(
+      game.winnerLogin,
+      game.loserLogin,
+      game.winnerScore,
+      game.loserScore,
+    );
   }
 
   @Get('/won')

@@ -1,18 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Game, User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
+import { UserService } from '../user';
 
 @Injectable()
 export class GameService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
 
   async createGame(
-    winner: User,
-    loser: User,
+    winnerLogin: string,
+    loserLogin: string,
     scoreWinner: number,
     scoreLoser: number,
   ): Promise<void> {
+    const winner = await this.userService.getUnique(winnerLogin);
+
+    if (!winner) throw new NotFoundException(`User ${winnerLogin} does not exists`);
+
+    const loser = await this.userService.getUnique(loserLogin);
+
+    if (!loser) throw new NotFoundException(`User ${loserLogin} does not exists`);
+
+    if (scoreWinner < 0 || scoreLoser < 0) throw new BadRequestException('Score must be positive');
+
+    if (winner.id === loser.id)
+      throw new BadRequestException('One player cannot play against himself.');
+
     await this.prisma.game.create({
       data: {
         winnerScore: scoreWinner,
