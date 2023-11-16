@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Game, User } from '@prisma/client';
 
 import { PrismaService } from '@/prisma';
+
 import { UserService } from '../user';
 
 @Injectable()
