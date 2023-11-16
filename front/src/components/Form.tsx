@@ -1,10 +1,12 @@
-import React, { useState, FormEvent, ChangeEvent, SyntheticEvent } from 'react';
-import PicUploader from './PicUploader';
-import { UseQueryResult, useMutation } from 'react-query';
-import { api } from '@/utils/api';
-import { useApi } from '@/hooks/useApi';
-import { userDto } from '@/dto/userDto';
+import React, { ChangeEvent, FormEvent, SyntheticEvent, useState } from 'react';
 import { FC } from 'react';
+import { useMutation, UseQueryResult } from 'react-query';
+
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
+import { api } from '@/utils/api';
+
+import PicUploader from './PicUploader';
 
 interface InputProps {
   user: userDto;

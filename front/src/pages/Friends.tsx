@@ -1,9 +1,9 @@
 import { UseQueryResult } from 'react-query';
 
+import Form from '@/components/Form';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
-import Form from '@/components/Form';
 
 function Friends() {
   const { logout } = useAuth();

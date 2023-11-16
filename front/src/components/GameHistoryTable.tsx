@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from './Button';
+
 import background from '@/assets/low-poly-grid-haikei.svg';
+
+import { Button } from './Button';
 
 const PAGE_SIZE = 5; // Number of records per page
 

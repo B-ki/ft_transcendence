@@ -1,18 +1,18 @@
 import { useCallback, useState } from 'react';
-import { FormEvent, ChangeEvent } from 'react';
-import { UseQueryResult, useMutation } from 'react-query';
+import { ChangeEvent, FormEvent } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { useMutation, UseQueryResult } from 'react-query';
 
 import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
+import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
-import { api } from '@/utils/api';
 import { queryClient } from '@/main';
-import PicUploader from '@/components/PicUploader';
-import { useDropzone } from 'react-dropzone';
+import { api } from '@/utils/api';
 
 function Profile() {
   const [show, setShow] = useState(false);
@@ -75,7 +75,6 @@ function Profile() {
   }
   user = data;
 
-
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
@@ -123,7 +122,6 @@ function Profile() {
     setShow(false);
     setUsername('');
     setDescription('');
-
   };
 
   return (

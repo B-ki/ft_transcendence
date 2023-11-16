@@ -1,8 +1,9 @@
-import { userDto } from '@/dto/userDto';
 import React, { SetStateAction, useCallback, useState } from 'react';
 import { FC } from 'react';
 import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+
+import { userDto } from '@/dto/userDto';
 
 interface InputProps {
   ID: string;
