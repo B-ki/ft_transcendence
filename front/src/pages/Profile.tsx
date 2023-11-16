@@ -1,9 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { ChangeEvent, FormEvent } from 'react';
-import { useDropzone } from 'react-dropzone';
 import { useMutation, UseQueryResult } from 'react-query';
 
-import googleAuthenticatorLogo from '@/assets/GoogleAuthenticatorLogo.png';
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
@@ -23,7 +21,7 @@ function Profile() {
   let user: userDto | undefined = undefined;
 
   const mutation1 = useMutation({
-    mutationFn: (userInfos) => {
+    mutationFn: (userInfos: any) => {
       return api.patch('user/me', { json: userInfos });
     },
     onSuccess: () => {
@@ -91,10 +89,10 @@ function Profile() {
     const ProfilePic = document.querySelector<HTMLFormElement>('#ProfilePic');
     const Banner = document.querySelector<HTMLFormElement>('#Banner');
 
-    if (ProfilePic) {
+    if (ProfilePic && File !== null) {
       mutation2.mutate(File);
     }
-    if (Banner) {
+    if (Banner && banner !== null) {
       mutation3.mutate(banner);
     }
 
