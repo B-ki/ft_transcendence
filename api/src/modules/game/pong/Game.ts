@@ -262,12 +262,14 @@ export class Game {
       loser = this.player1;
     }
     if (winner && loser) {
-      this.gameService.createGame(
-        winner.socket.data.user.login,
-        loser.socket.data.user.login,
-        this.player1.score,
-        this.player2.score,
-      );
+      if (winner.socket.data.user.id != loser.socket.data.user.id) {
+        this.gameService.createGame(
+          winner.socket.data.user.login,
+          loser.socket.data.user.login,
+          this.player1.score,
+          this.player2.score,
+        );
+      }
       this.player1.reset();
       this.player2.reset();
       return true;

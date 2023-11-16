@@ -24,7 +24,6 @@ import {
 interface Props {}
 
 export const Pong: FC<Props> = () => {
-  console.log(GameEvent.BonusQueue);
   const socket = io('ws://localhost:3000/pong', {
     auth: {
       token: localStorage.getItem('token') as string,
