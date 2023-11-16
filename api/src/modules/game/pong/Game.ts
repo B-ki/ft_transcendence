@@ -3,6 +3,7 @@ import '@pixi/math-extras';
 import * as PIXI from 'pixi.js';
 import { Socket } from 'socket.io';
 import { GameEvent } from './game.events';
+import { GameService } from '../game.service';
 
 const w_screen: number = 840;
 const h_screen: number = 460;
@@ -25,19 +26,27 @@ export class Player {
 }
 
 export class Game {
-  sprite: PIXI.Rectangle = new PIXI.Rectangle();
-  pick1: PIXI.Rectangle = new PIXI.Rectangle();
-  pick2: PIXI.Rectangle = new PIXI.Rectangle();
-  speed: number = 0.5;
-  direction: PIXI.Point = new PIXI.Point();
-  player1: Player;
-  player2: Player;
-  needEmit: boolean = true;
-  onFire: boolean = false;
-  elapsedTime: number = 0;
-  started: boolean = false;
+  private sprite: PIXI.Rectangle = new PIXI.Rectangle();
+  private pick1: PIXI.Rectangle = new PIXI.Rectangle();
+  private pick2: PIXI.Rectangle = new PIXI.Rectangle();
+  private speed: number = 0.5;
+  private direction: PIXI.Point = new PIXI.Point();
+  private player1: Player;
+  private player2: Player;
+  private needEmit: boolean = true;
+  private onFire: boolean = false;
+  private elapsedTime: number = 0;
+  private started: boolean = false;
 
-  constructor(x: number, y: number, rad: number, p1: Player, p2: Player, bonus: boolean) {
+  constructor(
+    private gameService: GameService,
+    x: number,
+    y: number,
+    rad: number,
+    p1: Player,
+    p2: Player,
+    bonus: boolean,
+  ) {
     this.sprite.x = x;
     this.sprite.y = y;
     this.sprite.width = rad * 2;
@@ -51,8 +60,7 @@ export class Game {
     this.pick2.height = rad * 2;
     this.pick2.x = w_screen - 110 - this.pick2.width;
 
-    this.direction.set(1 + Math.random(), 1 + Math.random());
-    this.direction.normalize(this.direction);
+    this.launchBall();
 
     this.player1 = p1;
     this.player2 = p2;
@@ -181,6 +189,12 @@ export class Game {
   launchBall() {
     this.sprite.x = w_screen / 2 - this.sprite.width / 2;
     this.sprite.y = h_screen / 2 - this.sprite.height / 2;
+    if (this.direction.x > 0) {
+      this.direction.x = 1;
+    } else {
+      this.direction.x = -1;
+    }
+    this.direction.y = 0;
     this.needEmit = true;
   }
 
@@ -226,25 +240,36 @@ export class Game {
   }
 
   isFinished() {
+    let winner: Player | null = null;
+    let loser: Player | null = null;
     if (this.player1.opponent == null) {
-      this.player1.reset();
       this.player1.socket.emit(GameEvent.Victory);
-      return true;
+      winner = this.player1;
+      loser = this.player2;
     } else if (this.player2.opponent == null) {
-      this.player2.reset();
       this.player2.socket.emit(GameEvent.Victory);
-      return true;
+      winner = this.player2;
+      loser = this.player1;
     } else if (this.player1.score >= 5) {
-      this.player1.reset();
-      this.player2.reset();
       this.player1.socket.emit(GameEvent.Victory);
       this.player2.socket.emit(GameEvent.Defeat);
-      return true;
+      winner = this.player1;
+      loser = this.player2;
     } else if (this.player2.score >= 5) {
-      this.player1.reset();
-      this.player2.reset();
       this.player1.socket.emit(GameEvent.Defeat);
       this.player2.socket.emit(GameEvent.Victory);
+      winner = this.player2;
+      loser = this.player1;
+    }
+    if (winner && loser) {
+      this.gameService.createGame(
+        winner.socket.data.user.login,
+        loser.socket.data.user.login,
+        this.player1.score,
+        this.player2.score,
+      );
+      this.player1.reset();
+      this.player2.reset();
       return true;
     }
     return false;

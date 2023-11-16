@@ -6,6 +6,7 @@ import { config } from '@/config';
 
 import { Game, Player } from './pong/Game';
 import { GameEvent } from './pong/game.events';
+import { GameService } from './game.service';
 
 @Injectable()
 export class PongService {
@@ -15,7 +16,7 @@ export class PongService {
   private games: Game[] = [];
   private clock: PIXI.Ticker = new PIXI.Ticker();
 
-  constructor() {
+  constructor(private gameService: GameService) {
     setInterval(() => {
       for (let i = 0; i < this.games.length; i++) {
         this.games[i].move(
@@ -106,6 +107,7 @@ export class PongService {
     player2.opponent = player1;
 
     const game = new Game(
+      this.gameService,
       config.game.width / 2,
       config.game.heigth / 2,
       10,
@@ -114,8 +116,8 @@ export class PongService {
       bonus,
     );
 
-    game.player1.rect = new PIXI.Rectangle(-30, 0, 60, 100);
-    game.player2.rect = new PIXI.Rectangle(config.game.width - 30, 0, 60, 100);
+    player1.rect = new PIXI.Rectangle(-30, 0, 60, 100);
+    player2.rect = new PIXI.Rectangle(config.game.width - 30, 0, 60, 100);
 
     player1.socket.emit(GameEvent.Countdown);
     player2.socket.emit(GameEvent.Countdown);
