@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Socket } from 'socket.io-client';
 
 import logo from '@/assets/logo.svg';
 
@@ -10,6 +11,37 @@ interface ChatListElemProps {
     lastMessage: string;
   };
 }
+
+const chats = [
+  {
+    id: 1,
+    username: 'Arthur',
+    login: 'apigeon',
+    lastMessage: 'Hello you 👋',
+    profilePicture: logo,
+  },
+  {
+    id: 2,
+    username: 'Arthur',
+    login: 'apigeon',
+    lastMessage: 'Hello you 👋',
+    profilePicture: logo,
+  },
+  {
+    id: 3,
+    username: 'Arthur',
+    login: 'apigeon',
+    lastMessage: 'Hello you 👋',
+    profilePicture: logo,
+  },
+  {
+    id: 4,
+    username: 'Arthur',
+    login: 'apigeon',
+    lastMessage: 'Hello you 👋',
+    profilePicture: logo,
+  },
+];
 
 // TODO: take props for the conversation
 const ChatListElem = ({ chatInfos }: ChatListElemProps) => {
@@ -27,38 +59,17 @@ const ChatListElem = ({ chatInfos }: ChatListElemProps) => {
   );
 };
 
-// TODO: Loop over all the conversations
-const ChatList = () => {
-  const chats = [
-    {
-      id: 1,
-      username: 'Arthur',
-      login: 'apigeon',
-      lastMessage: 'Hello you 👋',
-      profilePicture: logo,
-    },
-    {
-      id: 2,
-      username: 'Arthur',
-      login: 'apigeon',
-      lastMessage: 'Hello you 👋',
-      profilePicture: logo,
-    },
-    {
-      id: 3,
-      username: 'Arthur',
-      login: 'apigeon',
-      lastMessage: 'Hello you 👋',
-      profilePicture: logo,
-    },
-    {
-      id: 4,
-      username: 'Arthur',
-      login: 'apigeon',
-      lastMessage: 'Hello you 👋',
-      profilePicture: logo,
-    },
-  ];
+interface ChatListProps {
+  socket?: Socket;
+}
+
+const ChatList = ({ socket }: ChatListProps) => {
+  // useEffect(() => {
+  //   console.log('Fetching conversations');
+  //   socket.emit('channelList', '', (data) => {
+  //     console.log(data);
+  //   });
+  // }, []);
   return (
     <div className="h-full w-full">
       {chats.map((chat) => (

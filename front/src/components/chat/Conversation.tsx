@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { UseQueryResult } from 'react-query';
 
-import send_icon from '@/assets/send.svg';
+import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
@@ -35,7 +35,7 @@ const messages = [
 ];
 
 interface ConversationProps {
-  sendMessage: (content: string | object) => void;
+  sendMessage?: (content: string | object) => void;
 }
 
 const Conversation = ({ sendMessage }: ConversationProps) => {
