@@ -1,36 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { FormEvent, ReactEventHandler, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
+import lock from '@/assets/chat/lock.svg';
 
 import ChatList from './ChatList';
+import ChatModal from './ChatModal';
 import Conversation from './Conversation';
-
-interface ModalProps {
-  children: React.ReactNode;
-}
-
-const Modal = ({ children }: ModalProps) => {
-  return (
-    <div className="absolute left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-white-3/30">
-      {children}
-    </div>
-  );
-};
+import { Channel } from 'diagnostics_channel';
 
 interface CreateChannelProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  socket: Socket;
+}
+interface Channel {
+  name: string;
+  type: string;
+  password?: string;
 }
 
-const CreateChannel = ({ setShowModal }: CreateChannelProps) => {
+const CreateChannel = ({ setShowModal, socket }: CreateChannelProps) => {
   const [channelType, setChannelType] = useState<string>('Public');
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
 
   const createChannel = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Creating channel');
     // send notification if success or error
+    const channel: Channel = {
+      name: nameRef.current?.value || '',
+      type: channelType.toUpperCase(),
+    };
+    if (channelType === 'protected') {
+      channel.password = passwordRef.current?.value;
+    }
+    console.log('Creating channel', channel);
+    // socket.emit('create', channel);
     setShowModal(false);
   };
   return (
@@ -43,6 +50,7 @@ const CreateChannel = ({ setShowModal }: CreateChannelProps) => {
           className="rounded-lg border-2 border-white-3 p-2"
           type="text"
           placeholder="Channel name"
+          ref={nameRef}
         />
         <select
           className="rounded-lg border-2 border-white-3 p-2"
@@ -57,6 +65,7 @@ const CreateChannel = ({ setShowModal }: CreateChannelProps) => {
             className="rounded-lg border-2 border-white-3 p-2"
             type="password"
             placeholder="Password"
+            ref={passwordRef}
           />
         )}
 
@@ -76,44 +85,53 @@ const CreateChannel = ({ setShowModal }: CreateChannelProps) => {
   );
 };
 
-const JoinChannel = ({ setShowModal }: CreateChannelProps) => {
-  const channels = [
-    {
-      id: 1,
-      name: 'Channel 1',
-      type: 'public',
-      joined: true,
-    },
-    {
-      id: 2,
-      name: 'Channel 2',
-      type: 'protected',
-      joined: false,
-    },
-    {
-      id: 3,
-      name: 'Channel 3',
-      type: 'public',
-      joined: false,
-    },
-    {
-      id: 4,
-      name: 'Channel 4',
-      type: 'public',
-      joined: false,
-    },
-  ];
-  const [searchChannel, setSearchChannel] = useState('');
+export interface ChannelType {
+  createdAt: string;
+  id: number;
+  name: string;
+  type: 'PUBLIC' | 'PROTECTED' | 'PRIVATE';
+}
+
+const JoinChannel = ({ setShowModal, socket }: CreateChannelProps) => {
+  const [searchChannel, setSearchChannel] = useState<string>('');
+  const [isPasswordNeeded, setIsPasswordNeeded] = useState<boolean>(false);
+  const [channelSelected, setChannelSelected] = useState<HTMLButtonElement | null>(null);
+  const [channels, setChannels] = useState<ChannelType[]>([]);
+
+  useEffect(() => {
+    socket.emit('channelList', (data: ChannelType[]) => {
+      console.log('Channel list', data);
+      setChannels(data);
+    });
+  }, []);
 
   const selectChannel = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('Selecting channel', e);
-    // send notification if success or error
-    // setShowModal(false);
+    if (e.currentTarget.lastChild?.nodeName === 'IMG') {
+      setIsPasswordNeeded(true);
+    } else {
+      setIsPasswordNeeded(false);
+    }
+
+    if (e.currentTarget !== channelSelected) {
+      if (channelSelected) {
+        channelSelected.style.backgroundColor = '#FFFFFF';
+        channelSelected.style.color = '#000000';
+      }
+      e.currentTarget.style.backgroundColor = '#37626D';
+      e.currentTarget.style.color = '#FFFFFF';
+      setChannelSelected(e.currentTarget);
+    }
   };
+
+  const handleJoinChannel = () => {
+    console.log('Joining channel');
+    setShowModal(false);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white-2 p-6 shadow-xl">
       <h2 className="mb-4 text-2xl">Join a channel</h2>
-      <div className="flex flex-col gap-2">
+      <form className="flex flex-col gap-2" onSubmit={handleJoinChannel}>
         <div className="flex gap-2">
           <input
             className="rounded-lg border-2 border-white-3 p-2"
@@ -128,34 +146,42 @@ const JoinChannel = ({ setShowModal }: CreateChannelProps) => {
             Cancel
           </button>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex max-h-[300px] flex-col gap-1 overflow-x-scroll">
           {channels
-            .filter((channel) => channel.name.includes(searchChannel))
+            .filter((channel) => channel.name.toLowerCase().includes(searchChannel.toLowerCase()))
             .map((channel) => {
               return (
                 <button
-                  className="flex justify-between gap-2 rounded-lg border-2 border-white-3 bg-white-1 p-2 enabled:hover:bg-darkBlue-2 enabled:hover:text-white-1 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex justify-between gap-2 rounded-lg border-2 border-white-3 bg-white-1 p-2 enabled:hover:bg-darkBlue-2 enabled:hover:text-white-1 enabled:focus:bg-darkBlue-2 enabled:focus:text-white-1 disabled:cursor-not-allowed disabled:opacity-60"
                   key={channel.id}
-                  disabled={channel.joined}
+                  disabled={false}
                   onClick={selectChannel}
+                  type="button"
                 >
                   <div>{channel.name}</div>
-                  {channel.joined && <div className="text-darkBlue-2">Joined</div>}
+                  {false && <div className="text-darkBlue-2">Joined</div>}
+                  {channel.type === 'PROTECTED' && (
+                    <img className="mr-2 w-6 text-darkBlue-2" src={lock} alt="lock" />
+                  )}
                 </button>
               );
             })}
         </div>
         <div className="flex justify-center gap-2">
           <input
-            className="rounded-lg border-2 border-white-3 p-2"
+            className={`rounded-lg border-2 border-white-3 p-2 ${
+              isPasswordNeeded ? '' : 'cursor-not-allowed'
+            }`}
             type="password"
             placeholder="Password"
+            required={isPasswordNeeded}
+            disabled={!isPasswordNeeded}
           />
           <button className="w-full rounded-lg border-2 border-white-3 p-2 hover:bg-darkBlue-2 hover:text-white-1">
             Join
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
@@ -163,52 +189,47 @@ const JoinChannel = ({ setShowModal }: CreateChannelProps) => {
 const Chat = () => {
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [showJoinModal, setShowJoinModal] = useState<boolean>(false);
-  // let socket: Socket = io();
-  // const localToken = localStorage.getItem('token');
-  // const token: string = localToken ? localToken : '';
-  // const [error, setError] = useState<boolean>(false);
-  // const [loading, setLoading] = useState<boolean>(true);
-  // const [messages, setMessages] = useState<any[]>([]);
-  // const [currentMessage, setCurrentMessage] = useState<string | object>('');
+  const [socket, setSocket] = useState<Socket>();
+  const localToken = localStorage.getItem('token');
+  const token: string = localToken ? localToken : '';
+  const [loading, setLoading] = useState<boolean>(true);
+  const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
 
-  // const sendMessage = (content: string | object) => {
-  //   console.log('Sending message', content);
-  //   socket.emit('channelList', (data) => {
-  //     console.log('Received the event', data);
-  //   });
-  // };
+  useEffect(() => {
+    setLoading(true);
+    console.log('Initializing socket');
+    const tmpSocket = io('/chat', { extraHeaders: { token: token } });
+    tmpSocket.on('connect', () => {
+      console.log('Connected to socket');
+      setSocket(tmpSocket);
+      setLoading(false);
+      tmpSocket.emit('joinedChannels', (data: ChannelType[]) => {
+        setJoinedChannels(data);
+      });
+      tmpSocket.onAny((data, event) => {
+        console.log('Event:', event, data);
+      });
+    });
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   console.log('Initializing socket');
-  //   socket = io('/chat', { extraHeaders: { token: token } });
-  //   socket.on('connect_error', (err) => {
-  //     console.log('Connection error', err);
-  //     setError(true);
-  //   });
-  //   socket.onAny((event, ...args) => {
-  //     console.log('Received the event', event, args);
-  //     setMessages((prevMessages) => [...prevMessages, args]);
-  //   });
-  //   setLoading(false);
-  //   return () => {
-  //     console.log('Disconnecting socket');
-  //     socket.disconnect();
-  //   };
-  // }, []);
-  // if (loading) return <div>loading</div>;
+    return () => {
+      console.log('Disconnecting socket');
+      socket?.disconnect();
+    };
+  }, []);
+  if (loading) return <div>loading</div>;
+  if (!socket) return <div>socket not initialized</div>;
 
   return (
     <div className="flex max-h-full min-h-[75%] bg-white-1">
       {showCreateModal && (
-        <Modal>
-          <CreateChannel setShowModal={setShowCreateModal} />
-        </Modal>
+        <ChatModal>
+          <CreateChannel setShowModal={setShowCreateModal} socket={socket} />
+        </ChatModal>
       )}
       {showJoinModal && (
-        <Modal>
-          <JoinChannel setShowModal={setShowJoinModal} />
-        </Modal>
+        <ChatModal>
+          <JoinChannel setShowModal={setShowJoinModal} socket={socket} />
+        </ChatModal>
       )}
       <div className="flex flex-col">
         <div className="flex justify-between p-3">
@@ -230,7 +251,7 @@ const Chat = () => {
             </button>
           </div>
         </div>
-        <ChatList />
+        <ChatList joinedChannels={joinedChannels} />
       </div>
       <Conversation />
     </div>
