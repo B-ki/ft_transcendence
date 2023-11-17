@@ -204,6 +204,7 @@ const Chat = () => {
       setSocket(tmpSocket);
       setLoading(false);
       tmpSocket.emit('joinedChannels', (data: ChannelType[]) => {
+        console.log('Joined channels', data);
         setJoinedChannels(data);
       });
       tmpSocket.onAny((data, event) => {
@@ -232,7 +233,7 @@ const Chat = () => {
         </ChatModal>
       )}
       <div className="flex flex-col">
-        <div className="flex justify-between p-3">
+        <div className="flex justify-between gap-2 p-3">
           <h2 className="text-xl">Messages</h2>
           <div className="flex gap-2">
             <button
