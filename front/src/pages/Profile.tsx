@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { ChangeEvent, FormEvent } from 'react';
 import { useMutation, UseQueryResult } from 'react-query';
-
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
-import PicUploader from '@/components/PicUploader';
 import { userDto } from '@/dto/userDto';
+import { gameDto } from '@/dto/gameDto';
 import { useApi } from '@/hooks/useApi';
 import { queryClient } from '@/main';
 import { api } from '@/utils/api';
+import PicUploader from '@/components/PicUploader';
 
 function Profile() {
   const [show, setShow] = useState(false);
@@ -59,6 +59,9 @@ function Profile() {
       setShow(false);
     },
   });
+
+  const { data: win } = useApi().get('get user win', 'game/won') as UseQueryResult<gameDto[]>;
+  const { data: lose } = useApi().get('get user lose', 'game/lose') as UseQueryResult<gameDto[]>;
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
@@ -110,8 +113,6 @@ function Profile() {
         mutation1.mutate({
           description: descriptionInput.value,
         });
-      } else {
-        console.log('nothing done');
       }
     }
   };
@@ -185,36 +186,50 @@ function Profile() {
           backgroundSize: 'cover',
         }}
       ></div>
-      <div className="absolute left-40 top-40 hidden gap-4 sm:flex">
-        <img
-          className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
-          src={user?.imagePath ? user?.imagePath : user?.intraImageURL}
-          alt="Profile picture"
-          onClick={() => setShow(true)}
-        />
-        <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">
-            {user?.displayName ? user?.displayName : user?.login}
-          </span>
-          <span className="text-white-3">
-            {user?.description ? user?.description : 'Edit your description'}
+      <div className="absolute left-40 top-40 hidden items-end gap-4 sm:flex">
+        <div className="flex gap-4">
+          <img
+            className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
+            src={user?.imagePath ? user?.imagePath : user?.intraImageURL}
+            alt="Profile picture"
+            onClick={() => setShow(true)}
+          />
+          <div className="flex flex-col items-start justify-end gap-2">
+            <span className="left-0 text-2xl font-bold text-white-1">
+              {user?.displayName ? user?.displayName : user?.login}
+            </span>
+            <span className="text-white-3">
+              {user?.description ? user?.description : 'Edit your description'}
+            </span>
+          </div>
+          <span className=" flex items-end justify-center text-white-3">
+            W : {win?.length ? win?.length : 0} L : {lose?.length ? lose?.length : 0}
           </span>
         </div>
       </div>
-      <div className="absolute left-16 top-40 flex items-center justify-center gap-4 sm:hidden">
-        <img
-          className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
-          src={user?.imagePath}
-          alt="profile pic"
-          onClick={() => setShow(true)}
-        />
-        <div className="flex flex-col items-start justify-end gap-2">
-          <span className="left-0 text-2xl font-bold text-white-1">
-            {user?.displayName ? user?.displayName : user?.login}
-          </span>
-          <span className="text-white-3">
-            {user?.description ? user?.description : 'Edit your description'}
-          </span>
+      <div className="absolute left-16 top-40 flex justify-center gap-4 sm:hidden">
+        <div className="flex gap-4">
+          <img
+            className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
+            src={user?.imagePath ? user?.imagePath : user?.intraImageURL}
+            alt="profile pic"
+            onClick={() => setShow(true)}
+          />
+          <div className="flex flex-col items-start justify-end gap-2">
+            <span className="left-0 text-2xl font-bold text-white-1">
+              {user?.displayName ? user?.displayName : user?.login}
+            </span>
+            <span className="text-white-3">
+              {user?.description ? user?.description : 'Edit your description'}
+            </span>
+          </div>
+          <div className="flex items-end justify-center gap-1 text-white-3">
+            <span className=" flex items-end justify-center">
+              W : {win?.length ? win?.length : 0}
+            </span>
+            {'  '}
+            <span> L : {lose?.length ? lose?.length : 0}</span>
+          </div>
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
