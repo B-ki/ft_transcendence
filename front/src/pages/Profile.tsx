@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { ChangeEvent, FormEvent } from 'react';
 import { useMutation, UseQueryResult } from 'react-query';
+
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';
 import { Navbar } from '@/components/Navbar';
-import { userDto } from '@/dto/userDto';
+import PicUploader from '@/components/PicUploader';
 import { gameDto } from '@/dto/gameDto';
+import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { queryClient } from '@/main';
 import { api } from '@/utils/api';
-import PicUploader from '@/components/PicUploader';
 
 function Profile() {
   const [show, setShow] = useState(false);
