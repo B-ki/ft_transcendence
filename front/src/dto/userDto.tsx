@@ -17,4 +17,8 @@ export const dummyUserDto: userDto = {
   last_name: 'morel',
   email: 'lorem@ipsum.fr',
   imagePath: 'image',
+  displayName: 'NoobMaster',
+  description: '',
+  intraImageURL: '',
+  bannerPath: '',
 };
