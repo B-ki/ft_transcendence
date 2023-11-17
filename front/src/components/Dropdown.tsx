@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import DropdownImg from '@/assets/dropdown.svg';
+import DropdownImg from '@/assets/align-justify-svgrepo-com.svg';
 import { useAuth } from '@/hooks/useAuth';
 
 import { Button } from './Button';
 
 const navigation = [
-  { id: '0', name: 'Private', href: '/private' },
+  { id: '0', name: 'Game', href: '/game' },
   { id: '1', name: 'Profile', href: '/profile' },
   { id: '2', name: 'Friends', href: '/friends' },
+  { id: '3', name: '2FA', href: '/2fa' },
 ];
 
 export const Dropdown = () => {
@@ -24,6 +25,11 @@ export const Dropdown = () => {
   const handleMenuClick = (item: { name: string; href: string }) => {
     navigate(item.href);
     setOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -45,7 +51,7 @@ export const Dropdown = () => {
           ))}
           <div>
             <li className=" w-20 rounded-b-md border-t border-t-dark-1 hover:bg-accent">
-              <button onClick={logout} className="w-full">
+              <button onClick={handleLogout} className="w-full">
                 Logout
               </button>
             </li>
