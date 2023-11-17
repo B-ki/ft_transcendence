@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import DropdownImg from '@/assets/dropdown.svg';
+import DropdownImg from '@/assets/align-justify-svgrepo-com.svg';
 import { useAuth } from '@/hooks/useAuth';
 
 import { Button } from './Button';
@@ -10,6 +10,7 @@ const navigation = [
   { id: '0', name: 'Game', href: '/game' },
   { id: '1', name: 'Profile', href: '/profile' },
   { id: '2', name: 'Friends', href: '/friends' },
+  { id: '3', name: '2FA', href: '/2fa' },
 ];
 
 export const Dropdown = () => {
