@@ -35,12 +35,19 @@ export const TwoFACode: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    mutation.mutate(code);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center">
-      <input type="test" name="2FAcode" onChange={handleCodeChange} />
-      <Button size="small" type="primary" onClick={() => mutation.mutate(code)}>
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-1">
+      <input
+        className="rounded-md border border-dark-3 bg-white-3 p-1  invalid:border-red focus:border-blue focus:outline-none"
+        type="test"
+        name="2FAcode"
+        placeholder="Enter your code"
+        onChange={handleCodeChange}
+      />
+      <Button size="small" type="primary" submit="submit">
         Submit
       </Button>
     </form>

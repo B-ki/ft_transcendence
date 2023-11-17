@@ -35,12 +35,18 @@ export const TwoFADeactivation: React.FC<TwoFACodeProps> = ({ setShowInvalidate 
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    mutation.mutate(code);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center">
-      <input type="test" name="2FAcode" onChange={handleCodeChange} />
-      <Button size="small" type="secondary" onClick={() => mutation.mutate(code)}>
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+      <input
+        type="test"
+        name="2FAcode"
+        onChange={handleCodeChange}
+        className="rounded-md border border-dark-3 bg-white-3 p-1  invalid:border-red focus:border-blue focus:outline-none"
+      />
+      <Button size="small" type="secondary" submit="submit">
         Deactivate 2FA
       </Button>
     </form>

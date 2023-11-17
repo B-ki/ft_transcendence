@@ -62,7 +62,7 @@ function Profile() {
   });
 
   const { data: win } = useApi().get('get user win', 'game/won') as UseQueryResult<gameDto[]>;
-  const { data: lose } = useApi().get('get user lose', 'game/lose') as UseQueryResult<gameDto[]>;
+  const { data: lose } = useApi().get('get user lose', 'game/lost') as UseQueryResult<gameDto[]>;
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
@@ -190,7 +190,7 @@ function Profile() {
       <div className="absolute left-40 top-40 hidden items-end gap-4 sm:flex">
         <div className="flex gap-4">
           <img
-            className="h-32 w-32 rounded-full object-cover hover:cursor-pointer"
+            className="h-32 w-32 rounded-full object-cover hover:cursor-pointer hover:opacity-50"
             src={user?.imagePath ? user?.imagePath : user?.intraImageURL}
             alt="Profile picture"
             onClick={() => setShow(true)}

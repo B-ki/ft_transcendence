@@ -19,7 +19,6 @@ const loginWithTwoFaCode = async ({
   const token: tokenDto = json as tokenDto;
   return token;
 };
-
 export const TwoFaLoginInput = (props: any) => {
   const [code, setCode] = useState('');
   const { login, setToken } = useAuth();
@@ -28,35 +27,36 @@ export const TwoFaLoginInput = (props: any) => {
     setCode(event.target.value);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  const navigate = useNavigate();
-
-  const mutation = useMutation({
-    mutationFn: loginWithTwoFaCode,
-    onSuccess: (data) => {
+    try {
+      const data = await loginWithTwoFaCode({ code, login });
       if (data.token) {
         setToken(data.token);
       }
       navigate('/');
-    },
-    onError: () => {
+    } catch (error) {
       alert('Wrong 2FA code');
-    },
-  });
+    }
+  };
+
+  const navigate = useNavigate();
 
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <input type="test" name="2FAcode" onChange={handleCodeChange} />
+        <input
+          className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
+          type="text"
+          name="2FAcode"
+          placeholder="Enter your code"
+          onChange={handleCodeChange}
+        />
+        <Button submit="submit" size="small" type="primary">
+          Submit
+        </Button>
       </form>
-      <Button
-        size="small"
-        type="primary"
-        onClick={() => mutation.mutateAsync({ code: code, login: login })}
-      >
-        Submit
-      </Button>
     </>
   );
 };
