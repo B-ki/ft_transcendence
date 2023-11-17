@@ -148,9 +148,9 @@ export const GameHistoryTable = () => {
           </thead>
           <tbody>
             {visibleGameHistory.map((game, index) => (
-              <>
+              <React.Fragment key={index}>
                 {game.player1Score > game.player2Score ? (
-                  <tr key={index} className="border bg-blue">
+                  <tr className="border bg-blue">
                     <td className="px-4 py-1">{game.date}</td>
                     <td className="px-5 py-1">
                       {game.player1Score} - {game.player2Score}
@@ -158,7 +158,7 @@ export const GameHistoryTable = () => {
                     <td className="px-4 py-1">{game.duration}</td>
                   </tr>
                 ) : game.player1Score < game.player2Score ? (
-                  <tr key={index} className="border bg-red">
+                  <tr className="border bg-red">
                     <td className="px-4 py-1">{game.date}</td>
                     <td className="px-5 py-1">
                       {game.player1Score} - {game.player2Score}
@@ -166,7 +166,7 @@ export const GameHistoryTable = () => {
                     <td className="px-4 py-1">{game.duration}</td>
                   </tr>
                 ) : (
-                  <tr key={index} className="border bg-grey">
+                  <tr className="border bg-grey">
                     <td className="px-4 py-1">{game.date}</td>
                     <td className="px-5 py-1">
                       {game.player1Score} - {game.player2Score}
@@ -174,7 +174,7 @@ export const GameHistoryTable = () => {
                     <td className="px-4 py-1">{game.duration}</td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

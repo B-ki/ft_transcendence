@@ -44,7 +44,6 @@ const PicUploader: FC<InputProps> = ({ ID, name, user, setFile }) => {
       }
     };
     reader.readAsDataURL(file);
-    console.log(file);
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
