@@ -20,10 +20,7 @@ import { UserService } from '../user';
 import { GameEvent } from './pong/game.events';
 import { PongService } from './pong.service';
 
-@WebSocketGateway({
-  namespace: 'pong',
-  cors: { origin: 'http://localhost:8080' },
-})
+@WebSocketGateway({ namespace: 'pong' })
 @UseFilters(HttpExceptionTransformationFilter)
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(

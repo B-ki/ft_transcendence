@@ -78,9 +78,9 @@ const router = createBrowserRouter([
 export const queryClient = new QueryClient();
 
 root.render(
-  //<StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-  </QueryClientProvider>,
-  //</StrictMode>,
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  </StrictMode>,
 );

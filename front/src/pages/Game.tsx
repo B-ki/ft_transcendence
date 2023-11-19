@@ -2,8 +2,8 @@ import '@pixi/math-extras';
 
 import * as PIXI from 'pixi.js';
 import type { FC } from 'react';
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { Component, useEffect } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 import { Button } from '@/components/Button';
 
@@ -23,200 +23,242 @@ import {
 
 interface Props {}
 
-export const Pong: FC<Props> = () => {
-  const socket = io('ws://localhost:3000/pong', {
-    auth: {
-      token: localStorage.getItem('token') as string,
-    },
-  });
+export class Pong extends Component {
+  private socket: Socket;
+  private app: PIXI.Application<HTMLCanvasElement>;
+  private middleLine: DashLine;
+  private ball: Ball;
+  private pad1: Paddle;
+  private pad2: Paddle;
+  private scorePlayer1: number = 0;
+  private scorePlayer2: number = 0;
+  private pick1: PIXI.Graphics;
+  private pick2: PIXI.Graphics;
+  private countdownText: PIXI.Text;
+  private remainingTime: number = 5000;
+  private screenManager: ScreenManager;
+  private p1Score: PIXI.Text;
+  private p2Score: PIXI.Text;
+  private loadingText: PIXI.Text;
+  private endingText: PIXI.Text;
+  private buttonQuit: TextButton;
+  private buttonLeave: TextButton;
 
-  const app = new PIXI.Application<HTMLCanvasElement>({
-    width: game.screen.width,
-    height: game.screen.height,
-    backgroundColor: 0x171717,
-    antialias: true,
-  });
+  constructor(props: Props) {
+    super(props);
 
-  app.renderer.view.style.position = 'absolute';
-  app.renderer.view.style.left = '50%';
-  app.renderer.view.style.top = '50%';
-  app.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
-  app.ticker.maxFPS = 60;
-  app.view.style.visibility = 'hidden';
-  document.body.appendChild(app.view);
+    this.socket = io('ws://' + window.location.host + '/pong', {
+      auth: {
+        token: localStorage.getItem('token') as string,
+      },
+    });
 
-  const middleLine = new DashLine(app);
+    this.app = new PIXI.Application<HTMLCanvasElement>({
+      width: game.screen.width,
+      height: game.screen.height,
+      backgroundColor: 0x171717,
+      antialias: true,
+    });
+    this.app.renderer.view.style.position = 'absolute';
+    this.app.renderer.view.style.left = '50%';
+    this.app.renderer.view.style.top = '50%';
+    this.app.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
+    this.app.ticker.maxFPS = 60;
+    this.app.view.style.visibility = 'hidden';
+    document.body.appendChild(this.app.view);
 
-  const ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
-  app.stage.addChild(ball.sprite);
-  socket.on(GameEvent.Bounce, (arg: PIXI.Rectangle, dir: PIXI.Point) => bounceBall(arg, dir, ball));
-  socket.on(GameEvent.ClassicBall, () => ball.setOfFire());
-  socket.on(GameEvent.Fireball, () => ball.setOnFire());
+    this.middleLine = new DashLine(this.app);
+    this.ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
+    this.app.stage.addChild(this.ball.sprite);
+    this.socket.on(GameEvent.Bounce, (arg: PIXI.Rectangle, dir: PIXI.Point) =>
+      bounceBall(arg, dir, this.ball),
+    );
+    this.socket.on(GameEvent.ClassicBall, () => this.ball.setOfFire());
+    this.socket.on(GameEvent.Fireball, () => this.ball.setOnFire());
 
-  const pad1 = new Paddle(-game.paddle.width / 2, game.paddle.width, game.paddle.height);
-  const pad2 = new Paddle(
-    game.screen.width - game.paddle.width / 2,
-    game.paddle.width,
-    game.paddle.height,
-  );
-  socket.on(GameEvent.Paddle, (arg: number) => (pad2.sprite.y = arg));
+    this.pad1 = new Paddle(-game.paddle.width / 2, game.paddle.width, game.paddle.height);
+    this.pad2 = new Paddle(
+      game.screen.width - game.paddle.width / 2,
+      game.paddle.width,
+      game.paddle.height,
+    );
+    this.socket.on(GameEvent.Paddle, (arg: number) => (this.pad2.sprite.y = arg));
 
-  window.addEventListener('blur', () => {
-    pad1.keyUP = false;
-    pad1.keyDOWN = false;
-  });
+    window.addEventListener('blur', () => {
+      this.pad1.keyUP = false;
+      this.pad1.keyDOWN = false;
+    });
 
-  document.addEventListener('keydown', (key: KeyboardEvent) => {
-    if (key.key == 'q') pad1.keyUP = true;
-    if (key.key == 'a') pad1.keyDOWN = true;
-  });
+    document.addEventListener('keydown', (key: KeyboardEvent) => {
+      if (key.key == 'q') this.pad1.keyUP = true;
+      if (key.key == 'a') this.pad1.keyDOWN = true;
+    });
 
-  document.addEventListener('keyup', (key: KeyboardEvent) => {
-    if (key.key == 'q') pad1.keyUP = false;
-    if (key.key == 'a') pad1.keyDOWN = false;
-  });
+    document.addEventListener('keyup', (key: KeyboardEvent) => {
+      if (key.key == 'q') this.pad1.keyUP = false;
+      if (key.key == 'a') this.pad1.keyDOWN = false;
+    });
 
-  app.stage.addChild(pad1.sprite);
-  app.stage.addChild(pad2.sprite);
+    this.app.stage.addChild(this.pad1.sprite);
+    this.app.stage.addChild(this.pad2.sprite);
 
-  let scorePlayer1 = 0;
-  let scorePlayer2 = 0;
+    this.socket.on(
+      GameEvent.YourPoint,
+      () => (this.scorePlayer1 = updateScore(this.scorePlayer1, this.p1Score)),
+    );
+    this.socket.on(
+      GameEvent.OpponentPoint,
+      () => (this.scorePlayer2 = updateScore(this.scorePlayer2, this.p2Score)),
+    );
 
-  socket.on(GameEvent.YourPoint, () => (scorePlayer1 = updateScore(scorePlayer1, p1Score)));
-  socket.on(GameEvent.OpponentPoint, () => (scorePlayer2 = updateScore(scorePlayer2, p2Score)));
+    this.pick1 = createPickable(this.app);
+    this.pick2 = createPickable(this.app);
 
-  const pick1 = createPickable(app);
-  const pick2 = createPickable(app);
+    this.socket.on(GameEvent.LeftPick, (arg: PIXI.Rectangle) => movePickable(arg, this.pick1));
+    this.socket.on(GameEvent.RightPick, (arg: PIXI.Rectangle) => movePickable(arg, this.pick2));
 
-  socket.on(GameEvent.LeftPick, (arg: PIXI.Rectangle) => movePickable(arg, pick1));
-  socket.on(GameEvent.RightPick, (arg: PIXI.Rectangle) => movePickable(arg, pick2));
+    this.countdownText = createText(5, 60, 0xaeb8b1, this.app);
+    this.countdownText.anchor.set(0.5, 0.5);
+    this.countdownText.x = this.app.renderer.width * 0.5;
+    this.countdownText.y = this.app.renderer.height * 0.5;
 
-  const countdownText = createText(5, 60, 0xaeb8b1, app);
-  countdownText.anchor.set(0.5, 0.5);
-  countdownText.x = app.renderer.width * 0.5;
-  countdownText.y = app.renderer.height * 0.5;
+    this.socket.on(GameEvent.Remaining, (remaining: number) => (this.remainingTime = remaining));
+    this.socket.on(GameEvent.Countdown, () => {
+      this.remainingTime = 5000;
+      this.countdownText.text = (this.remainingTime / 1000.0).toFixed(1);
+      this.screenManager.countdownScreen();
+    });
 
-  let remainingTime: number = 5000;
-
-  socket.on(GameEvent.Remaining, (remaining: number) => (remainingTime = remaining));
-  socket.on(GameEvent.Countdown, () => {
-    remainingTime = 5000;
-    countdownText.text = (remainingTime / 1000.0).toFixed(1);
-    screenManager.countdownScreen();
-  });
-  app.ticker.add(() => {
-    if (remainingTime > 0) {
-      remainingTime -= app.ticker.deltaMS;
-      countdownText.text = (remainingTime / 1000.0).toFixed(1);
-      if (remainingTime <= 0) {
-        remainingTime = 0;
-        countdownText.visible = false;
+    this.app.ticker.add(() => {
+      if (this.remainingTime > 0) {
+        this.remainingTime -= this.app.ticker.deltaMS;
+        this.countdownText.text = (this.remainingTime / 1000.0).toFixed(1);
+        if (this.remainingTime <= 0) {
+          this.remainingTime = 0;
+          this.countdownText.visible = false;
+        }
       }
-    }
-  });
+    });
 
-  const p1Score = createText(scorePlayer1, 24, 0xaeb8b1, app);
-  p1Score.anchor.set(1, 0);
-  p1Score.x = game.screen.width / 2 - 50;
-  p1Score.y = 0;
+    this.p1Score = createText(this.scorePlayer1, 24, 0xaeb8b1, this.app);
+    this.p1Score.anchor.set(1, 0);
+    this.p1Score.x = game.screen.width / 2 - 50;
+    this.p1Score.y = 0;
 
-  const p2Score = createText(scorePlayer2, 24, 0xaeb8b1, app);
-  p2Score.x = game.screen.width / 2 + 50;
-  p2Score.y = 0;
+    this.p2Score = createText(this.scorePlayer2, 24, 0xaeb8b1, this.app);
+    this.p2Score.x = game.screen.width / 2 + 50;
+    this.p2Score.y = 0;
 
-  const loadingText = createText('Waiting for an opponent', 44, 0xaeb8b1, app);
-  loadingText.anchor.set(0.5, 0.5);
-  loadingText.x = game.screen.width / 2;
-  loadingText.y = game.screen.height / 2;
+    this.loadingText = createText('Waiting for an opponent', 44, 0xaeb8b1, this.app);
+    this.loadingText.anchor.set(0.5, 0.5);
+    this.loadingText.x = game.screen.width / 2;
+    this.loadingText.y = game.screen.height / 2;
 
-  const endingText = createText('End', 84, 0xaeb8b1, app);
-  endingText.anchor.set(0.5, 0.5);
-  endingText.x = game.screen.width / 2;
-  endingText.y = game.screen.height / 2;
+    this.endingText = createText('End', 84, 0xaeb8b1, this.app);
+    this.endingText.anchor.set(0.5, 0.5);
+    this.endingText.x = game.screen.width / 2;
+    this.endingText.y = game.screen.height / 2;
 
-  socket.on(GameEvent.Victory, () => {
-    endingText.text = 'Victory';
-    endingText.style.fill = 0x5ab555;
-    screenManager.endScreen();
-  });
+    this.socket.on(GameEvent.Victory, () => {
+      this.endingText.text = 'Victory';
+      this.endingText.style.fill = 0x5ab555;
+      this.screenManager.endScreen();
+    });
 
-  socket.on(GameEvent.Defeat, () => {
-    endingText.text = 'Defeat';
-    endingText.style.fill = 0xb52828;
-    screenManager.endScreen();
-  });
+    this.socket.on(GameEvent.Defeat, () => {
+      this.endingText.text = 'Defeat';
+      this.endingText.style.fill = 0xb52828;
+      this.screenManager.endScreen();
+    });
 
-  app.ticker.add(() => {
-    ball.move(app.ticker.deltaMS);
-    if (pad1.keyUP) pad1.move(-app.ticker.deltaMS, socket);
-    if (pad1.keyDOWN) pad1.move(app.ticker.deltaMS, socket);
-  });
+    this.app.ticker.add(() => {
+      this.ball.move(this.app.ticker.deltaMS);
+      if (this.pad1.keyUP) this.pad1.move(-this.app.ticker.deltaMS, this.socket);
+      if (this.pad1.keyDOWN) this.pad1.move(this.app.ticker.deltaMS, this.socket);
+    });
 
-  const buttonQuit = new TextButton('Quit', game.screen.width / 2, game.screen.height * 0.8, app);
-  const buttonLeave = new TextButton('Leave', game.screen.width / 2, game.screen.height * 0.8, app);
+    this.buttonQuit = new TextButton(
+      'Quit',
+      game.screen.width / 2,
+      game.screen.height * 0.8,
+      this.app,
+    );
+    this.buttonLeave = new TextButton(
+      'Leave',
+      game.screen.width / 2,
+      game.screen.height * 0.8,
+      this.app,
+    );
 
-  const screenManager = new ScreenManager(
-    ball.sprite,
-    pad1.sprite,
-    pad2.sprite,
-    pick1,
-    pick2,
-    middleLine,
-    countdownText,
-    p1Score,
-    p2Score,
-    loadingText,
-    endingText,
-    buttonQuit.graphics,
-    buttonQuit.text,
-    buttonLeave.graphics,
-    buttonLeave.text,
-  );
+    this.buttonQuit.onClick(() => buttonScreen(this.app, this.screenManager));
+    this.buttonLeave.onClick(() => this.socket.emit(GameEvent.LeaveQueue));
+    this.socket.on(GameEvent.LeaveQueue, () => buttonScreen(this.app, this.screenManager));
 
-  buttonQuit.onClick(() => buttonScreen(app, screenManager));
-  buttonLeave.onClick(() => socket.emit(GameEvent.LeaveQueue));
-  socket.on(GameEvent.LeaveQueue, () => buttonScreen(app, screenManager));
+    this.socket.on(GameEvent.Start, () => this.screenManager.playScreen());
 
-  socket.on(GameEvent.Start, () => screenManager.playScreen());
-
-  function launchGame(bonus: boolean) {
-    window.onresize = () => resize_game(app);
-    screenManager.setMode(bonus);
-    if (bonus) {
-      socket.emit(GameEvent.BonusQueue);
-    } else {
-      socket.emit(GameEvent.ClassicQueue);
-    }
-
-    pad1.sprite.y = 0;
-    pad2.sprite.y = 0;
-    scorePlayer1 = 0;
-    scorePlayer2 = 0;
-    p1Score.text = scorePlayer1;
-    p2Score.text = scorePlayer2;
-
-    gameScreen(app);
-    screenManager.queueScreen();
-    resize_game(app);
+    this.screenManager = new ScreenManager(
+      this.ball.sprite,
+      this.pad1.sprite,
+      this.pad2.sprite,
+      this.pick1,
+      this.pick2,
+      this.middleLine,
+      this.countdownText,
+      this.p1Score,
+      this.p2Score,
+      this.loadingText,
+      this.endingText,
+      this.buttonQuit.graphics,
+      this.buttonQuit.text,
+      this.buttonLeave.graphics,
+      this.buttonLeave.text,
+    );
   }
 
-  useEffect(() => {
-    return () => {
-      if (app) app.destroy(true, { children: true, texture: true, baseTexture: true });
-      socket.disconnect();
-    };
-  }, []);
-  return (
-    <div className="mt-10 flex h-2/3 w-screen items-center justify-center gap-8">
-      <Button id="ClassicQueue" type="primary" size="xlarge" onClick={() => launchGame(false)}>
-        Classic Game
-      </Button>
-      <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => launchGame(true)}>
-        Bonus Game
-      </Button>
-    </div>
-  );
-};
+  launchGame(bonus: boolean) {
+    window.onresize = () => resize_game(this.app);
+    this.screenManager.setMode(bonus);
+    if (bonus) {
+      this.socket.emit(GameEvent.BonusQueue);
+    } else {
+      this.socket.emit(GameEvent.ClassicQueue);
+    }
+
+    this.pad1.sprite.y = 0;
+    this.pad2.sprite.y = 0;
+    this.scorePlayer1 = 0;
+    this.scorePlayer2 = 0;
+    this.p1Score.text = this.scorePlayer1;
+    this.p2Score.text = this.scorePlayer2;
+
+    gameScreen(this.app);
+    this.screenManager.queueScreen();
+    resize_game(this.app);
+  }
+  componentWillUnmount(): void {
+    this.app.destroy(true, { children: false, texture: true, baseTexture: true });
+    this.socket.disconnect();
+    window.onresize = () => {};
+  }
+
+  render() {
+    return (
+      <div className="mt-10 flex h-2/3 w-screen flex-col items-center justify-center gap-8">
+        <Button
+          id="ClassicQueue"
+          type="primary"
+          size="xlarge"
+          onClick={() => this.launchGame(false)}
+        >
+          Classic Game
+        </Button>
+        <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => this.launchGame(true)}>
+          Bonus Game
+        </Button>
+      </div>
+    );
+  }
+}
 
 import { Navbar } from '@/components/Navbar';
 

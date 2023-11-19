@@ -31,13 +31,11 @@ export class PongService {
   }
 
   addNewPlayer(socket: Socket) {
-    //console.log('Connected : ' + socket.id);
     const tmp: Player = new Player(socket);
     this.users.set(socket.id, tmp);
   }
 
   removePlayer(socket: Socket) {
-    //console.log('Disconnected : ' + socket.id);
     const sender = this.users.get(socket.id);
     this.users.delete(socket.id);
 
@@ -60,7 +58,6 @@ export class PongService {
     const sender = this.users.get(socket.id);
 
     if (sender && this.classicQueue.push(sender) % 2 == 0) {
-      //console.log('launch a classic pong game');
       this.createGame(
         this.classicQueue[this.classicQueue.length - 1],
         this.classicQueue[this.classicQueue.length - 2],
@@ -74,7 +71,6 @@ export class PongService {
     const sender = this.users.get(socket.id);
 
     if (sender && this.bonusQueue.push(sender) % 2 == 0) {
-      //console.log('launch a bonus pong game');
       this.createGame(
         this.bonusQueue[this.bonusQueue.length - 1],
         this.bonusQueue[this.bonusQueue.length - 2],
