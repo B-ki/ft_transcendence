@@ -17,8 +17,8 @@ import { HttpExceptionTransformationFilter } from '@/utils/ws-http-exception.fil
 
 import { WSAuthMiddleware } from '../auth/ws/ws.middleware';
 import { UserService } from '../user';
-import { GameEvent } from './pong/game.events';
 import { PongService } from './pong.service';
+import { GameEvent } from './pong/game.events';
 
 @WebSocketGateway({ namespace: 'pong' })
 @UseFilters(HttpExceptionTransformationFilter)

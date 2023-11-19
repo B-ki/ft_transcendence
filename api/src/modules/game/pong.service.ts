@@ -4,9 +4,9 @@ import { Socket } from 'socket.io';
 
 import { config } from '@/config';
 
+import { GameService } from './game.service';
 import { Game, Player } from './pong/Game';
 import { GameEvent } from './pong/game.events';
-import { GameService } from './game.service';
 
 @Injectable()
 export class PongService {

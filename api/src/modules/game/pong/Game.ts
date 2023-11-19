@@ -2,8 +2,9 @@ import '@pixi/math-extras';
 
 import * as PIXI from 'pixi.js';
 import { Socket } from 'socket.io';
-import { GameEvent } from './game.events';
+
 import { GameService } from '../game.service';
+import { GameEvent } from './game.events';
 
 const w_screen: number = 840;
 const h_screen: number = 460;
