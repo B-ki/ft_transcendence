@@ -1,6 +1,6 @@
 import ky from 'ky';
 
-const url: string = 'http://localhost:8080/api/';
+const url: string = '/api/';
 
 const base = ky.create({ prefixUrl: url });
 
