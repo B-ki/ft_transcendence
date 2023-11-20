@@ -1,46 +1,23 @@
-import logo from '@/assets/logo.svg';
+// import logo from '@/assets/logo.svg';
 
 import { ChannelType } from './Chat';
 
 interface ChatListElemProps {
   chatInfos: ChannelType;
+  currentChannel: ChannelType | null;
+  setCurrentChannel: (channel: ChannelType) => void;
 }
 
-const chats = [
-  {
-    id: 1,
-    username: 'Arthur',
-    login: 'apigeon',
-    lastMessage: 'Hello you 👋',
-    profilePicture: logo,
-  },
-  {
-    id: 2,
-    username: 'Arthur',
-    login: 'apigeon',
-    lastMessage: 'Hello you 👋',
-    profilePicture: logo,
-  },
-  {
-    id: 3,
-    username: 'Arthur',
-    login: 'apigeon',
-    lastMessage: 'Hello you 👋',
-    profilePicture: logo,
-  },
-  {
-    id: 4,
-    username: 'Arthur',
-    login: 'apigeon',
-    lastMessage: 'Hello you 👋',
-    profilePicture: logo,
-  },
-];
+const ChatListElem = ({ chatInfos, setCurrentChannel, currentChannel }: ChatListElemProps) => {
+  const handleClick = (channel: ChannelType) => {
+    if (currentChannel === null || channel.id !== currentChannel.id) setCurrentChannel(channel);
+  };
 
-// TODO: take props for the conversation
-const ChatListElem = ({ chatInfos }: ChatListElemProps) => {
   return (
-    <div className="flex w-full cursor-pointer p-3 hover:bg-white-2">
+    <button
+      onClick={() => handleClick(chatInfos)}
+      className="flex w-full cursor-pointer p-3 hover:bg-white-2"
+    >
       {/* <img src={chatInfos.profilePicture} alt="conversation" className="h-14 w-14 rounded-full" /> */}
       <div className="flex flex-col">
         <div className="flex items-center gap-1">
@@ -49,19 +26,26 @@ const ChatListElem = ({ chatInfos }: ChatListElemProps) => {
         </div>
         {/* <span className="text-sm">{chatInfos.lastMessage}</span> */}
       </div>
-    </div>
+    </button>
   );
 };
 
 interface ChatListProps {
   joinedChannels: ChannelType[];
+  currentChannel: ChannelType | null;
+  setCurrentChannel: (channel: ChannelType) => void;
 }
 
-const ChatList = ({ joinedChannels }: ChatListProps) => {
+const ChatList = ({ joinedChannels, currentChannel, setCurrentChannel }: ChatListProps) => {
   return (
     <div className="h-full w-full">
       {joinedChannels.map((chat) => (
-        <ChatListElem key={chat.id} chatInfos={chat} />
+        <ChatListElem
+          setCurrentChannel={setCurrentChannel}
+          key={chat.id}
+          chatInfos={chat}
+          currentChannel={currentChannel}
+        />
       ))}
     </div>
   );
