@@ -13,16 +13,22 @@
     "type-check": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@pixi/math-extras": "^7.3.2",
+    "@pixi/react": "^7.1.1",
+    "@pixi/ui": "^0.10.1",
     "axios": "^1.6.0",
     "jwt-decode": "^3.1.2",
     "ky": "^0.33.3",
     "qrcode.react": "^3.1.0",
+    "pixi.js": "^7.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-notifications-component": "^4.0.1",
     "react-query": "^3.39.3",
-    "react-router-dom": "^6.18.0"
+    "react-router-dom": "^6.18.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
     "@types/node": "^20.8.10",

@@ -29,4 +29,8 @@ export const config = {
   twofa: {
     name: process.env.AUTH_APP_NAME || 'ft_transcendence',
   },
+  game: {
+    width: 840,
+    heigth: 460,
+  },
 } as const;

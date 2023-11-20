@@ -13,7 +13,12 @@ export const WSAuthMiddleware = (
 ): SocketMiddleware => {
   return async (client: Socket, next: (err?: Error) => void) => {
     try {
-      const payload: JwtPayload = jwtService.verify(client.handshake.headers.token as string);
+      let token = client.handshake.headers.token;
+      if (!token) {
+        token = client.handshake.auth.token;
+      }
+
+      const payload: JwtPayload = jwtService.verify(token as string);
       client.data.user = await userService.getUnique(payload.login);
       next();
     } catch (err) {
