@@ -19,6 +19,7 @@ interface UserListResponse {
   users: UserType[];
 }
 
+// TODO: leaver button ??
 const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: ChatInfosProps) => {
   const [users, setUsers] = useState<UserType[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -48,6 +49,10 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
     setUsers(users.filter((u) => u.id !== user.id));
   };
 
+  const startGame = (user: UserType) => {
+    // TODO: start game with user
+  };
+
   // Contains the list of members in the channel, whith a possibility to kick them, to promote them as admin, and to start a game with them
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-white-1 p-4">
@@ -69,7 +74,11 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                 <h3 className="text-lg">{user.login}</h3>
               </div>
               <div className="flex gap-2">
-                <button className="rounded-full p-1 hover:bg-green-1" title="Start a game">
+                <button
+                  className="rounded-full p-1 hover:bg-green-1"
+                  title="Start a game"
+                  onClick={() => startGame(user)}
+                >
                   <img className="w-6" src={game_icon} alt="close" />
                 </button>
                 <button
