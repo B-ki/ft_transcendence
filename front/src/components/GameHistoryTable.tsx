@@ -162,62 +162,64 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
         className="border-separate rounded border bg-grey p-1 text-dark-1"
         style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}
       >
-        <table className=" m-2 table-auto">
-          <thead>
-            <tr className="text-white-2">
-              <th>Winner</th>
-              <th>Score</th>
-              <th>LOOOOOSER</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleGameHistory ? (
-              visibleGameHistory.map((game, index) => (
-                <React.Fragment key={index}>
-                  {game.winner.login === login ? (
-                    <tr className="border bg-blue">
-                      <td className="px-4 py-1">{game.winner.displayName}</td>
-                      <td className="px-5 py-1">
-                        {game.winnerScore} - {game.loserScore}
-                      </td>
-                      <td className="px-4 py-1">{game.loser.displayName}</td>
-                    </tr>
-                  ) : (
-                    <tr className="border bg-red">
-                      <td className="px-4 py-1">{game.winner.displayName}</td>
-                      <td className="px-5 py-1">
-                        {game.winnerScore} - {game.loserScore}
-                      </td>
-                      <td className="px-4 py-1">{game.loser.displayName}</td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              <div></div>
-            )}
-          </tbody>
-        </table>
+        {visibleGameHistory ? (
+          <React.Fragment>
+            <table className=" m-2 table-auto">
+              <thead>
+                <tr className="text-white-2">
+                  <th>Winner</th>
+                  <th>Score</th>
+                  <th>LOOOOOSER</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visibleGameHistory.map((game, index) => (
+                  <React.Fragment key={index}>
+                    {game.winner.login === login ? (
+                      <tr className="border bg-blue">
+                        <td className="px-4 py-1">{game.winner.displayName}</td>
+                        <td className="px-5 py-1">
+                          {game.winnerScore} - {game.loserScore}
+                        </td>
+                        <td className="px-4 py-1">{game.loser.displayName}</td>
+                      </tr>
+                    ) : (
+                      <tr className="border bg-red">
+                        <td className="px-4 py-1">{game.winner.displayName}</td>
+                        <td className="px-5 py-1">
+                          {game.winnerScore} - {game.loserScore}
+                        </td>
+                        <td className="px-4 py-1">{game.loser.displayName}</td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
 
-        <div className="flex w-full justify-center gap-2 p-1">
-          <Button
-            size="xsmall"
-            type="primary"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <span className="text-white-2">{`Page ${currentPage} of ${totalPages}`}</span>
-          <Button
-            size="xsmall"
-            type="primary"
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-          >
-            Next
-          </Button>
-        </div>
+            <div className="flex w-full justify-center gap-2 p-1">
+              <Button
+                size="xsmall"
+                type="primary"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <span className="text-white-2">{`Page ${currentPage} of ${totalPages}`}</span>
+              <Button
+                size="xsmall"
+                type="primary"
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          </React.Fragment>
+        ) : (
+          <div className="flex items-center justify-center text-white-3">NO GAME PLAYED YET</div>
+        )}
       </div>
     </>
   );
