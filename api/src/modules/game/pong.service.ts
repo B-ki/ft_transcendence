@@ -4,10 +4,10 @@ import { Socket } from 'socket.io';
 
 import { config } from '@/config';
 
+import { NotifyService } from '../notify';
 import { GameService } from './game.service';
 import { Game, Player } from './pong/Game';
 import { GameEvent } from './pong/game.events';
-import { NotifyService } from '../notify';
 
 @Injectable()
 export class PongService {
