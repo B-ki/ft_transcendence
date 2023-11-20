@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import background from '@/assets/low-poly-grid-haikei.svg';
 
 import { Button } from './Button';
+import { useApi } from '@/hooks/useApi';
+import { UseQueryResult } from 'react-query';
+import { gameDto } from '@/dto/gameDto';
+import { userDto } from '@/dto/userDto';
 
 const PAGE_SIZE = 5; // Number of records per page
 
@@ -119,14 +123,35 @@ const gameHistory = [
   },
 ];
 
-export const GameHistoryTable = () => {
+interface HistoryProps {
+  login: string | undefined;
+}
+
+export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  let totalPages, startIndex, endIndex, visibleGameHistory, reverseArray;
+  const {
+    data: games,
+    isLoading,
+    isError,
+  } = useApi().get('get games', 'game/all') as UseQueryResult<gameDto[]>;
 
-  const totalPages = Math.ceil(gameHistory.length / PAGE_SIZE);
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
 
-  const visibleGameHistory = gameHistory.slice(startIndex, endIndex);
+  if (games) {
+    totalPages = Math.ceil(games.length / PAGE_SIZE);
+    startIndex = (currentPage - 1) * PAGE_SIZE;
+    endIndex = startIndex + PAGE_SIZE;
+
+    reverseArray = [...games].reverse();
+    visibleGameHistory = reverseArray.slice(startIndex, endIndex);
+  }
+  if (games) console.log(games);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -141,41 +166,37 @@ export const GameHistoryTable = () => {
         <table className=" m-2 table-auto">
           <thead>
             <tr className="text-white-2">
-              <th>Date</th>
+              <th>Winner</th>
               <th>Score</th>
-              <th>Duration</th>
+              <th>LOOOOOSER</th>
             </tr>
           </thead>
           <tbody>
-            {visibleGameHistory.map((game, index) => (
-              <React.Fragment key={index}>
-                {game.player1Score > game.player2Score ? (
-                  <tr className="border bg-blue">
-                    <td className="px-4 py-1">{game.date}</td>
-                    <td className="px-5 py-1">
-                      {game.player1Score} - {game.player2Score}
-                    </td>
-                    <td className="px-4 py-1">{game.duration}</td>
-                  </tr>
-                ) : game.player1Score < game.player2Score ? (
-                  <tr className="border bg-red">
-                    <td className="px-4 py-1">{game.date}</td>
-                    <td className="px-5 py-1">
-                      {game.player1Score} - {game.player2Score}
-                    </td>
-                    <td className="px-4 py-1">{game.duration}</td>
-                  </tr>
-                ) : (
-                  <tr className="border bg-grey">
-                    <td className="px-4 py-1">{game.date}</td>
-                    <td className="px-5 py-1">
-                      {game.player1Score} - {game.player2Score}
-                    </td>
-                    <td className="px-4 py-1">{game.duration}</td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))}
+            {visibleGameHistory ? (
+              visibleGameHistory.map((game, index) => (
+                <React.Fragment key={index}>
+                  {game.winner.login === login ? (
+                    <tr className="border bg-blue">
+                      <td className="px-4 py-1">{game.winner.displayName}</td>
+                      <td className="px-5 py-1">
+                        {game.winnerScore} - {game.loserScore}
+                      </td>
+                      <td className="px-4 py-1">{game.loser.displayName}</td>
+                    </tr>
+                  ) : (
+                    <tr className="border bg-red">
+                      <td className="px-4 py-1">{game.winner.displayName}</td>
+                      <td className="px-5 py-1">
+                        {game.winnerScore} - {game.loserScore}
+                      </td>
+                      <td className="px-4 py-1">{game.loser.displayName}</td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              ))
+            ) : (
+              <div></div>
+            )}
           </tbody>
         </table>
 
@@ -192,8 +213,8 @@ export const GameHistoryTable = () => {
           <Button
             size="xsmall"
             type="primary"
-            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
           >
             Next
           </Button>
