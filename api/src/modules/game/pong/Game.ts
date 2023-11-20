@@ -33,8 +33,6 @@ export class Game {
   private pick2: PIXI.Rectangle = new PIXI.Rectangle();
   private speed: number = 0.5;
   private direction: PIXI.Point = new PIXI.Point();
-  private player1: Player;
-  private player2: Player;
   private needEmit: boolean = true;
   private onFire: boolean = false;
   private elapsedTime: number = 0;
@@ -45,8 +43,8 @@ export class Game {
     x: number,
     y: number,
     rad: number,
-    p1: Player,
-    p2: Player,
+    public player1: Player,
+    public player2: Player,
     bonus: boolean,
   ) {
     this.sprite.x = x;
@@ -64,8 +62,6 @@ export class Game {
 
     this.launchBall();
 
-    this.player1 = p1;
-    this.player2 = p2;
     this.player1.socket.emit(GameEvent.Bounce, this.sprite, this.direction);
     this.player2.socket.emit(GameEvent.Bounce, this.sprite, this.direction);
 
