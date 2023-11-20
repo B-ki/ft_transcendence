@@ -197,7 +197,8 @@ export class ChannelsService {
     });
 
     return {
-      content: message.content,
+      createdAt: created.createdAt,
+      content: created.content,
       channel: channel.name,
       user: {
         ...created.author,
@@ -218,7 +219,7 @@ export class ChannelsService {
       dto.offset = 0;
     }
 
-    return await this.prisma.message.findMany({
+    const messages = await this.prisma.message.findMany({
       where: {
         channel: { name: dto.channel },
       },
@@ -227,6 +228,20 @@ export class ChannelsService {
       },
       skip: dto.offset,
       take: dto.limit,
+    });
+
+    return messages.map((msg) => {
+      const channelUser = channel.users.find((u) => u.userId === msg.authorId);
+
+      return {
+        createdAt: msg.createdAt,
+        content: msg.content,
+        channel: channel.name,
+        user: {
+          ...msg.author,
+          role: channelUser ? channelUser.role : ChannelRole.USER,
+        },
+      };
     });
   }
 
@@ -626,6 +641,7 @@ export class ChannelsService {
     });
 
     return {
+      createdAt: created.createdAt,
       content: created.content,
       channel: channelName,
       user: {
