@@ -16,7 +16,10 @@ const ChatListElem = ({ chatInfos, setCurrentChannel, currentChannel }: ChatList
   return (
     <button
       onClick={() => handleClick(chatInfos)}
-      className="flex w-full cursor-pointer p-3 hover:bg-white-2"
+      className={`flex w-full cursor-pointer p-3 enabled:hover:bg-white-2 ${
+        currentChannel?.name === chatInfos.name && 'bg-white-3'
+      }`}
+      disabled={currentChannel?.name === chatInfos.name}
     >
       {/* <img src={chatInfos.profilePicture} alt="conversation" className="h-14 w-14 rounded-full" /> */}
       <div className="flex flex-col">

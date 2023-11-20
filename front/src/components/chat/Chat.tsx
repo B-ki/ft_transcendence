@@ -46,10 +46,8 @@ const Chat = () => {
       });
 
       tmpSocket.on('youJoined', (data: ChannelType) => {
-        console.log('You joined', data);
-        // TODO uncomment once this is done https://github.com/B-ki/ft_transcendence/issues/72
-        // setCurrentChannel(data);
-        // setJoinedChannels((prev) => [...prev, data]);
+        setCurrentChannel(data);
+        setJoinedChannels((prev) => [...prev, data]);
       });
     });
 
@@ -61,7 +59,7 @@ const Chat = () => {
   if (!socket) return <div>socket not initialized</div>;
 
   return (
-    <div className="flex max-h-full min-h-[75%] bg-white-1">
+    <div className="flex max-h-full min-h-[75%] w-full bg-white-1 md:w-auto">
       {showCreateModal && (
         <ChatModal>
           <CreateChannel setShowModal={setShowCreateModal} socket={socket} />
@@ -76,23 +74,23 @@ const Chat = () => {
           />
         </ChatModal>
       )}
-      <div className="flex flex-col">
-        <div className="flex justify-between gap-2 p-3">
-          <h2 className="text-xl">Messages</h2>
-          <div className="flex gap-2">
+      <div className="flex w-[35%] flex-col md:w-auto">
+        <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
+          <h2 className="text-base md:text-xl">Messages</h2>
+          <div className="flex w-full gap-1 md:gap-2">
             <button
               className="rounded-full p-1 hover:bg-white-3"
               title="Join a channel"
               onClick={() => setShowJoinModal(true)}
             >
-              <img className="w-6" src={chat_join} alt="join channel" />
+              <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
             </button>
             <button
               title="Create a channel"
               onClick={() => setShowCreateModal(true)}
               className="rounded-full p-1 hover:bg-white-3"
             >
-              <img className="w-6" src={chat_plus} alt="create channel" />
+              <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
             </button>
           </div>
         </div>

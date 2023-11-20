@@ -23,7 +23,6 @@ const CreateChannel = ({ setShowModal, socket }: CreateChannelProps) => {
     if (channelType === 'protected') {
       channel.password = passwordRef.current?.value;
     }
-    console.log('Creating channel', channel);
     socket.emit('create', channel);
     setShowModal(false);
   };

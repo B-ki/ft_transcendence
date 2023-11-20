@@ -29,9 +29,7 @@ export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  channelId: number;
-  authorId: number;
-  author: UserType;
+  user: UserType;
 }
 
 const Conversation = ({ channel, socket }: ConversationProps) => {
@@ -46,10 +44,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {
-      // TODO fix wrong MessageType from server
-      // if (messages.length > 0 && messages[messages.length - 1].id === data.id) return;
-      console.log(data);
-      // setMessages((messages) => [...messages, data]);
+      setMessages((messages) => [...messages, data]);
     });
     socket.emit(
       'history',
@@ -74,7 +69,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
   if (!infos) return <div>error</div>;
 
   return (
-    <div className="flex w-[500px] flex-col border-l border-l-white-3">
+    <div className="flex w-[65%] flex-col border-l border-l-white-3 md:w-[500px]">
       {showModal && (
         <ChatModal>
           <ChatInfos
@@ -94,13 +89,14 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
         </div>
       </div>
       <div className="flex h-full flex-col justify-end gap-1 p-3">
-        {messages.map((m) => {
+        {messages.map((m, idx) => {
+          // TODO replace idx by message id
           return (
             <Message
-              key={m.id}
+              key={idx}
               text={m.content}
-              send_by_user={m.author.login === infos?.login}
-              sender={m.author.login}
+              send_by_user={m.user.login === infos?.login}
+              sender={m.user.login}
             />
           );
         })}
