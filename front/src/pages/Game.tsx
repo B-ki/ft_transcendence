@@ -1,11 +1,11 @@
 import '@pixi/math-extras';
 
 import * as PIXI from 'pixi.js';
-import type { FC } from 'react';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
 
 import { Ball, Paddle } from './pong/BallPaddle';
 import { game } from './pong/config';
@@ -256,8 +256,7 @@ export class Pong extends Component {
         <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => this.launchGame(true)}>
           Bonus Game
         </Button>
-        <label htmlFor="key">Private Key (15 characters):</label>
-        <input type="text" id="key" required minLength={15} maxLength={15} size={15} />
+        <Input labelText="" inputText="Private key ..." mandatory={false} id="key"></Input>
       </div>
     );
   }

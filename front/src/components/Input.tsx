@@ -5,9 +5,10 @@ interface InputProps {
   labelText: string;
   inputText: string;
   mandatory: boolean;
+  id?: string;
 }
 
-export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
+export const Input: FC<InputProps> = ({ labelText, inputText, mandatory, id }) => {
   const [inputValue, setInputValue] = useState('');
 
   return (
@@ -22,6 +23,7 @@ export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={inputText}
+        id={id}
       />
     </label>
   );
