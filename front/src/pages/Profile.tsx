@@ -27,6 +27,7 @@ function Profile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get user profile'] });
+      queryClient.invalidateQueries({ queryKey: ['get games'] });
       setUsername('');
       setDescription('');
       setShow(false);
@@ -62,7 +63,7 @@ function Profile() {
   });
 
   const { data: win } = useApi().get('get user win', 'game/won') as UseQueryResult<gameDto[]>;
-  const { data: lose } = useApi().get('get user lose', 'game/lose') as UseQueryResult<gameDto[]>;
+  const { data: lose } = useApi().get('get user lost', 'game/lost') as UseQueryResult<gameDto[]>;
 
   const { data, isLoading, isError } = useApi().get(
     'get user profile',
@@ -234,7 +235,7 @@ function Profile() {
         </div>
       </div>
       <div className="flex w-screen items-center justify-center pt-32">
-        <GameHistoryTable></GameHistoryTable>
+        <GameHistoryTable login={user?.login}></GameHistoryTable>
       </div>
     </>
   );
