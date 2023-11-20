@@ -8,11 +8,7 @@ import { api, setApiToken } from '@/utils/api';
 
 import { Button } from './Button';
 
-const loginWithTwoFaCode = async ({
-  code,
-}: {
-  code: string;
-}): Promise<tokenDto> => {
+const loginWithTwoFaCode = async ({ code }: { code: string }): Promise<tokenDto> => {
   const json = await api.post('auth/2fa/login', { json: { twoFACode: code } }).json();
   const token: tokenDto = json as tokenDto;
   return token;
@@ -48,11 +44,7 @@ export const TwoFaLoginInput = (props: any) => {
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <input type="test" name="2FAcode" onChange={handleCodeChange} />
       </form>
-      <Button
-        size="small"
-        type="primary"
-        onClick={() => mutation.mutateAsync({ code: code })}
-      >
+      <Button size="small" type="primary" onClick={() => mutation.mutateAsync({ code: code })}>
         Submit
       </Button>
     </>
