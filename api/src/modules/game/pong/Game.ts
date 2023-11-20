@@ -268,8 +268,8 @@ export class Game {
         this.gameService.createGame(
           winner.socket.data.user.login,
           loser.socket.data.user.login,
-          this.player1.score,
-          this.player2.score,
+          winner.score,
+          loser.score,
         );
       }
       this.player1.reset();

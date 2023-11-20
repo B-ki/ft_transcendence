@@ -5,9 +5,10 @@ interface InputProps {
   labelText: string;
   inputText: string;
   mandatory: boolean;
+  id?: string;
 }
 
-export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
+export const Input: FC<InputProps> = ({ labelText, inputText, mandatory, id }) => {
   const [inputValue, setInputValue] = useState('');
 
   return (
@@ -16,12 +17,13 @@ export const Input: FC<InputProps> = ({ labelText, inputText, mandatory }) => {
         {labelText}
       </span>
       <input
-        className="rounded-md border border-dark-3 bg-white-3  invalid:border-red focus:border-blue focus:outline-none"
+        className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
         type="text"
         maxLength={30}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder={inputText}
+        id={id}
       />
     </label>
   );
