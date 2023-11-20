@@ -56,7 +56,7 @@ export class ChannelsService {
     }
 
     try {
-      await this.prisma.channel.create({
+      const createdChannel: any = await this.prisma.channel.create({
         data: {
           name: channel.name,
           type: channel.type,
@@ -72,6 +72,9 @@ export class ChannelsService {
           },
         },
       });
+
+      delete createdChannel.password;
+      return createdChannel;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
         throw new BadRequestException('Channel name must be unique');
@@ -128,10 +131,20 @@ export class ChannelsService {
     });
 
     return {
-      channel: channel.name,
-      user: {
-        ...channelUser.user,
-        role: ChannelRole.USER,
+      toChannel: {
+        channel: channel.name,
+        user: {
+          ...channelUser.user,
+          role: ChannelRole.USER,
+        },
+      },
+      toClient: {
+        id: channel.id,
+        createdAt: channel.createdAt,
+        updatedAt: channel.updatedAt,
+        name: channel.name,
+        type: channel.type,
+        isDM: channel.isDM,
       },
     };
   }

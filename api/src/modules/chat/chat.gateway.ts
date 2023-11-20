@@ -77,17 +77,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @MessageBody() channel: CreateChannelDTO,
     @ConnectedSocket() client: Socket,
   ) {
-    await this.channelsService.createChannel(channel, client.data.user);
+    const data = await this.channelsService.createChannel(channel, client.data.user);
     client.join(channel.name);
-    return { event: 'youJoined', data: channel.name };
+    return { event: 'youJoined', data: data };
   }
 
   @SubscribeMessage(ChatEvent.Join)
   async onJoinChannel(@MessageBody() channel: JoinChannelDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.joinChannel(channel, client.data.user);
-    this.io.to(channel.name).emit(ChatEvent.Join, data);
+    this.io.to(channel.name).emit(ChatEvent.Join, data.toChannel);
     client.join(channel.name);
-    return { event: 'youJoined', data: channel.name };
+    return { event: 'youJoined', data: data.toClient };
   }
 
   @SubscribeMessage(ChatEvent.Leave)
