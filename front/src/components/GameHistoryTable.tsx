@@ -3,7 +3,6 @@ import { UseQueryResult } from 'react-query';
 
 import background from '@/assets/low-poly-grid-haikei.svg';
 import { gameDto } from '@/dto/gameDto';
-import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 import { Button } from './Button';
