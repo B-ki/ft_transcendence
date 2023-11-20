@@ -38,6 +38,8 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
     visibleGameHistory = reverseArray.slice(startIndex, endIndex);
   }
 
+  console.log(games);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -48,7 +50,7 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
         className="border-separate rounded border bg-grey p-1 text-dark-1"
         style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover' }}
       >
-        {visibleGameHistory ? (
+        {visibleGameHistory && games?.length ? (
           <React.Fragment>
             <table className=" m-2 table-auto">
               <thead>
