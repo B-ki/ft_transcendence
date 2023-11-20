@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 
 import background from '@/assets/low-poly-grid-haikei.svg';
-
-import { Button } from './Button';
-import { useApi } from '@/hooks/useApi';
-import { UseQueryResult } from 'react-query';
 import { gameDto } from '@/dto/gameDto';
 import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
+
+import { Button } from './Button';
 
 const PAGE_SIZE = 5; // Number of records per page
 
