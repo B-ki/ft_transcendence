@@ -17,7 +17,7 @@ export const Input: FC<InputProps> = ({ labelText, inputText, mandatory, id }) =
         {labelText}
       </span>
       <input
-        className="rounded-md border border-dark-3 bg-white-3  invalid:border-red focus:border-blue focus:outline-none"
+        className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
         type="text"
         maxLength={30}
         value={inputValue}
