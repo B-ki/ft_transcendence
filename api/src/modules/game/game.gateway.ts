@@ -48,13 +48,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage(GameEvent.ClassicQueue)
-  joinClassicQueue(@ConnectedSocket() socket: Socket) {
-    this.pongService.joinClassicQueue(socket);
+  joinClassicQueue(@ConnectedSocket() socket: Socket, @MessageBody() key: string) {
+    this.pongService.joinClassicQueue(socket, key);
   }
 
   @SubscribeMessage(GameEvent.BonusQueue)
-  joinBonusQueue(@ConnectedSocket() socket: Socket) {
-    this.pongService.joinBonusQueue(socket);
+  joinBonusQueue(@ConnectedSocket() socket: Socket, @MessageBody() key: string) {
+    this.pongService.joinBonusQueue(socket, key);
   }
 
   @SubscribeMessage(GameEvent.LeaveQueue)

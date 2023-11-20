@@ -216,12 +216,13 @@ export class Pong extends Component {
   }
 
   launchGame(bonus: boolean) {
+    const textInput = document.getElementById('key') as HTMLInputElement;
     window.onresize = () => resize_game(this.app);
     this.screenManager.setMode(bonus);
     if (bonus) {
-      this.socket.emit(GameEvent.BonusQueue);
+      this.socket.emit(GameEvent.BonusQueue, textInput.value);
     } else {
-      this.socket.emit(GameEvent.ClassicQueue);
+      this.socket.emit(GameEvent.ClassicQueue, textInput.value);
     }
 
     this.pad1.sprite.y = 0;
@@ -255,6 +256,8 @@ export class Pong extends Component {
         <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => this.launchGame(true)}>
           Bonus Game
         </Button>
+        <label htmlFor="key">Private Key (15 characters):</label>
+        <input type="text" id="key" required minLength={15} maxLength={15} size={15} />
       </div>
     );
   }

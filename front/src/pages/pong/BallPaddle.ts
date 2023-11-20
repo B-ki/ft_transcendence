@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Socket } from 'socket.io-client';
 
 import { game } from './config';
+import { GameEvent } from './game.events';
 
 export class Paddle {
   sprite: PIXI.Graphics = new PIXI.Graphics();
@@ -23,7 +24,7 @@ export class Paddle {
     if (this.sprite.y < 0) this.sprite.y = 0;
     else if (this.sprite.y + this.sprite.height > game.screen.height)
       this.sprite.y = game.screen.height - this.sprite.height;
-    socket.emit('Paddle', this.sprite.y);
+    socket.emit(GameEvent.Paddle, this.sprite.y);
   }
 }
 

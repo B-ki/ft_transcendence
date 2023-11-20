@@ -13,6 +13,8 @@ export class PongService {
   private users: Map<string, Player> = new Map<string, Player>();
   private classicQueue: Player[] = [];
   private bonusQueue: Player[] = [];
+  private classicPrivate: Map<string, Player> = new Map<string, Player>();
+  private bonusPrivate: Map<string, Player> = new Map<string, Player>();
   private games: Game[] = [];
   private clock: PIXI.Ticker = new PIXI.Ticker();
 
@@ -54,8 +56,14 @@ export class PongService {
     }
   }
 
-  joinClassicQueue(socket: Socket) {
+  joinClassicQueue(socket: Socket, key: string) {
     const sender = this.users.get(socket.id);
+    if (!sender) return;
+    sender.key = key;
+    if (key) {
+      this.joinPrivateQueue(false, key, socket);
+      return;
+    }
 
     if (sender && this.classicQueue.push(sender) % 2 == 0) {
       this.createGame(
@@ -67,7 +75,11 @@ export class PongService {
     }
   }
 
-  joinBonusQueue(socket: Socket) {
+  joinBonusQueue(socket: Socket, key: string) {
+    if (key) {
+      this.joinPrivateQueue(true, key, socket);
+      return;
+    }
     const sender = this.users.get(socket.id);
 
     if (sender && this.bonusQueue.push(sender) % 2 == 0) {
@@ -80,8 +92,32 @@ export class PongService {
     }
   }
 
+  joinPrivateQueue(bonus: boolean, key: string, socket: Socket) {
+    const sender = this.users.get(socket.id);
+    if (!sender) return;
+    sender.key = key;
+    if (bonus) {
+      const opponent = this.bonusPrivate.get(key);
+      if (opponent && sender) {
+        this.createGame(opponent, sender, bonus);
+        this.bonusPrivate.delete(key);
+      } else {
+        this.bonusPrivate.set(key, sender!);
+      }
+    } else {
+      const opponent = this.classicPrivate.get(key);
+      if (opponent && sender) {
+        this.createGame(opponent, sender, bonus);
+        this.classicPrivate.delete(key);
+      } else {
+        this.classicPrivate.set(key, sender!);
+      }
+    }
+  }
+
   leaveQueue(socket: Socket) {
     const sender = this.users.get(socket.id);
+    if (!sender) return;
 
     let length: number = this.classicQueue.length;
     this.classicQueue = this.classicQueue.filter((player) => player != sender);
@@ -93,6 +129,16 @@ export class PongService {
     length = this.bonusQueue.length;
     this.bonusQueue = this.bonusQueue.filter((player) => player != sender);
     if (this.bonusQueue.length != length) {
+      socket.emit(GameEvent.LeaveQueue);
+      return;
+    }
+
+    if (this.bonusPrivate.delete(sender.key)) {
+      socket.emit(GameEvent.LeaveQueue);
+      return;
+    }
+
+    if (this.classicPrivate.delete(sender.key)) {
       socket.emit(GameEvent.LeaveQueue);
       return;
     }

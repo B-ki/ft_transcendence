@@ -64,6 +64,7 @@ export function gameScreen(app: PIXI.Application<HTMLCanvasElement>) {
   app.view.style.visibility = 'visible';
   document.getElementById('ClassicQueue')!.style.visibility = 'hidden';
   document.getElementById('BonusQueue')!.style.visibility = 'hidden';
+  document.getElementById('key')!.style.visibility = 'hidden';
 }
 
 export function buttonScreen(
@@ -74,6 +75,7 @@ export function buttonScreen(
   app.view.style.visibility = 'hidden';
   document.getElementById('ClassicQueue')!.style.visibility = 'visible';
   document.getElementById('BonusQueue')!.style.visibility = 'visible';
+  document.getElementById('key')!.style.visibility = 'visible';
 }
 
 export function bounceBall(pos: PIXI.Rectangle, dir: PIXI.Point, ball: Ball) {

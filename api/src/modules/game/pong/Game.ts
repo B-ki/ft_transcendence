@@ -14,6 +14,7 @@ export class Player {
   opponent: Player | null = null;
   score: number = 0;
   rect: PIXI.Rectangle = new PIXI.Rectangle();
+  key: string = '';
 
   constructor(socket: Socket) {
     this.socket = socket;
