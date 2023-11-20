@@ -244,7 +244,7 @@ export class Pong extends Component {
 
   render() {
     return (
-      <div className="mt-10 flex h-2/3 w-screen flex-col items-center justify-center gap-8">
+      <div className="mt-56 flex h-2/3 w-screen flex-col items-center justify-center gap-8">
         <Button
           id="ClassicQueue"
           type="primary"
@@ -262,8 +262,6 @@ export class Pong extends Component {
   }
 }
 
-import { Navbar } from '@/components/Navbar';
-
 import { DashLine } from './pong/DashLine';
 import { ScreenManager } from './pong/ScreenManager';
 import { TextButton } from './pong/SwitchButton';
@@ -271,7 +269,6 @@ import { TextButton } from './pong/SwitchButton';
 function Game() {
   return (
     <div>
-      <Navbar />
       <Pong />
     </div>
   );
