@@ -151,7 +151,6 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
     reverseArray = [...games].reverse();
     visibleGameHistory = reverseArray.slice(startIndex, endIndex);
   }
-  if (games) console.log(games);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
