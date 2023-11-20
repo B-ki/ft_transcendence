@@ -30,8 +30,8 @@ export class AuthController {
 
   @Post('2fa/login')
   @UseGuards(JwtAuthGuard)
-  async connectWith2FA(@Body() body: loginTwoFaDto) {
-    const token = await this.authService.loginWithTwoFa(body.twoFACode, body.login);
+  async connectWith2FA(@Body() body: loginTwoFaDto, @GetUser() user: User) {
+    const token = await this.authService.loginWithTwoFa(body.twoFACode, user);
     return { token };
   }
 

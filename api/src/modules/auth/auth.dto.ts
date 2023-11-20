@@ -47,8 +47,4 @@ export class loginTwoFaDto {
   @IsNotEmpty()
   @IsString()
   twoFACode: string;
-
-  @IsNotEmpty()
-  @IsString()
-  login: string;
 }
