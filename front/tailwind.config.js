@@ -20,6 +20,8 @@ module.exports = {
       'blue-bg': '#ECF2FF',
       grey: '#758492',
       'grey-bg': '#F7F7F9',
+      'yellow-1': '#F2C94C',
+      'green-1': '#6FCF97',
     },
     fontFamily: {
       sans: ['Roboto', 'sans-serif'],
