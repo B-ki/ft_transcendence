@@ -33,7 +33,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   }, []);
 
   const promoteUser = (user: UserType) => {
-    socket.emit('promote', { channel: channelName, user: user.login });
+    socket.emit('promote', { channel: channelName, login: user.login });
     setUsers(
       users.map((u) => {
         if (u.id === user.id) {
@@ -45,7 +45,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   };
 
   const kickUser = (user: UserType) => {
-    socket.emit('kick', { channel: channelName, user: user.login });
+    socket.emit('kick', { channel: channelName, login: user.login });
     setUsers(users.filter((u) => u.id !== user.id));
   };
 
