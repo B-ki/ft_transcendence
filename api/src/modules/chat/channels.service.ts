@@ -22,6 +22,7 @@ import {
   UpdateChannelDTO,
   UserListInChannelDTO,
 } from './chat.dto';
+import { Server, Socket } from 'socket.io';
 
 type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 
@@ -667,5 +668,19 @@ export class ChannelsService {
         role: ChannelRole.USER,
       },
     };
+  }
+
+  getSocketsForUser(login: string, socketsID: Map<string, string[]>, io: Server): Socket[] {
+    const result: Socket[] = [];
+
+    const ids = socketsID.get(login);
+    if (ids) {
+      ids.forEach((id) => {
+        const socket = (io.sockets as any).get(id);
+        result.push(socket);
+      });
+    }
+
+    return result;
   }
 }

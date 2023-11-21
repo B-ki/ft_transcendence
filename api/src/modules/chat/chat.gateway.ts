@@ -44,7 +44,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer()
   private io: Server;
   private logger: Logger = new Logger(ChatGateway.name);
-  private socketsID: Map<string, string> = new Map<string, string>();
+  private socketsID = new Map<string, string[]>();
 
   constructor(
     private jwtService: JwtService,
@@ -60,7 +60,10 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(socket: Socket) {
     this.logger.log('Client connected: ' + socket.id);
 
-    this.socketsID.set(socket.data.user.login, socket.id);
+    const login = socket.data.user.login;
+    const existingSockets = this.socketsID.get(login) || [];
+    existingSockets.push(socket.id);
+    this.socketsID.set(login, existingSockets);
 
     const channels = await this.channelsService.getJoinedChannels(socket.data.user);
     const channelsName = channels.map((c) => c.name);
@@ -69,7 +72,17 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   handleDisconnect(socket: Socket) {
     this.logger.log('Client disconnected: ' + socket.id);
-    this.socketsID.delete(socket.data.user.login);
+
+    const login = socket.data.user.login;
+    const existingSockets = this.socketsID.get(login) || [];
+    const updatedSockets = existingSockets.filter((id) => id !== socket.id);
+
+    if (updatedSockets.length > 0) {
+      this.socketsID.set(login, updatedSockets);
+    } else {
+      // If there are no more sockets for the user, remove the entry from the map
+      this.socketsID.delete(login);
+    }
   }
 
   @SubscribeMessage(ChatEvent.Create)
@@ -166,15 +179,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onKickUser(@MessageBody() kick: KickUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.kickUser(kick, client.data.user);
 
-    const socketID = this.socketsID.get(kick.login);
+    const sockets = this.channelsService.getSocketsForUser(kick.login, this.socketsID, this.io);
 
-    if (socketID) {
-      const socket = (this.io.sockets as any).get(socketID);
-
-      if (socket) {
-        socket.leave(kick.channel);
-        socket.emit('youLeft', data);
-      }
+    for (const socket of sockets) {
+      socket.leave(kick.channel);
+      socket.emit('youLeft', data);
     }
 
     this.io.to(kick.channel).emit(ChatEvent.Leave, data);
@@ -184,15 +193,11 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onBanUser(@MessageBody() ban: BanUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.banUser(ban, client.data.user);
 
-    const socketID = this.socketsID.get(ban.login);
+    const sockets = this.channelsService.getSocketsForUser(ban.login, this.socketsID, this.io);
 
-    if (socketID) {
-      const socket = (this.io.sockets as any).get(socketID);
-
-      if (socket) {
-        socket.leave(ban.channel);
-        socket.emit('youLeft', data);
-      }
+    for (const socket of sockets) {
+      socket.leave(ban.channel);
+      socket.emit('youLeft', data);
     }
 
     this.io.to(ban.channel).emit(ChatEvent.Leave, data);
@@ -208,9 +213,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onDirectMessageUser(@MessageBody() dm: SendDmDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.sendDM(dm, client.data.user);
 
-    const socketID = this.socketsID.get(dm.login);
-    if (socketID) {
-      this.io.to(socketID).emit(ChatEvent.DirectMessage, data);
+    const sockets = this.channelsService.getSocketsForUser(
+      client.data.user,
+      this.socketsID,
+      this.io,
+    );
+
+    for (const socket of sockets) {
+      this.io.to(socket.id).emit(ChatEvent.DirectMessage, data);
     }
 
     client.emit(ChatEvent.DirectMessage, data);
