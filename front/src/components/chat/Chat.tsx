@@ -5,6 +5,7 @@ import { io, Socket } from 'socket.io-client';
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
 
+import { FriendList } from '../FriendList';
 import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
@@ -73,7 +74,7 @@ const Chat = () => {
   if (!socket) return <div>socket not initialized</div>;
 
   return (
-    <div className="flex max-h-full min-h-[75%] w-full bg-white-1 md:w-auto">
+    <div className="flex max-h-full min-h-[75%] w-full rounded-lg bg-white-1 md:w-auto">
       {showCreateModal && (
         <ChatModal>
           <CreateChannel setShowModal={setShowCreateModal} socket={socket} />
