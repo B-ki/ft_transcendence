@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import { Socket } from 'socket.io-client';
 
@@ -36,6 +36,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
+  const bottomEl = useRef<HTMLDivElement>(null);
   const {
     data: infos,
     isError,
@@ -46,6 +47,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
     socket.on('message', (data: MessageType) => {
       setMessages((messages) => [...messages, data]);
     });
+
     socket.emit(
       'history',
       { channel: channel.name, offset: 0, limit: 100 },
@@ -53,10 +55,15 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
         setMessages(res);
       },
     );
+
     return () => {
       socket.off('message');
     };
   }, [channel]);
+
+  useEffect(() => {
+    bottomEl?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,7 +95,10 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
           </button>
         </div>
       </div>
-      <div className="flex h-full flex-col justify-end gap-1 p-3">
+      <div
+        className="flex h-full flex-col gap-1 overflow-y-auto p-3"
+        style={{ maxHeight: '600px' }}
+      >
         {messages.map((m, idx) => {
           // TODO replace idx by message id
           return (
@@ -100,6 +110,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             />
           );
         })}
+        <div ref={bottomEl}></div>
       </div>
       <div className="border-t border-t-white-3">
         <form
@@ -109,7 +120,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
           <input
             className="w-full bg-white-3 outline-none"
             type="text"
-            placeholder="ecrire un nouveau message"
+            placeholder="Write a new message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
