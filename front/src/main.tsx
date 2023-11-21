@@ -12,6 +12,7 @@ import Game from '@/pages/Game';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Profile from '@/pages/Profile';
+import User from './pages/User';
 import { privateGuard } from '@/utils/privateGuard';
 
 import Main from './components/Main';
@@ -55,6 +56,11 @@ const router = createBrowserRouter([
           {
             path: '/2fa',
             element: <TwoFaActivation />,
+            loader: privateGuard,
+          },
+          {
+            path: '/user/:login',
+            element: <User />,
             loader: privateGuard,
           },
         ],
