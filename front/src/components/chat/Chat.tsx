@@ -10,6 +10,7 @@ import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
 import JoinChannel from './JoinChannel';
+import { FriendList } from '../FriendList';
 
 export interface Channel {
   name: string;
@@ -73,7 +74,7 @@ const Chat = () => {
   if (!socket) return <div>socket not initialized</div>;
 
   return (
-    <div className="flex max-h-full min-h-[75%] w-full bg-white-1 md:w-auto">
+    <div className="flex max-h-full min-h-[75%] w-full rounded-lg bg-white-1 md:w-auto">
       {showCreateModal && (
         <ChatModal>
           <CreateChannel setShowModal={setShowCreateModal} socket={socket} />

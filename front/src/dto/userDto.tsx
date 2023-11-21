@@ -9,6 +9,7 @@ export interface userDto {
   description: string;
   bannerPath: string;
   intraImageURL: string;
+  status: string;
 }
 
 export const dummyUserDto: userDto = {
@@ -21,4 +22,5 @@ export const dummyUserDto: userDto = {
   description: '',
   intraImageURL: '',
   bannerPath: '',
+  status: '',
 };
