@@ -50,6 +50,12 @@ const Chat = () => {
         setJoinedChannels((prev) => [...prev, data]);
       });
 
+      tmpSocket.on('youLeft', (data: any) => {
+        setCurrentChannel(null);
+        setJoinedChannels(joinedChannels.filter((c) => c.name !== data.channel));
+        alert(`You left ${data.channel}, ${data.reason}`);
+      });
+
       tmpSocket.on('exception', (data) => {
         if (Array.isArray(data.message)) {
           alert(data.message.join('\n'));

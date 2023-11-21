@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
-import kick_icon from '@/assets/chat/ban.svg';
+import ban_icon from '@/assets/chat/ban.svg';
+import kick_icon from '@/assets/chat/kick.svg';
 import game_icon from '@/assets/chat/boxing-glove.svg';
 import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
@@ -63,6 +64,11 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
     setUsers(users.filter((u) => u.id !== user.id));
   };
 
+  const banUser = (user: UserType) => {
+    socket.emit('ban', { channel: channelName, login: user.login });
+    setUsers(users.filter((u) => u.id !== user.id));
+  };
+
   const startGame = (user: UserType) => {
     // TODO: start game with user
   };
@@ -104,7 +110,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                     disabled={!isAdmin || user.role === 'OWNER'}
                     onClick={() => demoteUser(user)}
                   >
-                    <img className="w-6" src={demote_icon} alt="info" />
+                    <img className="w-6" src={demote_icon} alt="demote" />
                   </button>
                 ) : (
                   <button
@@ -113,7 +119,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                     disabled={!isAdmin}
                     onClick={() => promoteUser(user)}
                   >
-                    <img className="w-6" src={promote_icon} alt="info" />
+                    <img className="w-6" src={promote_icon} alt="promote" />
                   </button>
                 )}
                 <button
@@ -122,7 +128,15 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                   disabled={!isAdmin}
                   onClick={() => kickUser(user)}
                 >
-                  <img className="w-6" src={kick_icon} alt="info" />
+                  <img className="w-6" src={kick_icon} alt="kick" />
+                </button>
+                <button
+                  className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
+                  title={isAdmin ? 'Ban user' : "Can't ban user because you are not admin"}
+                  disabled={!isAdmin}
+                  onClick={() => banUser(user)}
+                >
+                  <img className="w-6" src={ban_icon} alt="ban" />
                 </button>
               </div>
             </div>
