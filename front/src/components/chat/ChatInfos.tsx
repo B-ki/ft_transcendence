@@ -70,7 +70,9 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   };
 
   const startGame = (user: UserType) => {
-    // TODO: start game with user
+    const code = (Math.random() + 1).toString(36).substring(7);
+    const message = `Come join me in a Pong game! ${window.location.origin}/game?code=${code}`;
+    socket.emit('message', { channel: channelName, content: message });
   };
 
   // Contains the list of members in the channel, whith a possibility to kick them, to promote them as admin, and to start a game with them

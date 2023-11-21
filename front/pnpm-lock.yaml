@@ -38,6 +38,9 @@ dependencies:
   react-dropzone:
     specifier: ^14.2.3
     version: 14.2.3(react@18.2.0)
+  react-linkify:
+    specifier: 1.0.0-alpha
+    version: 1.0.0-alpha
   react-notifications-component:
     specifier: ^4.0.1
     version: 4.0.1(react@18.2.0)
@@ -64,6 +67,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.2.14
     version: 18.2.14
+  '@types/react-linkify':
+    specifier: ^1.0.4
+    version: 1.0.4
   '@types/react-router-dom':
     specifier: ^5.3.3
     version: 5.3.3
@@ -1204,6 +1210,12 @@ packages:
 
   /@types/react-dom@18.2.14:
     resolution: {integrity: sha512-V835xgdSVmyQmI1KLV2BEIUgqEuinxp9O4G6g3FqO/SqLac049E53aysv0oEFD2kHfejeKU+ZqL2bcFWj9gLAQ==}
+    dependencies:
+      '@types/react': 18.2.33
+    dev: true
+
+  /@types/react-linkify@1.0.4:
+    resolution: {integrity: sha512-NOMw4X3kjvjY0lT5kXQdxZCXpPNi2hOuuqG+Kz+5EOQpi9rDUJJDitdE1j2JRNmrTnNIjrLnYG0HKyuOWN/uKA==}
     dependencies:
       '@types/react': 18.2.33
     dev: true
@@ -3049,6 +3061,12 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
+  /linkify-it@2.2.0:
+    resolution: {integrity: sha512-GnAl/knGn+i1U/wjBz3akz2stz+HrHLsxMwHQGofCDfPvlf+gDKN58UtfmUquTY4/MXeE2x7k19KQmeoZi94Iw==}
+    dependencies:
+      uc.micro: 1.0.6
+    dev: false
+
   /locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
@@ -3641,6 +3659,13 @@ packages:
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
+  /react-linkify@1.0.0-alpha:
+    resolution: {integrity: sha512-7gcIUvJkAXXttt1fmBK9cwn+1jTa4hbKLGCZ9J1U6EOkyb2/+LKL1Z28d9rtDLMnpvImlNlLPdTPooorl5cpmg==}
+    dependencies:
+      linkify-it: 2.2.0
+      tlds: 1.247.0
+    dev: false
+
   /react-notifications-component@4.0.1(react@18.2.0):
     resolution: {integrity: sha512-NRBkWO19AsXmN0b8YQ0L12eoCAhrnmIZtGm77ATWSfQEXPL5PYSyeACpx7tePP+R2De9b0IP4yk9vY4TtzC02w==}
     peerDependencies:
@@ -4097,6 +4122,11 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
+  /tlds@1.247.0:
+    resolution: {integrity: sha512-m9G0j6euzOucY3Auzl2/SAnGXJVFA1ibJDRBqUdAx7o4jzMidCCKZXWNQVBDcx5zHISJl1r5yA8aaS6WfWuKMQ==}
+    hasBin: true
+    dev: false
+
   /to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
@@ -4197,6 +4227,10 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
+
+  /uc.micro@1.0.6:
+    resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
