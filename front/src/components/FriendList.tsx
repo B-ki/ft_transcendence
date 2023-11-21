@@ -1,10 +1,11 @@
 import React from 'react';
-import { userDto } from '@/dto/userDto';
-import { useApi } from '@/hooks/useApi';
 import { FC } from 'react';
 import { UseQueryResult } from 'react-query';
-import background from '@/assets/low-poly-grid-haikei.svg';
 import { Navigate, useNavigate } from 'react-router-dom';
+
+import background from '@/assets/low-poly-grid-haikei.svg';
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 
 interface Props {}
 
@@ -39,7 +40,7 @@ export const FriendList: FC<Props> = () => {
                   {friend.status === 'ONLINE' ? (
                     <React.Fragment>
                       <div>Online</div>
-                      <div className="bg-green-1 flex h-3 w-3 rounded-full"></div>
+                      <div className="flex h-3 w-3 rounded-full bg-green-1"></div>
                     </React.Fragment>
                   ) : friend.status === 'OFFLINE' ? (
                     <React.Fragment>
