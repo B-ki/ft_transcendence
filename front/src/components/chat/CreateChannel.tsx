@@ -26,6 +26,7 @@ const CreateChannel = ({ setShowModal, socket }: CreateChannelProps) => {
     socket.emit('create', channel);
     setShowModal(false);
   };
+
   return (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white-2 p-6 shadow-xl">
       <h2 className="mb-4 text-2xl">Create a channel</h2>
