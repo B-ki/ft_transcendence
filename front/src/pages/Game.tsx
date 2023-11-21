@@ -52,7 +52,6 @@ export class Pong extends Component {
         token: localStorage.getItem('token') as string,
       },
     });
-
     this.app = new PIXI.Application<HTMLCanvasElement>({
       width: game.screen.width,
       height: game.screen.height,
@@ -236,6 +235,7 @@ export class Pong extends Component {
     this.screenManager.queueScreen();
     resize_game(this.app);
   }
+
   componentWillUnmount(): void {
     this.app.destroy(true, { children: false, texture: true, baseTexture: true });
     this.socket.disconnect();
@@ -243,6 +243,9 @@ export class Pong extends Component {
   }
 
   render() {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const code = queryParameters.get('code');
+
     return (
       <div className="mt-56 flex h-2/3 w-screen flex-col items-center justify-center gap-8">
         <Button
@@ -256,7 +259,14 @@ export class Pong extends Component {
         <Button id="BonusQueue" type="primary" size="xlarge" onClick={() => this.launchGame(true)}>
           Bonus Game
         </Button>
-        <Input labelText="" inputText="Private key ..." mandatory={false} id="key"></Input>
+        <input
+          className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
+          type="text"
+          maxLength={30}
+          placeholder="Private key ..."
+          id="key"
+          defaultValue={code as string | undefined}
+        />
       </div>
     );
   }
