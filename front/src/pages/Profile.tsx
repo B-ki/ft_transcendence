@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChangeEvent, FormEvent } from 'react';
 import { useMutation, UseQueryResult } from 'react-query';
+
 import { Button } from '@/components/Button';
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { Modal } from '@/components/Modal';

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { UseQueryResult } from 'react-query';
+import { useParams } from 'react-router-dom';
+
 import { GameHistoryTable } from '@/components/GameHistoryTable';
 import { gameDto } from '@/dto/gameDto';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
-import { useParams } from 'react-router-dom';
 
 function User() {
   const routeParams = useParams();
