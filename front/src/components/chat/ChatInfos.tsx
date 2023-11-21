@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
@@ -7,7 +7,9 @@ import game_icon from '@/assets/chat/boxing-glove.svg';
 import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
 import kick_icon from '@/assets/chat/kick.svg';
+import mute_icon from '@/assets/chat/mute.svg';
 
+import ChatModal from './ChatModal';
 import { UserType } from './Conversation';
 
 interface ChatInfosProps {
@@ -26,6 +28,9 @@ interface UserListResponse {
 const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: ChatInfosProps) => {
   const [users, setUsers] = useState<UserType[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [showMuteModal, setShowMuteModal] = useState<boolean>(false);
+  const muteDurationRef = useRef<HTMLInputElement>(null);
+  const muteReasonRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     socket.emit('userList', { channel: channelName }, (res: UserListResponse) => {
@@ -67,6 +72,19 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   const banUser = (user: UserType) => {
     socket.emit('ban', { channel: channelName, login: user.login });
     setUsers(users.filter((u) => u.id !== user.id));
+  };
+
+  const muteUser = (e: React.FormEvent<HTMLFormElement>, user: UserType) => {
+    e.preventDefault();
+
+    const muteData = {
+      channel: channelName,
+      login: user.login,
+      reason: muteReasonRef.current?.value,
+      duration: Number(muteDurationRef.current?.value),
+    };
+
+    socket.emit('mute', muteData);
   };
 
   const startGame = () => {
@@ -140,6 +158,48 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                 >
                   <img className="w-6" src={ban_icon} alt="ban" />
                 </button>
+                <button
+                  className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
+                  title={isAdmin ? 'Mute user' : "Can't mute user because you are not admin"}
+                  disabled={!isAdmin}
+                  onClick={() => setShowMuteModal(true)}
+                >
+                  <img className="w-6" src={mute_icon} alt="mute" />
+                </button>
+                {showMuteModal && (
+                  <ChatModal>
+                    <div className="flex flex-col gap-2 rounded-lg bg-white-1 p-4">
+                      <div className="flex flex-col items-center justify-between gap-4">
+                        <h2 className="text-2xl">Mute user</h2>
+                        <form className="flex flex-col gap-2" onSubmit={(e) => muteUser(e, user)}>
+                          <input
+                            className="rounded-lg border-2 border-white-3 p-2"
+                            placeholder="Mute duration in seconds"
+                            ref={muteDurationRef}
+                            required
+                          ></input>
+                          <input
+                            className="rounded-lg border-2 border-white-3 p-2"
+                            placeholder="Mute reason (optional)"
+                            ref={muteReasonRef}
+                          ></input>
+                          <div className="flex justify-between">
+                            <button
+                              onClick={() => setShowMuteModal(false)}
+                              className="rounded-lg border-2 border-white-3 p-2 hover:bg-red hover:text-white-1"
+                            >
+                              Cancel
+                            </button>
+                            <button className="rounded-lg border-2 border-white-3 p-2 hover:bg-darkBlue-2 hover:text-white-1">
+                              Mute
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                      <div className="flex flex-col gap-2"></div>
+                    </div>
+                  </ChatModal>
+                )}
               </div>
             </div>
           );
