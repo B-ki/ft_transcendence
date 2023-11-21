@@ -69,7 +69,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
     setUsers(users.filter((u) => u.id !== user.id));
   };
 
-  const startGame = (user: UserType) => {
+  const startGame = () => {
     const code = (Math.random() + 1).toString(36).substring(7);
     const message = `Come join me in a Pong game! ${window.location.origin}/game?code=${code}`;
     socket.emit('message', { channel: channelName, content: message });
@@ -101,7 +101,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                 <button
                   className="rounded-full p-1 hover:bg-green-1"
                   title="Start a game"
-                  onClick={() => startGame(user)}
+                  onClick={() => startGame()}
                 >
                   <img className="w-6" src={game_icon} alt="close" />
                 </button>

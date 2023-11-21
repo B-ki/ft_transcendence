@@ -67,6 +67,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!message) return;
     socket.emit('message', { channel: channel.name, content: message });
     setMessage('');
   };
@@ -106,7 +107,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
               key={idx}
               text={m.content}
               send_by_user={m.user.login === infos?.login}
-              sender={m.user.login}
+              sender={m.user}
             />
           );
         })}
