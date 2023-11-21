@@ -4,8 +4,10 @@ import { Socket } from 'socket.io-client';
 import kick_icon from '@/assets/chat/ban.svg';
 import game_icon from '@/assets/chat/boxing-glove.svg';
 import promote_icon from '@/assets/chat/crown.svg';
+import demote_icon from '@/assets/chat/demote.svg';
 
 import { UserType } from './Conversation';
+import { Link } from 'react-router-dom';
 
 interface ChatInfosProps {
   setShowModal: (show: boolean) => void;
@@ -44,6 +46,18 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
     );
   };
 
+  const demoteUser = (user: UserType) => {
+    socket.emit('demote', { channel: channelName, login: user.login });
+    setUsers(
+      users.map((u) => {
+        if (u.id === user.id) {
+          return { ...u, role: 'USER' };
+        }
+        return u;
+      }),
+    );
+  };
+
   const kickUser = (user: UserType) => {
     socket.emit('kick', { channel: channelName, login: user.login });
     setUsers(users.filter((u) => u.id !== user.id));
@@ -69,10 +83,12 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
         {users.map((user) => {
           return (
             <div key={user.id} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <img className="w-8 rounded-full" src={user.intraImageURL} alt="user" />
-                <h3 className="text-lg">{user.login}</h3>
-              </div>
+              <Link to={'/user/' + user.login}>
+                <div className="flex items-center gap-2">
+                  <img className="w-8 rounded-full" src={user.intraImageURL} alt="user" />
+                  <h3 className="text-lg">{user.login}</h3>
+                </div>
+              </Link>
               <div className="flex gap-2">
                 <button
                   className="rounded-full p-1 hover:bg-green-1"
@@ -81,14 +97,25 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                 >
                   <img className="w-6" src={game_icon} alt="close" />
                 </button>
-                <button
-                  className="rounded-full p-1 enabled:hover:bg-yellow-1 disabled:cursor-not-allowed"
-                  title={'Promote user to admin'}
-                  disabled={!isAdmin || user.role === 'ADMIN' || user.role === 'OWNER'}
-                  onClick={() => promoteUser(user)}
-                >
-                  <img className="w-6" src={promote_icon} alt="info" />
-                </button>
+                {user.role === 'ADMIN' || user.role === 'OWNER' ? (
+                  <button
+                    className="rounded-full p-1 enabled:hover:bg-yellow-1 disabled:cursor-not-allowed"
+                    title={'Demote user'}
+                    disabled={!isAdmin || user.role === 'OWNER'}
+                    onClick={() => demoteUser(user)}
+                  >
+                    <img className="w-6" src={demote_icon} alt="info" />
+                  </button>
+                ) : (
+                  <button
+                    className="rounded-full p-1 enabled:hover:bg-yellow-1 disabled:cursor-not-allowed"
+                    title={'Promote user to admin'}
+                    disabled={!isAdmin}
+                    onClick={() => promoteUser(user)}
+                  >
+                    <img className="w-6" src={promote_icon} alt="info" />
+                  </button>
+                )}
                 <button
                   className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
                   title={isAdmin ? 'Kick user' : "Can't kick user because you are not admin"}
