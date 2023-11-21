@@ -61,6 +61,7 @@ services:
       - ./api/package.json:/app/package.json
       - ./api/pnpm-lock.yaml:/app/pnpm-lock.yaml
       - ./api/src:/app/src
+      - image_uploads:/app/uploads
     networks:
       - network
     ports:
@@ -69,6 +70,7 @@ services:
 
 volumes:
   db_data:
+  image_uploads:
 
 networks:
   network:
