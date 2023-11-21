@@ -18,6 +18,7 @@ import Main from './components/Main';
 import OauthCallback from './pages/OauthCallback';
 import TwoFaActivation from './pages/TwoFaActivation';
 import TwoFaLogin from './pages/TwoFaLogin';
+import User from './pages/User';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -55,6 +56,11 @@ const router = createBrowserRouter([
           {
             path: '/2fa',
             element: <TwoFaActivation />,
+            loader: privateGuard,
+          },
+          {
+            path: '/user/:login',
+            element: <User />,
             loader: privateGuard,
           },
         ],

@@ -15,12 +15,12 @@ interface HistoryProps {
 
 export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  let totalPages, startIndex, endIndex, visibleGameHistory, reverseArray;
+  let totalPages, startIndex, endIndex, visibleGameHistory, reverseArray, won;
   const {
     data: games,
     isLoading,
     isError,
-  } = useApi().get('get games', 'game/all') as UseQueryResult<gameDto[]>;
+  } = useApi().get('get games', `game/all/${login}`) as UseQueryResult<gameDto[]>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -37,8 +37,6 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
     reverseArray = [...games].reverse();
     visibleGameHistory = reverseArray.slice(startIndex, endIndex);
   }
-
-  console.log(games);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
