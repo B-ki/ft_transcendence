@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
 import ban_icon from '@/assets/chat/ban.svg';
-import kick_icon from '@/assets/chat/kick.svg';
 import game_icon from '@/assets/chat/boxing-glove.svg';
 import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
+import kick_icon from '@/assets/chat/kick.svg';
 
 import { UserType } from './Conversation';
 
