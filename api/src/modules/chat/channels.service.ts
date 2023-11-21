@@ -3,6 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'nestjs-prisma';
+import { Server, Socket } from 'socket.io';
 
 import { config } from '@/config';
 
@@ -22,7 +23,6 @@ import {
   UpdateChannelDTO,
   UserListInChannelDTO,
 } from './chat.dto';
-import { Server, Socket } from 'socket.io';
 
 type ChannelWithUsers = Prisma.ChannelGetPayload<{ include: { users: true } }>;
 
