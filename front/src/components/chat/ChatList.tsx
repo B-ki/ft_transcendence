@@ -41,7 +41,7 @@ interface ChatListProps {
 
 const ChatList = ({ joinedChannels, currentChannel, setCurrentChannel }: ChatListProps) => {
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full overflow-y-auto" style={{ maxHeight: '600px' }}>
       {joinedChannels.map((chat) => (
         <ChatListElem
           setCurrentChannel={setCurrentChannel}
