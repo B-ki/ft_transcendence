@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
 import kick_icon from '@/assets/chat/ban.svg';
@@ -7,7 +8,6 @@ import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
 
 import { UserType } from './Conversation';
-import { Link } from 'react-router-dom';
 
 interface ChatInfosProps {
   setShowModal: (show: boolean) => void;
