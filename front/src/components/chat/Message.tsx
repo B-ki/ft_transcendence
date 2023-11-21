@@ -17,10 +17,12 @@ const Message = ({ text, sender, send_by_user }: MessageProps) => {
         send_by_user ? 'self-end bg-darkBlue-2 text-white-1' : 'self-start bg-white-3'
       }`}
     >
-      <div className="flex gap-1 font-bold">
-        <img className="w-8 rounded-full" src={sender.intraImageURL} alt="user" />
-        <span className="text-lg">{sender.login}</span>
-      </div>
+      <Link to={'/user/' + sender.login}>
+        <div className="flex gap-1 font-bold">
+          <img className="w-8 rounded-full" src={sender.intraImageURL} alt="user" />
+          <span className="text-lg">{sender.login}</span>
+        </div>
+      </Link>
       <Linkify
         componentDecorator={(decoratedHref, decoratedText, key) => (
           <Link to={decoratedHref} key={key} style={{ color: '#3182CE' }}>

@@ -3,6 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { ChannelRole, ChannelType, Prisma, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'nestjs-prisma';
+import { Server, Socket } from 'socket.io';
 
 import { config } from '@/config';
 
@@ -239,23 +240,28 @@ export class ChannelsService {
       include: {
         author: true,
       },
+      orderBy: {
+        id: 'desc',
+      },
       skip: dto.offset,
       take: dto.limit,
     });
 
-    return messages.map((msg) => {
-      const channelUser = channel.users.find((u) => u.userId === msg.authorId);
+    return messages
+      .map((msg) => {
+        const channelUser = channel.users.find((u) => u.userId === msg.authorId);
 
-      return {
-        createdAt: msg.createdAt,
-        content: msg.content,
-        channel: channel.name,
-        user: {
-          ...msg.author,
-          role: channelUser ? channelUser.role : ChannelRole.USER,
-        },
-      };
-    });
+        return {
+          createdAt: msg.createdAt,
+          content: msg.content,
+          channel: channel.name,
+          user: {
+            ...msg.author,
+            role: channelUser ? channelUser.role : ChannelRole.USER,
+          },
+        };
+      })
+      .reverse();
   }
 
   async updateChannel(updateData: UpdateChannelDTO, user: User) {
@@ -662,5 +668,19 @@ export class ChannelsService {
         role: ChannelRole.USER,
       },
     };
+  }
+
+  getSocketsForUser(login: string, socketsID: Map<string, string[]>, io: Server): Socket[] {
+    const result: Socket[] = [];
+
+    const ids = socketsID.get(login);
+    if (ids) {
+      ids.forEach((id) => {
+        const socket = (io.sockets as any).get(id);
+        result.push(socket);
+      });
+    }
+
+    return result;
   }
 }

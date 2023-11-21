@@ -39,6 +39,8 @@ services:
       dockerfile: Dockerfile
     container_name: api
     restart: unless-stopped
+    volumes:
+      - image_uploads:/app/uploads
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST:?err}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
@@ -61,6 +63,7 @@ services:
 
 volumes:
   db_data:
+  image_uploads:
 
 networks:
   network:

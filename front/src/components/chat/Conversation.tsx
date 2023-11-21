@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import { Socket } from 'socket.io-client';
 
+import edit_icon from '@/assets/chat/edit.svg';
 import info_icon from '@/assets/chat/info.svg';
 import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './Chat';
+import ChatEdit from './ChatEdit';
 import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
 import Message from './Message';
@@ -33,7 +35,8 @@ export interface MessageType {
 }
 
 const Conversation = ({ channel, socket }: ConversationProps) => {
-  const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
   const bottomEl = useRef<HTMLDivElement>(null);
@@ -55,6 +58,10 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
         setMessages(res);
       },
     );
+
+    socket.on('mute', (data) => {
+      alert(`Channel ${channel.name}, ${data.reason}`);
+    });
 
     return () => {
       socket.off('message');
@@ -78,10 +85,20 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
   return (
     <div className="flex w-[65%] flex-col border-l border-l-white-3 md:w-[500px]">
-      {showModal && (
+      {showInfoModal && (
         <ChatModal>
           <ChatInfos
-            setShowModal={setShowModal}
+            setShowModal={setShowInfoModal}
+            socket={socket}
+            channelName={channel.name}
+            currentUserLogin={infos.login}
+          />
+        </ChatModal>
+      )}
+      {showEditModal && (
+        <ChatModal>
+          <ChatEdit
+            setShowModal={setShowEditModal}
             socket={socket}
             channelName={channel.name}
             currentUserLogin={infos.login}
@@ -90,8 +107,17 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
       )}
       <div className="flex justify-between p-3">
         <h3 className="text-xl">{channel.name}</h3>
-        <div className="flex gap-2">
-          <button className="rounded-full p-1 hover:bg-white-3" onClick={() => setShowModal(true)}>
+        <div className="flex gap-1">
+          <button
+            className="rounded-full p-1 hover:bg-white-3"
+            onClick={() => setShowEditModal(true)}
+          >
+            <img className="w-6" src={edit_icon} alt="info" />
+          </button>
+          <button
+            className="rounded-full p-1 hover:bg-white-3"
+            onClick={() => setShowInfoModal(true)}
+          >
             <img className="w-6" src={info_icon} alt="info" />
           </button>
         </div>
