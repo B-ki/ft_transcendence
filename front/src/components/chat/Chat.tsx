@@ -49,6 +49,14 @@ const Chat = () => {
         setCurrentChannel(data);
         setJoinedChannels((prev) => [...prev, data]);
       });
+
+      tmpSocket.on('exception', (data) => {
+        if (Array.isArray(data.message)) {
+          alert(data.message.join('\n'));
+        } else {
+          alert(data.message);
+        }
+      });
     });
 
     return () => {
