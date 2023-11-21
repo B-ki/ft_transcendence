@@ -239,23 +239,28 @@ export class ChannelsService {
       include: {
         author: true,
       },
+      orderBy: {
+        id: 'desc',
+      },
       skip: dto.offset,
       take: dto.limit,
     });
 
-    return messages.map((msg) => {
-      const channelUser = channel.users.find((u) => u.userId === msg.authorId);
+    return messages
+      .map((msg) => {
+        const channelUser = channel.users.find((u) => u.userId === msg.authorId);
 
-      return {
-        createdAt: msg.createdAt,
-        content: msg.content,
-        channel: channel.name,
-        user: {
-          ...msg.author,
-          role: channelUser ? channelUser.role : ChannelRole.USER,
-        },
-      };
-    });
+        return {
+          createdAt: msg.createdAt,
+          content: msg.content,
+          channel: channel.name,
+          user: {
+            ...msg.author,
+            role: channelUser ? channelUser.role : ChannelRole.USER,
+          },
+        };
+      })
+      .reverse();
   }
 
   async updateChannel(updateData: UpdateChannelDTO, user: User) {

@@ -9,10 +9,10 @@ import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './Chat';
+import ChatEdit from './ChatEdit';
 import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
 import Message from './Message';
-import ChatEdit from './ChatEdit';
 
 interface ConversationProps {
   channel: ChannelType;
@@ -58,6 +58,10 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
         setMessages(res);
       },
     );
+
+    socket.on('mute', (data) => {
+      alert(`Channel ${channel.name}, ${data.reason}`);
+    });
 
     return () => {
       socket.off('message');
