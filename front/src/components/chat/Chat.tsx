@@ -5,12 +5,12 @@ import { io, Socket } from 'socket.io-client';
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
 
+import { FriendList } from '../FriendList';
 import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
 import JoinChannel from './JoinChannel';
-import { FriendList } from '../FriendList';
 
 export interface Channel {
   name: string;

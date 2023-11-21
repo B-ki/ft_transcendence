@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button';
-import { FriendList } from '@/components/FriendList';
 import Chat from '@/components/chat/Chat';
+import { FriendList } from '@/components/FriendList';
 
 const ChatPage = () => {
   return (
