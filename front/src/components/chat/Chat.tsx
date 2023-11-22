@@ -4,13 +4,15 @@ import { io, Socket } from 'socket.io-client';
 
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
+import chat_channel from '@/assets/chat/Chat.svg';
+import chat_DM from '@/assets/chat/comment.svg';
 
-import { FriendList } from '../FriendList';
 import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
 import JoinChannel from './JoinChannel';
+import { Button } from '../Button';
 
 export interface Channel {
   name: string;
@@ -34,6 +36,7 @@ const Chat = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
   const [currentChannel, setCurrentChannel] = useState<ChannelType | null>(null);
+  const [show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -89,32 +92,75 @@ const Chat = () => {
           />
         </ChatModal>
       )}
-      <div className="flex w-[35%] flex-col md:w-auto">
-        <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
-          <h2 className="text-base md:text-xl">Messages</h2>
-          <div className="flex w-full gap-1 md:gap-2">
-            <button
-              className="rounded-full p-1 hover:bg-white-3"
-              title="Join a channel"
-              onClick={() => setShowJoinModal(true)}
-            >
-              <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
-            </button>
-            <button
-              title="Create a channel"
-              onClick={() => setShowCreateModal(true)}
-              className="rounded-full p-1 hover:bg-white-3"
-            >
-              <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
-            </button>
+      {show ? (
+        <div className="flex w-[35%] flex-col md:w-auto">
+          <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
+            <h2 className="text-base md:text-xl">Channels</h2>
+            <div className="flex w-full gap-1 md:gap-2">
+              <button
+                className="rounded-full p-1 hover:bg-white-3"
+                title="Go to direct messages"
+                onClick={() => setShow(false)}
+              >
+                <img className="w-5 md:w-6" src={chat_channel} alt="Direct messages" />
+              </button>
+              <button
+                className="rounded-full p-1 hover:bg-white-3"
+                title="Join a channel"
+                onClick={() => setShowJoinModal(true)}
+              >
+                <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
+              </button>
+              <button
+                title="Create a channel"
+                onClick={() => setShowCreateModal(true)}
+                className="rounded-full p-1 hover:bg-white-3"
+              >
+                <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
+              </button>
+            </div>
           </div>
+          <ChatList
+            joinedChannels={joinedChannels}
+            setCurrentChannel={setCurrentChannel}
+            currentChannel={currentChannel}
+          />
         </div>
-        <ChatList
-          joinedChannels={joinedChannels}
-          setCurrentChannel={setCurrentChannel}
-          currentChannel={currentChannel}
-        />
-      </div>
+      ) : (
+        <div className="flex w-[35%] flex-col md:w-auto">
+          <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
+            <h2 className="text-base md:text-xl">Direct message</h2>
+            <div className="flex w-full justify-center gap-1 md:gap-2">
+              <button
+                className="rounded-full p-1 hover:bg-white-3"
+                title="Go to channels"
+                onClick={() => setShow(true)}
+              >
+                <img className="w-5 md:w-6" src={chat_DM} alt="Channels" />
+              </button>
+              <button
+                className="rounded-full p-1 hover:bg-white-3"
+                title="Join a channel"
+                onClick={() => setShowJoinModal(true)}
+              >
+                <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
+              </button>
+              <button
+                title="Create a channel"
+                onClick={() => setShowCreateModal(true)}
+                className="rounded-full p-1 hover:bg-white-3"
+              >
+                <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
+              </button>
+            </div>
+          </div>
+          <ChatList
+            joinedChannels={joinedChannels}
+            setCurrentChannel={setCurrentChannel}
+            currentChannel={currentChannel}
+          />
+        </div>
+      )}
       {currentChannel && <Conversation socket={socket} channel={currentChannel} />}
     </div>
   );

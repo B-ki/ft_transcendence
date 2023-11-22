@@ -10,6 +10,10 @@ import DMConversation from './DMConversation';
 import DMList from './DMList';
 import DMModal from './DMModal';
 import JoinDM from './JoinDM';
+import FriendList from '@/components/friends/FriendList';
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
+import { UseQueryResult } from 'react-query';
 
 export interface Channel {
   name: string;
@@ -33,6 +37,13 @@ const DM = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
   const [currentChannel, setCurrentChannel] = useState<ChannelType | null>(null);
+  const [currentFriend, setCurrentFriend] = useState<userDto | null>(null);
+
+  const {
+    data: friendList,
+    isLoading,
+    isError,
+  } = useApi().get('get friend list', 'user/friends/friendlist') as UseQueryResult<userDto[]>;
 
   useEffect(() => {
     setLoading(true);
@@ -72,6 +83,13 @@ const DM = () => {
   if (loading) return <div>loading</div>;
   if (!socket) return <div>socket not initialized</div>;
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
+
   return (
     <div className="flex max-h-full min-h-[75%] w-full bg-white-1 md:w-auto">
       {showCreateModal && (
@@ -104,7 +122,10 @@ const DM = () => {
             </button>
           </div>
         </div>
-        <DMList
+        <FriendList
+          allFriends={friendList}
+          setCurrentFriend={setCurrentFriend}
+          currentFriend={currentFriend}
           joinedChannels={joinedChannels}
           setCurrentChannel={setCurrentChannel}
           currentChannel={currentChannel}

@@ -194,4 +194,8 @@ export class UserService {
       },
     });
   }
+
+  async getAllUsers(): Promise<User[]> {
+    return await this.prisma.user.findMany();
+  }
 }
