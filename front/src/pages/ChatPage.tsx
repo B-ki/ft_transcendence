@@ -1,6 +1,6 @@
 import Chat from '@/components/chat/Chat';
 
-const Friends = () => {
+const ChatPage = () => {
   return (
     <div className="flex h-full w-full items-center justify-center">
       <Chat />
@@ -8,4 +8,4 @@ const Friends = () => {
   );
 };
 
-export default Friends;
+export default ChatPage;

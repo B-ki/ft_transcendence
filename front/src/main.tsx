@@ -7,7 +7,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from '@/components/Root';
 import Error from '@/pages/Error';
-import Friends from '@/pages/Friends';
 import Game from '@/pages/Game';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
@@ -19,6 +18,8 @@ import OauthCallback from './pages/OauthCallback';
 import TwoFaActivation from './pages/TwoFaActivation';
 import TwoFaLogin from './pages/TwoFaLogin';
 import User from './pages/User';
+import FriendPage from './pages/FriendPage';
+import ChatPage from './pages/ChatPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -45,7 +46,12 @@ const router = createBrowserRouter([
           },
           {
             path: '/friends',
-            element: <Friends />,
+            element: <FriendPage />,
+            loader: privateGuard,
+          },
+          {
+            path: '/chat',
+            element: <ChatPage />,
             loader: privateGuard,
           },
           {
