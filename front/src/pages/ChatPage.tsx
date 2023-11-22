@@ -2,7 +2,7 @@ import { Button } from '@/components/Button';
 import Chat from '@/components/chat/Chat';
 import { FriendList } from '@/components/FriendList';
 
-const Friends = () => {
+const ChatPage = () => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
       <div className="flex gap-3"></div>
@@ -11,4 +11,4 @@ const Friends = () => {
   );
 };
 
-export default Friends;
+export default ChatPage;
