@@ -39,6 +39,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
+  const [blockedUsers, setBlockedUsers] = useState<UserType[]>([]);
   const bottomEl = useRef<HTMLDivElement>(null);
   const {
     data: infos,
@@ -48,6 +49,13 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {
+      console.log(blockedUsers);
+      console.log(data.user.id);
+      if (blockedUsers.some((u) => u.id === data.user.id)) {
+        console.log(`blocking message from ${data.user.login}: ${data.content}`);
+        return;
+      }
+
       setMessages((messages) => [...messages, data]);
     });
 
@@ -61,6 +69,10 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
     socket.on('mute', (data) => {
       alert(`Channel ${channel.name}, ${data.reason}`);
+    });
+
+    socket.emit('blockList', (data: UserType[]) => {
+      setBlockedUsers(data);
     });
 
     return () => {
@@ -92,6 +104,8 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             socket={socket}
             channelName={channel.name}
             currentUserLogin={infos.login}
+            blockedUsers={blockedUsers}
+            setBlockedUsers={setBlockedUsers}
           />
         </ChatModal>
       )}

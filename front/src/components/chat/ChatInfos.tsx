@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
 import ban_icon from '@/assets/chat/ban.svg';
+import block_icon from '@/assets/chat/block.svg';
 import game_icon from '@/assets/chat/boxing-glove.svg';
 import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
 import kick_icon from '@/assets/chat/kick.svg';
 import mute_icon from '@/assets/chat/mute.svg';
+import unblock_icon from '@/assets/chat/unblock.svg';
 
 import ChatModal from './ChatModal';
 import { UserType } from './Conversation';
@@ -17,6 +19,8 @@ interface ChatInfosProps {
   socket: Socket;
   channelName: string;
   currentUserLogin: string;
+  blockedUsers: UserType[];
+  setBlockedUsers: (users: UserType[] | ((prev: UserType[]) => UserType[])) => void;
 }
 
 interface UserListResponse {
@@ -25,7 +29,14 @@ interface UserListResponse {
 }
 
 // TODO: leaver button ??
-const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: ChatInfosProps) => {
+const ChatInfos = ({
+  setShowModal,
+  socket,
+  channelName,
+  currentUserLogin,
+  blockedUsers,
+  setBlockedUsers,
+}: ChatInfosProps) => {
   const [users, setUsers] = useState<UserType[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showMuteModal, setShowMuteModal] = useState<boolean>(false);
@@ -72,6 +83,17 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   const banUser = (user: UserType) => {
     socket.emit('ban', { channel: channelName, login: user.login });
     setUsers(users.filter((u) => u.id !== user.id));
+  };
+
+  const blockUser = (user: UserType) => {
+    socket.emit('block', { login: user.login });
+    setBlockedUsers((prev) => [...prev, user]);
+  };
+
+  const unblockUser = (user: UserType) => {
+    socket.emit('unblock', { login: user.login });
+    console.log(blockedUsers);
+    setBlockedUsers(blockedUsers.filter((u) => u.id !== user.id));
   };
 
   const muteUser = (e: React.FormEvent<HTMLFormElement>, user: UserType) => {
@@ -166,6 +188,23 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                 >
                   <img className="w-6" src={mute_icon} alt="mute" />
                 </button>
+                {blockedUsers.some((u) => u.id === user.id) ? (
+                  <button
+                    className="rounded-full p-1 enabled:hover:bg-green-1 disabled:cursor-not-allowed"
+                    title="Unblock user"
+                    onClick={() => unblockUser(user)}
+                  >
+                    <img className="w-6" src={unblock_icon} alt="block" />
+                  </button>
+                ) : (
+                  <button
+                    className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
+                    title="Block user"
+                    onClick={() => blockUser(user)}
+                  >
+                    <img className="w-6" src={block_icon} alt="block" />
+                  </button>
+                )}
                 {showMuteModal && (
                   <ChatModal>
                     <div className="flex flex-col gap-2 rounded-lg bg-white-1 p-4">
