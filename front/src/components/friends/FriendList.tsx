@@ -4,6 +4,8 @@ import { useApi } from '@/hooks/useApi';
 import { FC } from 'react';
 import { UseQueryResult } from 'react-query';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { ChannelType } from './DM';
+import { channel } from 'diagnostics_channel';
 
 interface FriendListElemProps {
   friendInfos: userDto;
@@ -12,14 +14,15 @@ interface FriendListElemProps {
 }
 
 const FriendListElem = ({ friendInfos, setCurrentFriend, currentFriend }: FriendListElemProps) => {
-  const navigate = useNavigate();
   const handleClick = (friend: userDto) => {
-    if (currentFriend === null || friend.login !== currentFriend?.login) setCurrentFriend(friend);
+    if (currentFriend === null || friend.login !== currentFriend?.login) {
+      setCurrentFriend(friend);
+    }
   };
   return (
     <button
       onClick={() => handleClick(friendInfos)}
-      className={`flex w-full cursor-pointer p-3 enabled:hover:bg-grey  ${
+      className={`flex w-full cursor-pointer p-3 enabled:hover:bg-white-2  ${
         currentFriend?.login === friendInfos.login && 'bg-white-3'
       }`}
       disabled={currentFriend?.login === friendInfos.login}
@@ -62,21 +65,22 @@ const FriendListElem = ({ friendInfos, setCurrentFriend, currentFriend }: Friend
   );
 };
 
-interface FriendListProps {}
+interface FriendListProps {
+  allFriends: userDto[] | undefined;
+  currentFriend: userDto | null;
+  setCurrentFriend: (friend: userDto) => void;
+  joinedChannels: ChannelType[];
+  currentChannel: ChannelType | null;
+  setCurrentChannel: (channel: ChannelType) => void;
+}
 
-export const FriendList: FC<FriendListProps> = () => {
-  const [currentFriend, setCurrentFriend] = useState<userDto | null>();
-  const {
-    data: friendList,
-    isLoading,
-    isError,
-  } = useApi().get('get friend list', 'user/friends/friendlist') as UseQueryResult<userDto[]>;
-
+const FriendList = ({ allFriends, currentFriend, setCurrentFriend }: FriendListProps) => {
   return (
     <div className="h-full w-full">
-      {friendList ? (
-        friendList.map((friend, index) => (
+      {allFriends ? (
+        allFriends.map((friend, index) => (
           <FriendListElem
+            key={index}
             setCurrentFriend={setCurrentFriend}
             friendInfos={friend}
             currentFriend={currentFriend}
@@ -88,3 +92,5 @@ export const FriendList: FC<FriendListProps> = () => {
     </div>
   );
 };
+
+export default FriendList;

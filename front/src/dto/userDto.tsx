@@ -1,3 +1,5 @@
+import { ChannelType } from '@/components/chat/Chat';
+
 export interface userDto {
   login: string;
   first_name: string;
@@ -10,6 +12,7 @@ export interface userDto {
   bannerPath: string;
   intraImageURL: string;
   status: string;
+  channel: ChannelType;
 }
 
 export const dummyUserDto: userDto = {

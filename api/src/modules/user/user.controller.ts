@@ -97,4 +97,9 @@ export class UserController {
   async getUserByLogin(@Param('login') login: string) {
     return this.userService.getUnique(login);
   }
+
+  @Get('/all')
+  async getAllUsers() {
+    return this.userService.getAllUsers();
+  }
 }
