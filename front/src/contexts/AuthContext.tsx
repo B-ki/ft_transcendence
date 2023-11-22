@@ -10,6 +10,7 @@ interface AuthContextType {
   logout: () => void;
   setLogin: (user: string | undefined) => void;
   setToken: (token: string | null) => void;
+  socket?: Socket;
 }
 
 interface TokenDecoded {
@@ -25,9 +26,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   const [login, setLogin] = useState<string | undefined>(undefined);
   const [socket, setSocket] = useState<Socket>();
 
+  const connectNotifySocket = (token: string | null) => {
+    if (!token) {
+      return;
+    }
+
+    const newSocket = io('/notify', { extraHeaders: { token: token } });
+    newSocket.on('connect', () => {
+      console.log('Notify socket connected');
+      setSocket(newSocket);
+    });
+    newSocket.on('disconnect', () => {
+      console.log('Notify socket disconnected');
+      setSocket(undefined);
+    });
+  };
+
   const setToken = (token: string | null) => {
     localStorage.setItem('token', token || '');
     setApiToken(token);
+    connectNotifySocket(token);
   };
 
   useEffect(() => {
@@ -36,16 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
       const decoded = jwtDecode<TokenDecoded | null>(token);
       if (decoded && decoded.exp * 1000 > Date.now()) {
         setLogin(decoded.login);
-
-        const newSocket = io('/notify', { extraHeaders: { token: token } });
-        newSocket.on('connect', () => {
-          console.log('Notify socket connected');
-          setSocket(newSocket);
-        });
-        newSocket.on('disconnect', () => {
-          console.log('Notify socket disconnected');
-          setSocket(undefined);
-        });
+        connectNotifySocket(token);
       } else {
         setToken(null);
       }
@@ -65,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
   };
 
   return (
-    <AuthContext.Provider value={{ login, login_42, logout, setLogin, setToken }}>
+    <AuthContext.Provider value={{ login, login_42, logout, setLogin, setToken, socket }}>
       {initialLoading && children}
     </AuthContext.Provider>
   );

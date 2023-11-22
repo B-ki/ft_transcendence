@@ -4,6 +4,7 @@ import { Socket } from 'socket.io-client';
 
 import edit_icon from '@/assets/chat/edit.svg';
 import info_icon from '@/assets/chat/info.svg';
+import leave_icon from '@/assets/chat/leave.svg';
 import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
@@ -39,7 +40,9 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
+  const [blockedUsers, setBlockedUsers] = useState<UserType[]>([]);
   const bottomEl = useRef<HTMLDivElement>(null);
+  const blockedUsersRef = useRef<UserType[]>([]);
   const {
     data: infos,
     isError,
@@ -48,25 +51,39 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {
+      // Access the latest blockedUsers using the ref
+      const currentBlockedUsers = blockedUsersRef.current;
+      if (currentBlockedUsers.some((u) => u.id === data.user.id)) {
+        console.log(`blocking message from ${data.user.login}: ${data.content}`);
+        return;
+      }
+
       setMessages((messages) => [...messages, data]);
     });
 
     socket.emit(
       'history',
       { channel: channel.name, offset: 0, limit: 100 },
-      (res: MessageType[]) => {
-        setMessages(res);
+      (messages: MessageType[]) => {
+        const filteredMessages = messages.filter((m) => {
+          return !blockedUsersRef.current.some((u) => u.login === m.user.login);
+        });
+        setMessages(filteredMessages);
       },
     );
 
-    socket.on('mute', (data) => {
-      alert(`Channel ${channel.name}, ${data.reason}`);
+    socket.emit('blockList', (data: UserType[]) => {
+      setBlockedUsers(data);
     });
 
     return () => {
       socket.off('message');
     };
   }, [channel]);
+
+  useEffect(() => {
+    blockedUsersRef.current = blockedUsers;
+  }, [blockedUsers]);
 
   useEffect(() => {
     bottomEl?.current?.scrollIntoView({ behavior: 'smooth' });
@@ -77,6 +94,10 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
     if (!message) return;
     socket.emit('message', { channel: channel.name, content: message });
     setMessage('');
+  };
+
+  const leaveChannel = (channel: ChannelType) => {
+    socket.emit('leave', { name: channel.name });
   };
 
   if (isLoading) return <div>loading</div>;
@@ -92,6 +113,8 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             socket={socket}
             channelName={channel.name}
             currentUserLogin={infos.login}
+            blockedUsers={blockedUsers}
+            setBlockedUsers={setBlockedUsers}
           />
         </ChatModal>
       )}
@@ -108,6 +131,12 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
       <div className="flex justify-between p-3">
         <h3 className="text-xl">{channel.name}</h3>
         <div className="flex gap-1">
+          <button
+            className="rounded-full p-1 hover:bg-white-3"
+            onClick={() => leaveChannel(channel)}
+          >
+            <img className="w-6" src={leave_icon} alt="leave" />
+          </button>
           <button
             className="rounded-full p-1 hover:bg-white-3"
             onClick={() => setShowEditModal(true)}
