@@ -36,10 +36,14 @@ export class GameService {
         winnerScore: scoreWinner,
         loserScore: scoreLoser,
         winner: {
-          connect: winner,
+          connect: {
+            id: winner.id,
+          },
         },
         loser: {
-          connect: loser,
+          connect: {
+            id: loser.id,
+          },
         },
       },
     });
