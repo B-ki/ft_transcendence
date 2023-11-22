@@ -8,7 +8,7 @@ import promote_icon from '@/assets/chat/crown.svg';
 import demote_icon from '@/assets/chat/demote.svg';
 import kick_icon from '@/assets/chat/kick.svg';
 
-import { UserType } from './DMDMConversation';
+import { UserType } from './DMConversation';
 
 interface DMInfosProps {
   setShowModal: (show: boolean) => void;
