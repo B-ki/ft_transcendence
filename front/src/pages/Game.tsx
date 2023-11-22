@@ -72,9 +72,7 @@ export class Pong extends Component {
     this.ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
     this.app.stage.addChild(this.ball.sprite);
 
-    this.socket.on(GameEvent.BallSpeed, (newSpeed: number) =>
-      (this.ball.speed = newSpeed)
-    );
+    this.socket.on(GameEvent.BallSpeed, (newSpeed: number) => (this.ball.speed = newSpeed));
 
     this.socket.on(GameEvent.Bounce, (arg: PIXI.Rectangle, dir: PIXI.Point) =>
       bounceBall(arg, dir, this.ball),
