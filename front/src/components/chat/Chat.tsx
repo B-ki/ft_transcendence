@@ -5,7 +5,6 @@ import { io, Socket } from 'socket.io-client';
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
 
-import { FriendList } from '../FriendList';
 import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
@@ -54,7 +53,9 @@ const Chat = () => {
       tmpSocket.on('youLeft', (data: any) => {
         setCurrentChannel(null);
         setJoinedChannels(joinedChannels.filter((c) => c.name !== data.channel));
-        alert(`You left ${data.channel}, ${data.reason}`);
+        if (!data.reason.includes('disconnected')) {
+          alert(`You left ${data.channel}, ${data.reason}`);
+        }
       });
 
       tmpSocket.on('exception', (data) => {

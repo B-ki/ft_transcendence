@@ -92,7 +92,6 @@ const ChatInfos = ({
 
   const unblockUser = (user: UserType) => {
     socket.emit('unblock', { login: user.login });
-    console.log(blockedUsers);
     setBlockedUsers(blockedUsers.filter((u) => u.id !== user.id));
   };
 
@@ -107,6 +106,7 @@ const ChatInfos = ({
     };
 
     socket.emit('mute', muteData);
+    setShowMuteModal(false);
   };
 
   const startGame = () => {
