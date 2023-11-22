@@ -254,25 +254,22 @@ export class Game {
     let winner: Player | null = null;
     let loser: Player | null = null;
     if (this.player1.opponent == null) {
-      this.player1.socket.emit(GameEvent.Victory);
       winner = this.player1;
       loser = this.player2;
     } else if (this.player2.opponent == null) {
-      this.player2.socket.emit(GameEvent.Victory);
       winner = this.player2;
       loser = this.player1;
     } else if (this.player1.score >= 8) {
-      this.player1.socket.emit(GameEvent.Victory);
-      this.player2.socket.emit(GameEvent.Defeat);
       winner = this.player1;
       loser = this.player2;
     } else if (this.player2.score >= 8) {
-      this.player1.socket.emit(GameEvent.Defeat);
-      this.player2.socket.emit(GameEvent.Victory);
       winner = this.player2;
       loser = this.player1;
     }
     if (winner && loser) {
+      this.setOfFire();
+      winner.socket.emit(GameEvent.Victory);
+      loser.socket.emit(GameEvent.Defeat);
       if (winner.socket.data.user.id != loser.socket.data.user.id) {
         this.gameService.createGame(
           winner.socket.data.user.login,
