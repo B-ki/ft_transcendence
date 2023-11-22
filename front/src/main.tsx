@@ -14,12 +14,12 @@ import Profile from '@/pages/Profile';
 import { privateGuard } from '@/utils/privateGuard';
 
 import Main from './components/Main';
+import ChatPage from './pages/ChatPage';
+import FriendPage from './pages/FriendPage';
 import OauthCallback from './pages/OauthCallback';
 import TwoFaActivation from './pages/TwoFaActivation';
 import TwoFaLogin from './pages/TwoFaLogin';
 import User from './pages/User';
-import FriendPage from './pages/FriendPage';
-import ChatPage from './pages/ChatPage';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

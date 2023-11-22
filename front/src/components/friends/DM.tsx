@@ -5,10 +5,10 @@ import { io, Socket } from 'socket.io-client';
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
 
+import CreateDM from './CreateDM';
+import DMConversation from './DMConversation';
 import DMList from './DMList';
 import DMModal from './DMModal';
-import DMConversation from './DMConversation';
-import CreateDM from './CreateDM';
 import JoinDM from './JoinDM';
 
 export interface Channel {

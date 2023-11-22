@@ -8,9 +8,9 @@ import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './DM';
+import DMMessage from './DMDMMessage';
 import DMInfos from './DMInfos';
 import DMModal from './DMModal';
-import DMMessage from './DMDMMessage';
 
 interface DMConversationProps {
   channel: ChannelType;
