@@ -129,9 +129,11 @@ export class Game {
     if (ballRect.intersects(this.pick1) && this.direction.x < 0) {
       this.setOnFire();
       this.placePickOnLeft();
+      this.scoreP2();
     } else if (ballRect.intersects(this.pick2) && this.direction.x > 0) {
       this.setOnFire();
       this.placePickOnRight();
+      this.scoreP1();
     }
     if (ballRect.x < mapRect.x) {
       //touche left
@@ -151,6 +153,7 @@ export class Game {
         this.launchBall();
       } else {
         this.direction = this.newDirection(this.player1);
+        this.increaseBallSpeed();
       }
     } else if (ballRect.x + ballRect.width > mapRect.x + mapRect.width) {
       //touch right
@@ -171,6 +174,7 @@ export class Game {
       } else {
         this.direction = this.newDirection(this.player2);
         this.direction.x *= -1;
+        this.increaseBallSpeed();
       }
     }
     if (ballRect.y < mapRect.y) {
@@ -185,6 +189,9 @@ export class Game {
   }
 
   launchBall() {
+    this.speed = 0.5;
+    this.player1.socket.emit(GameEvent.BallSpeed, this.speed);
+    this.player2.socket.emit(GameEvent.BallSpeed, this.speed);
     this.sprite.x = w_screen / 2 - this.sprite.width / 2;
     this.sprite.y = h_screen / 2 - this.sprite.height / 2;
     if (this.direction.x > 0) {
@@ -194,6 +201,12 @@ export class Game {
     }
     this.direction.y = 0;
     this.needEmit = true;
+  }
+
+  increaseBallSpeed() {
+    this.speed += 0.02;
+    this.player1.socket.emit(GameEvent.BallSpeed, this.speed);
+    this.player2.socket.emit(GameEvent.BallSpeed, this.speed);
   }
 
   newDirection(pad: Player): PIXI.Point {
@@ -248,12 +261,12 @@ export class Game {
       this.player2.socket.emit(GameEvent.Victory);
       winner = this.player2;
       loser = this.player1;
-    } else if (this.player1.score >= 5) {
+    } else if (this.player1.score >= 8) {
       this.player1.socket.emit(GameEvent.Victory);
       this.player2.socket.emit(GameEvent.Defeat);
       winner = this.player1;
       loser = this.player2;
-    } else if (this.player2.score >= 5) {
+    } else if (this.player2.score >= 8) {
       this.player1.socket.emit(GameEvent.Defeat);
       this.player2.socket.emit(GameEvent.Victory);
       winner = this.player2;
