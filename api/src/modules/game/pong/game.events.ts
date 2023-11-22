@@ -15,4 +15,5 @@ export enum GameEvent {
   RightPick = 'RightPick',
   Remaining = 'Remaining',
   Start = 'Start',
+  BallSpeed = 'BallSpeed',
 }

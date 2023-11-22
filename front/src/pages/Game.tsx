@@ -62,16 +62,24 @@ export class Pong extends Component {
     this.app.renderer.view.style.left = '50%';
     this.app.renderer.view.style.top = '50%';
     this.app.renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
-    this.app.ticker.maxFPS = 60;
     this.app.view.style.visibility = 'hidden';
+
+    this.app.ticker.maxFPS = 60;
+
     document.body.appendChild(this.app.view);
 
     this.middleLine = new DashLine(this.app);
     this.ball = new Ball(game.screen.width / 2, game.screen.height / 2, 10);
     this.app.stage.addChild(this.ball.sprite);
+
+    this.socket.on(GameEvent.BallSpeed, (newSpeed: number) =>
+      (this.ball.speed = newSpeed)
+    );
+
     this.socket.on(GameEvent.Bounce, (arg: PIXI.Rectangle, dir: PIXI.Point) =>
       bounceBall(arg, dir, this.ball),
     );
+
     this.socket.on(GameEvent.ClassicBall, () => this.ball.setOfFire());
     this.socket.on(GameEvent.Fireball, () => this.ball.setOnFire());
 
