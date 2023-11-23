@@ -33,7 +33,7 @@ export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  user: userDto;
+  user: UserType;
 }
 
 const Conversation = ({ channel, socket, me }: ConversationProps) => {
@@ -43,15 +43,12 @@ const Conversation = ({ channel, socket, me }: ConversationProps) => {
   const [message, setMessage] = useState<string>('');
   const [blockedUsers, setBlockedUsers] = useState<UserType[]>([]);
   const bottomEl = useRef<HTMLDivElement>(null);
-<<<<<<< HEAD
   const blockedUsersRef = useRef<UserType[]>([]);
   const {
     data: infos,
     isError,
     isLoading,
   } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
-=======
->>>>>>> efcf72d (remi la salope)
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {

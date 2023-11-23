@@ -6,7 +6,7 @@ import { UserType } from './Conversation';
 import { userDto } from '@/dto/userDto';
 
 interface MessageProps {
-  sender: userDto;
+  sender: UserType;
   text: string;
   send_by_user: boolean;
 }
@@ -20,12 +20,8 @@ const Message = ({ text, sender, send_by_user }: MessageProps) => {
     >
       <Link to={'/user/' + sender.login}>
         <div className="flex gap-1 font-bold">
-          <img
-            className="w-8 rounded-full"
-            src={sender.imagePath ? sender.imagePath : sender.intraImageURL}
-            alt="user"
-          />
-          <span className="text-lg">{sender.displayName ? sender.displayName : sender.login}</span>
+          <img className="w-8 rounded-full" src={sender.intraImageURL} alt="user" />
+          <span className="text-lg">{sender.login}</span>
         </div>
       </Link>
       <Linkify
