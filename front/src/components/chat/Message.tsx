@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { userDto } from '@/dto/userDto';
 
-import { UserType } from './Conversation';
+import { UserType } from './DmConversation';
 
 interface MessageProps {
   sender: UserType;
