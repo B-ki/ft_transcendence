@@ -198,14 +198,19 @@ export class Game {
     this.speed = 0.5;
     this.player1.socket.emit(GameEvent.BallSpeed, this.speed);
     this.player2.socket.emit(GameEvent.BallSpeed, this.speed);
-    this.sprite.x = w_screen / 2 - this.sprite.width / 2;
+
+    const offset = w_screen / 4;
     this.sprite.y = h_screen / 2 - this.sprite.height / 2;
+
     if (this.direction.x > 0) {
       this.direction.x = 1;
+      this.sprite.x = offset - this.sprite.height / 2;
     } else {
       this.direction.x = -1;
+      this.sprite.x = w_screen - offset - this.sprite.height;
     }
     this.direction.y = 0;
+
     this.needEmit = true;
   }
 
