@@ -15,11 +15,10 @@ export default function OauthCallback() {
     return <div>No code given</div>; // TO DO : Create pop up error, then redirect to '/'
   }
 
-  const { data, isLoading, isError } = useApi().get(
-    'send oauth code',
-    '/auth/42/login',
-    { params: { code }, options: { enabled: !!code } },
-  ) as UseQueryResult<tokenDto>;
+  const { data, isLoading, isError } = useApi().get('send oauth code', '/auth/42/login', {
+    params: { code },
+    options: { enabled: !!code },
+  }) as UseQueryResult<tokenDto>;
 
   if (isLoading) {
     return (
