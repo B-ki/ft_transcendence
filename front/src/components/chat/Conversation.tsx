@@ -14,26 +14,13 @@ import ChatEdit from './ChatEdit';
 import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
 import Message from './Message';
+import { MessageType } from './DmConversation';
+import { UserType } from './DmConversation';
 
 interface ConversationProps {
   channel: ChannelType;
   me: userDto | undefined;
   socket: Socket;
-}
-
-export interface UserType {
-  id: number;
-  login: string;
-  status: string;
-  intraImageURL: string;
-  role: string;
-}
-
-export interface MessageType {
-  id: number;
-  creadtedAt: string;
-  content: string;
-  user: UserType;
 }
 
 const Conversation = ({ channel, socket, me }: ConversationProps) => {

@@ -2,15 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import { Socket } from 'socket.io-client';
 
-import edit_icon from '@/assets/chat/edit.svg';
 import info_icon from '@/assets/chat/info.svg';
 import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
-import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './Chat';
-import ChatEdit from './ChatEdit';
-import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
 import Message from './Message';
 import DmInfos from './DmInfos';
@@ -19,13 +15,16 @@ interface ConversationProps {
   channel: ChannelType;
   me: userDto | undefined;
   socket: Socket;
+  allUsers: userDto[] | undefined;
 }
 
 export interface UserType {
   id: number;
   login: string;
+  displayName: string;
   status: string;
   intraImageURL: string;
+  imagePath: string;
   role: string;
 }
 
@@ -33,12 +32,11 @@ export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  user: userDto;
+  user: UserType;
 }
 
-const DmConversation = ({ channel, socket, me }: ConversationProps) => {
+const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) => {
   const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
-  const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
   const bottomEl = useRef<HTMLDivElement>(null);
@@ -76,6 +74,19 @@ const DmConversation = ({ channel, socket, me }: ConversationProps) => {
     setMessage('');
   };
 
+  function findUserInfos(chatName: string) {
+    chatName = chatName.substring(1);
+    const names = chatName.split('_');
+    if (names[0] === me?.login) {
+      const user = allUsers?.filter((user) => user.login === names[1]);
+      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+    } else {
+      const user = allUsers?.filter((user) => user.login === names[0]);
+      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+    }
+    return '';
+  }
+
   return (
     <div className="flex w-[65%] flex-col border-l border-l-white-3 md:w-[500px]">
       {showInfoModal && (
@@ -89,7 +100,7 @@ const DmConversation = ({ channel, socket, me }: ConversationProps) => {
         </ChatModal>
       )}
       <div className="flex justify-between p-3">
-        <h3 className="text-xl">{channel.name}</h3>
+        <h3 className="text-xl">{findUserInfos(channel.name)}</h3>
         <div className="flex gap-1">
           <button
             className="rounded-full p-1 hover:bg-white-3"

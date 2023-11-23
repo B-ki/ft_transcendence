@@ -38,10 +38,12 @@ const DmChannel = ({ setShowModal, socket, users, setCurrentChannel }: DmChannel
   };
 
   const handleDirectMessage = () => {
+    //Need to be replace by socker.emit('createDM', {login: username})
     const message = document.querySelector<HTMLButtonElement>('#firstMessage')?.value;
     socket.emit('dm', { login: userName, content: message });
-    console.log(userName);
-    socket.on('dm', (data) => {});
+    socket.on('dm', (data) => {
+      setCurrentChannel(data.channel);
+    });
     // TODO send notification if error
     setShowModal(false);
   };
@@ -57,10 +59,7 @@ const DmChannel = ({ setShowModal, socket, users, setCurrentChannel }: DmChannel
             placeholder="Filter users"
             onChange={(e) => setSearchUser(e.target.value)}
           />
-          <button
-            onClick={() => setShowModal(false)}
-            className="rounded-lg border-2 border-white-3 p-2 hover:bg-red hover:text-white-1"
-          >
+          <button className="rounded-lg border-2 border-white-3 p-2 hover:bg-red hover:text-white-1">
             Cancel
           </button>
         </div>

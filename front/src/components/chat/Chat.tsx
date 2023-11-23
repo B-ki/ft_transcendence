@@ -109,7 +109,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex max-h-full min-h-[75%] w-full rounded-lg bg-white-1 md:w-auto">
+    <div className="flex max-h-full min-h-[65%] w-full rounded-lg bg-white-1 md:w-auto">
       {showCreateModal && (
         <ChatModal>
           <CreateChannel setShowModal={setShowCreateModal} socket={socket} />
@@ -190,6 +190,7 @@ const Chat = () => {
             </div>
           </div>
           <DmList
+            me={me}
             allUsers={users?.filter((user) => user.login !== me?.login)}
             joinedChannels={joinedChannels.filter((c) => c.isDM === true)}
             setCurrentChannel={setCurrentChannel}
@@ -199,7 +200,14 @@ const Chat = () => {
       )}
       {show
         ? currentChannel && <Conversation me={me} socket={socket} channel={currentChannel} />
-        : currentChannel && <DmConversation me={me} socket={socket} channel={currentChannel} />}
+        : currentChannel && (
+            <DmConversation
+              allUsers={users?.filter((user) => user.login !== me?.login)}
+              me={me}
+              socket={socket}
+              channel={currentChannel}
+            />
+          )}
     </div>
   );
 };
