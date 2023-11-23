@@ -111,14 +111,20 @@ export class Game {
   }
 
   placePickOnLeft() {
-    this.pick1.y = Math.random() * (h_screen - this.pick1.height);
+    const value = Math.random() * ((h_screen - this.pick1.height) / 3);
+
+    if (this.pick1.y > h_screen / 2) this.pick1.y = value;
+    else this.pick1.y = h_screen - this.pick1.height - value;
 
     this.player1.socket.emit(GameEvent.LeftPick, this.pick1);
     this.player2.socket.emit(GameEvent.RightPick, reverse_position(this.pick1));
   }
 
   placePickOnRight() {
-    this.pick2.y = Math.random() * (h_screen - this.pick2.height);
+    const value = Math.random() * ((h_screen - this.pick2.height) / 3);
+
+    if (this.pick2.y > h_screen / 2) this.pick2.y = value;
+    else this.pick2.y = h_screen - this.pick2.height - value;
 
     this.player1.socket.emit(GameEvent.RightPick, this.pick2);
     this.player2.socket.emit(GameEvent.LeftPick, reverse_position(this.pick2));
@@ -192,14 +198,19 @@ export class Game {
     this.speed = 0.5;
     this.player1.socket.emit(GameEvent.BallSpeed, this.speed);
     this.player2.socket.emit(GameEvent.BallSpeed, this.speed);
-    this.sprite.x = w_screen / 2 - this.sprite.width / 2;
+
+    const offset = w_screen / 4;
     this.sprite.y = h_screen / 2 - this.sprite.height / 2;
+
     if (this.direction.x > 0) {
       this.direction.x = 1;
+      this.sprite.x = offset - this.sprite.height / 2;
     } else {
       this.direction.x = -1;
+      this.sprite.x = w_screen - offset - this.sprite.height;
     }
     this.direction.y = 0;
+
     this.needEmit = true;
   }
 
