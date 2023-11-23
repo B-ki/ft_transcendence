@@ -5,7 +5,7 @@ import { Socket } from 'socket.io-client';
 import game_icon from '@/assets/chat/boxing-glove.svg';
 
 import ChatModal from './ChatModal';
-import { UserType } from './Conversation';
+import { UserType } from './DmConversation';
 
 interface DmInfosProps {
   setShowModal: (show: boolean) => void;
