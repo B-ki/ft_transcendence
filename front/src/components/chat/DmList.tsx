@@ -1,6 +1,7 @@
 // import logo from '@/assets/logo.svg';
 
 import { userDto } from '@/dto/userDto';
+
 import { ChannelType } from './Chat';
 
 interface DmListElemProps {

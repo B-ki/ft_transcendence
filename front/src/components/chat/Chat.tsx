@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 import { io, Socket } from 'socket.io-client';
 
-import chat_plus from '@/assets/chat/chat_plus.svg';
-import chat_join from '@/assets/chat/join-channel.svg';
-import chat_add from '@/assets/chat/Group_add_light.png';
 import chat_channel from '@/assets/chat/Chat.svg';
+import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_DM from '@/assets/chat/comment.svg';
+import chat_add from '@/assets/chat/Group_add_light.png';
+import chat_join from '@/assets/chat/join-channel.svg';
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 
 import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
-import JoinChannel from './JoinChannel';
 import DmChannel from './DmChannel';
-import { UseQueryResult } from 'react-query';
-import { userDto } from '@/dto/userDto';
-import { useApi } from '@/hooks/useApi';
 import DmConversation from './DmConversation';
 import DmList from './DmList';
+import JoinChannel from './JoinChannel';
 
 export interface Channel {
   name: string;

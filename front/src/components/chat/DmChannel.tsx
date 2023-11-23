@@ -2,9 +2,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 
 import lock from '@/assets/chat/lock.svg';
+import { userDto } from '@/dto/userDto';
 
 import { ChannelType } from './Chat';
-import { userDto } from '@/dto/userDto';
 
 interface DmChannelProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;

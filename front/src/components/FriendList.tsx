@@ -1,14 +1,15 @@
 // import logo from '@/assets/logo.svg';
 
+import React, { FormEvent, useRef } from 'react';
+import { useMutation, UseQueryResult } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+
+import chat_add from '@/assets/chat/Group_add_light.png';
+import background from '@/assets/low-poly-grid-haikei.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
-import { UseQueryResult, useMutation } from 'react-query';
-import React, { FormEvent, useRef } from 'react';
-import background from '@/assets/low-poly-grid-haikei.svg';
-import { useNavigate } from 'react-router-dom';
-import chat_add from '@/assets/chat/Group_add_light.png';
-import { api } from '@/utils/api';
 import { queryClient } from '@/main';
+import { api } from '@/utils/api';
 
 interface FriendListElemProps {
   currentFriend: userDto;
