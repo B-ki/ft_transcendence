@@ -12,7 +12,6 @@ export interface userDto {
   bannerPath: string;
   intraImageURL: string;
   status: string;
-  channel: ChannelType;
 }
 
 export const dummyUserDto: userDto = {

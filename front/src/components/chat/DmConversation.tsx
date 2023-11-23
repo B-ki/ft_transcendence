@@ -2,18 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import { Socket } from 'socket.io-client';
 
+import edit_icon from '@/assets/chat/edit.svg';
 import info_icon from '@/assets/chat/info.svg';
 import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
-import { ChannelType } from './DM';
-import DMInfos from './DMInfos';
-import DMMessage from './DMMessage';
-import DMModal from './DMModal';
+import { ChannelType } from './Chat';
+import ChatEdit from './ChatEdit';
+import ChatInfos from './ChatInfos';
+import ChatModal from './ChatModal';
+import Message from './Message';
+import DmInfos from './DmInfos';
 
-interface DMConversationProps {
+interface ConversationProps {
   channel: ChannelType;
+  me: userDto | undefined;
   socket: Socket;
 }
 
@@ -25,36 +29,36 @@ export interface UserType {
   role: string;
 }
 
-export interface DMMessageType {
+export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  user: UserType;
+  user: userDto;
 }
 
-const DMDMConversation = ({ channel, socket }: DMConversationProps) => {
-  const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [messages, setMessages] = useState<DMMessageType[]>([]);
+const DmConversation = ({ channel, socket, me }: ConversationProps) => {
+  const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
+  const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
   const bottomEl = useRef<HTMLDivElement>(null);
-  const {
-    data: infos,
-    isError,
-    isLoading,
-  } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
 
   useEffect(() => {
-    socket.on('message', (data: DMMessageType) => {
+    socket.on('message', (data: MessageType) => {
       setMessages((messages) => [...messages, data]);
     });
 
     socket.emit(
       'history',
       { channel: channel.name, offset: 0, limit: 100 },
-      (res: DMMessageType[]) => {
+      (res: MessageType[]) => {
         setMessages(res);
       },
     );
+
+    socket.on('mute', (data) => {
+      alert(`Channel ${channel.name}, ${data.reason}`);
+    });
 
     return () => {
       socket.off('message');
@@ -65,33 +69,32 @@ const DMDMConversation = ({ channel, socket }: DMConversationProps) => {
     bottomEl?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendDMMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!message) return;
     socket.emit('message', { channel: channel.name, content: message });
     setMessage('');
   };
 
-  if (isLoading) return <div>loading</div>;
-  if (isError) return <div>error</div>;
-  if (!infos) return <div>error</div>;
-
   return (
     <div className="flex w-[65%] flex-col border-l border-l-white-3 md:w-[500px]">
-      {showModal && (
-        <DMModal>
-          <DMInfos
-            setShowModal={setShowModal}
+      {showInfoModal && (
+        <ChatModal>
+          <DmInfos
+            setShowModal={setShowInfoModal}
             socket={socket}
             channelName={channel.name}
-            currentUserLogin={infos.login}
+            currentUserLogin={me?.login}
           />
-        </DMModal>
+        </ChatModal>
       )}
       <div className="flex justify-between p-3">
         <h3 className="text-xl">{channel.name}</h3>
-        <div className="flex gap-2">
-          <button className="rounded-full p-1 hover:bg-white-3" onClick={() => setShowModal(true)}>
+        <div className="flex gap-1">
+          <button
+            className="rounded-full p-1 hover:bg-white-3"
+            onClick={() => setShowInfoModal(true)}
+          >
             <img className="w-6" src={info_icon} alt="info" />
           </button>
         </div>
@@ -101,12 +104,12 @@ const DMDMConversation = ({ channel, socket }: DMConversationProps) => {
         style={{ maxHeight: '600px' }}
       >
         {messages.map((m, idx) => {
-          // TODO replace idx by DMMessage id
+          // TODO replace idx by message id
           return (
-            <DMMessage
+            <Message
               key={idx}
               text={m.content}
-              send_by_user={m.user.login === infos?.login}
+              send_by_user={m.user.login === me?.login}
               sender={m.user}
             />
           );
@@ -116,12 +119,12 @@ const DMDMConversation = ({ channel, socket }: DMConversationProps) => {
       <div className="border-t border-t-white-3">
         <form
           className="m-2 flex gap-3 rounded-2xl bg-white-3 p-2"
-          onSubmit={(e) => sendDMMessage(e)}
+          onSubmit={(e) => sendMessage(e)}
         >
           <input
             className="w-full bg-white-3 outline-none"
             type="text"
-            placeholder="Write a new DMMessage"
+            placeholder="Write a new message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
@@ -134,4 +137,4 @@ const DMDMConversation = ({ channel, socket }: DMConversationProps) => {
   );
 };
 
-export default DMDMConversation;
+export default DmConversation;

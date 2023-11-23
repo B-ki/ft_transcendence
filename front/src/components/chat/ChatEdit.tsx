@@ -7,7 +7,7 @@ interface ChatEditProps {
   setShowModal: (show: boolean) => void;
   socket: Socket;
   channelName: string;
-  currentUserLogin: string;
+  currentUserLogin: string | undefined;
 }
 
 // TODO: leaver button ??

@@ -45,11 +45,6 @@ const router = createBrowserRouter([
             loader: privateGuard,
           },
           {
-            path: '/friends',
-            element: <FriendPage />,
-            loader: privateGuard,
-          },
-          {
             path: '/chat',
             element: <ChatPage />,
             loader: privateGuard,

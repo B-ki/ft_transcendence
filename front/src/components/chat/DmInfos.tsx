@@ -2,17 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 
-import ban_icon from '@/assets/chat/ban.svg';
 import game_icon from '@/assets/chat/boxing-glove.svg';
-import promote_icon from '@/assets/chat/crown.svg';
-import demote_icon from '@/assets/chat/demote.svg';
-import kick_icon from '@/assets/chat/kick.svg';
-import mute_icon from '@/assets/chat/mute.svg';
 
 import ChatModal from './ChatModal';
 import { UserType } from './Conversation';
 
-interface ChatInfosProps {
+interface DmInfosProps {
   setShowModal: (show: boolean) => void;
   socket: Socket;
   channelName: string;
@@ -25,7 +20,7 @@ interface UserListResponse {
 }
 
 // TODO: leaver button ??
-const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: ChatInfosProps) => {
+const DmInfos = ({ setShowModal, socket, channelName, currentUserLogin }: DmInfosProps) => {
   const [users, setUsers] = useState<UserType[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showMuteModal, setShowMuteModal] = useState<boolean>(false);
@@ -39,40 +34,6 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
       if (user && (user.role === 'ADMIN' || user.role === 'OWNER')) setIsAdmin(true);
     });
   }, []);
-
-  const promoteUser = (user: UserType) => {
-    socket.emit('promote', { channel: channelName, login: user.login });
-    setUsers(
-      users.map((u) => {
-        if (u.id === user.id) {
-          return { ...u, role: 'ADMIN' };
-        }
-        return u;
-      }),
-    );
-  };
-
-  const demoteUser = (user: UserType) => {
-    socket.emit('demote', { channel: channelName, login: user.login });
-    setUsers(
-      users.map((u) => {
-        if (u.id === user.id) {
-          return { ...u, role: 'USER' };
-        }
-        return u;
-      }),
-    );
-  };
-
-  const kickUser = (user: UserType) => {
-    socket.emit('kick', { channel: channelName, login: user.login });
-    setUsers(users.filter((u) => u.id !== user.id));
-  };
-
-  const banUser = (user: UserType) => {
-    socket.emit('ban', { channel: channelName, login: user.login });
-    setUsers(users.filter((u) => u.id !== user.id));
-  };
 
   const muteUser = (e: React.FormEvent<HTMLFormElement>, user: UserType) => {
     e.preventDefault();
@@ -97,7 +58,7 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   return (
     <div className="flex flex-col gap-2 rounded-lg bg-white-1 p-4">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl">Members</h2>
+        <h2 className="text-2xl">User</h2>
         <button
           onClick={() => setShowModal(false)}
           className="rounded-lg border-2 border-white-3 p-1 text-xl hover:bg-red hover:text-white-1"
@@ -122,49 +83,6 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
                   onClick={() => startGame()}
                 >
                   <img className="w-6" src={game_icon} alt="close" />
-                </button>
-                {user.role === 'ADMIN' || user.role === 'OWNER' ? (
-                  <button
-                    className="rounded-full p-1 enabled:hover:bg-yellow-1 disabled:cursor-not-allowed"
-                    title={'Demote user'}
-                    disabled={!isAdmin || user.role === 'OWNER'}
-                    onClick={() => demoteUser(user)}
-                  >
-                    <img className="w-6" src={demote_icon} alt="demote" />
-                  </button>
-                ) : (
-                  <button
-                    className="rounded-full p-1 enabled:hover:bg-yellow-1 disabled:cursor-not-allowed"
-                    title={'Promote user to admin'}
-                    disabled={!isAdmin}
-                    onClick={() => promoteUser(user)}
-                  >
-                    <img className="w-6" src={promote_icon} alt="promote" />
-                  </button>
-                )}
-                <button
-                  className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
-                  title={isAdmin ? 'Kick user' : "Can't kick user because you are not admin"}
-                  disabled={!isAdmin}
-                  onClick={() => kickUser(user)}
-                >
-                  <img className="w-6" src={kick_icon} alt="kick" />
-                </button>
-                <button
-                  className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
-                  title={isAdmin ? 'Ban user' : "Can't ban user because you are not admin"}
-                  disabled={!isAdmin}
-                  onClick={() => banUser(user)}
-                >
-                  <img className="w-6" src={ban_icon} alt="ban" />
-                </button>
-                <button
-                  className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
-                  title={isAdmin ? 'Mute user' : "Can't mute user because you are not admin"}
-                  disabled={!isAdmin}
-                  onClick={() => setShowMuteModal(true)}
-                >
-                  <img className="w-6" src={mute_icon} alt="mute" />
                 </button>
                 {showMuteModal && (
                   <ChatModal>
@@ -209,4 +127,4 @@ const ChatInfos = ({ setShowModal, socket, channelName, currentUserLogin }: Chat
   );
 };
 
-export default ChatInfos;
+export default DmInfos;

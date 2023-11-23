@@ -16,6 +16,7 @@ import Message from './Message';
 
 interface ConversationProps {
   channel: ChannelType;
+  me: userDto | undefined;
   socket: Socket;
 }
 
@@ -31,20 +32,15 @@ export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  user: UserType;
+  user: userDto;
 }
 
-const Conversation = ({ channel, socket }: ConversationProps) => {
+const Conversation = ({ channel, socket, me }: ConversationProps) => {
   const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
   const bottomEl = useRef<HTMLDivElement>(null);
-  const {
-    data: infos,
-    isError,
-    isLoading,
-  } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {
@@ -79,10 +75,6 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
     setMessage('');
   };
 
-  if (isLoading) return <div>loading</div>;
-  if (isError) return <div>error</div>;
-  if (!infos) return <div>error</div>;
-
   return (
     <div className="flex w-[65%] flex-col border-l border-l-white-3 md:w-[500px]">
       {showInfoModal && (
@@ -91,7 +83,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             setShowModal={setShowInfoModal}
             socket={socket}
             channelName={channel.name}
-            currentUserLogin={infos.login}
+            currentUserLogin={me?.login}
           />
         </ChatModal>
       )}
@@ -101,7 +93,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             setShowModal={setShowEditModal}
             socket={socket}
             channelName={channel.name}
-            currentUserLogin={infos.login}
+            currentUserLogin={me?.login}
           />
         </ChatModal>
       )}
@@ -132,7 +124,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             <Message
               key={idx}
               text={m.content}
-              send_by_user={m.user.login === infos?.login}
+              send_by_user={m.user.login === me?.login}
               sender={m.user}
             />
           );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 
 import lock from '@/assets/chat/lock.svg';
@@ -9,52 +9,52 @@ import { userDto } from '@/dto/userDto';
 interface DmChannelProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   socket: Socket;
-  joinedChannels: ChannelType[];
-  users: userDto[];
+  users: userDto[] | undefined;
+  setCurrentChannel: (channel: ChannelType) => void;
 }
 
-const JoinChannel = ({ setShowModal, socket, joinedChannels, users }: DmChannelProps) => {
+const DmChannel = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelProps) => {
   const [searchUser, setSearchUser] = useState<string>('');
-  const [isPasswordNeeded, setIsPasswordNeeded] = useState<boolean>(false);
-  const [channelSelected, setChannelSelected] = useState<HTMLButtonElement | null>(null);
-  const [channels, setChannels] = useState<ChannelType[]>([]);
-  const [channelName, setChannelName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [userSelected, setUserSelected] = useState<HTMLButtonElement | null>(null);
+  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
-    socket.emit('channelList', (data: ChannelType[]) => {
-      setChannels(data);
+    socket.on('dm', (data) => {
+      setCurrentChannel(data.channel);
     });
   }, []);
 
-  const selectUser = (e: React.MouseEvent<HTMLButtonElement>, channelType: ChannelType) => {
-    if (e.currentTarget !== channelSelected) {
-      setChannelName(e.currentTarget.firstChild?.textContent || '');
-      if (channelSelected) {
-        channelSelected.style.backgroundColor = '#FFFFFF';
-        channelSelected.style.color = '#000000';
+  const selectUser = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setUserName(e.currentTarget.firstChild?.textContent || '');
+    if (e.currentTarget !== userSelected) {
+      if (userSelected) {
+        userSelected.style.backgroundColor = '#FFFFFF';
+        userSelected.style.color = '#000000';
       }
       e.currentTarget.style.backgroundColor = '#37626D';
       e.currentTarget.style.color = '#FFFFFF';
-      setChannelSelected(e.currentTarget);
+      setUserSelected(e.currentTarget);
     }
   };
 
-  const handleJoinChannel = () => {
-    socket.emit('join', { name: channelName, password: password });
+  const handleDirectMessage = () => {
+    const message = document.querySelector<HTMLButtonElement>('#firstMessage')?.value;
+    socket.emit('dm', { login: userName, content: message });
+    console.log(userName);
+    socket.on('dm', (data) => {});
     // TODO send notification if error
     setShowModal(false);
   };
 
   return (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white-2 p-6 shadow-xl">
-      <h2 className="mb-4 text-2xl">Join a channel</h2>
-      <form className="flex flex-col gap-2" onSubmit={handleJoinChannel}>
+      <h2 className="mb-4 text-2xl">Users</h2>
+      <form className="flex flex-col gap-2" onSubmit={handleDirectMessage}>
         <div className="flex gap-2">
           <input
             className="rounded-lg border-2 border-white-3 p-2"
             type="text"
-            placeholder="Filter channel"
+            placeholder="Filter users"
             onChange={(e) => setSearchUser(e.target.value)}
           />
           <button
@@ -64,47 +64,42 @@ const JoinChannel = ({ setShowModal, socket, joinedChannels, users }: DmChannelP
             Cancel
           </button>
         </div>
+        <input
+          className="rounded-lg border-2 border-white-3 p-2"
+          id="firstMessage"
+          type="text"
+          placeholder="First message"
+          required
+        />
         <div className="flex max-h-[300px] flex-col gap-1 overflow-x-scroll">
-          {users
-            .filter((user) => {
-              user.displayName
-                ? user.displayName.toLowerCase().includes(searchUser.toLowerCase())
-                : user.login.toLowerCase().includes(searchUser.toLowerCase());
-            })
-            .map((user, index) => {
-              const channelExist = users.some((user) => user.channel !== null);
-              return (
-                <button
-                  className="flex justify-between gap-2 rounded-lg border-2 border-white-3 bg-white-1 p-2 enabled:hover:bg-darkBlue-2 enabled:hover:text-white-1 enabled:focus:bg-darkBlue-2 enabled:focus:text-white-1 disabled:cursor-not-allowed disabled:opacity-60"
-                  key={index}
-                  disabled={joined}
-                  onClick={(e) => selectUser(e, user)}
-                  type="button"
-                >
-                  <div>{channel.name}</div>
-                  <div className="flex">
-                    {channel.type === 'PROTECTED' && (
-                      <img className="mr-2 w-6 text-darkBlue-2" src={lock} alt="lock" />
-                    )}
-                    {joined && <div className="text-darkBlue-2">Joined</div>}
-                  </div>
-                </button>
-              );
-            })}
+          {users ? (
+            users
+              .filter((user) =>
+                user.displayName
+                  ? user.displayName.toLowerCase().includes(searchUser.toLowerCase())
+                  : user.login.toLowerCase().includes(searchUser.toLowerCase()),
+              )
+              .map((user, index) => {
+                return (
+                  <button
+                    className="flex justify-between gap-2 rounded-lg border-2 border-white-3 bg-white-1 p-2 enabled:hover:bg-darkBlue-2 enabled:hover:text-white-1 enabled:focus:bg-darkBlue-2 enabled:focus:text-white-1 disabled:cursor-not-allowed disabled:opacity-60"
+                    id="user"
+                    key={index}
+                    onClick={(e) => selectUser(e)}
+                    type="button"
+                  >
+                    <div>{user.displayName ? user.displayName : user.login}</div>
+                    <div className="flex"></div>
+                  </button>
+                );
+              })
+          ) : (
+            <div></div>
+          )}
         </div>
         <div className="flex justify-center gap-2">
-          <input
-            className={`rounded-lg border-2 border-white-3 p-2 ${
-              isPasswordNeeded ? '' : 'cursor-not-allowed'
-            }`}
-            type="password"
-            placeholder="Password"
-            required={isPasswordNeeded}
-            disabled={!isPasswordNeeded}
-            onChange={(e) => setPassword(e.target.value)}
-          />
           <button className="w-full rounded-lg border-2 border-white-3 p-2 hover:bg-darkBlue-2 hover:text-white-1">
-            Join
+            Direct message
           </button>
         </div>
       </form>
@@ -112,4 +107,4 @@ const JoinChannel = ({ setShowModal, socket, joinedChannels, users }: DmChannelP
   );
 };
 
-export default JoinChannel;
+export default DmChannel;
