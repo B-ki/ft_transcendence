@@ -8,8 +8,8 @@ import { userDto } from '@/dto/userDto';
 
 import { ChannelType } from './Chat';
 import ChatModal from './ChatModal';
-import Message from './Message';
 import DmInfos from './DmInfos';
+import Message from './Message';
 
 interface ConversationProps {
   channel: ChannelType;

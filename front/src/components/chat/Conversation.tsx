@@ -13,9 +13,9 @@ import { ChannelType } from './Chat';
 import ChatEdit from './ChatEdit';
 import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
-import Message from './Message';
 import { MessageType } from './DmConversation';
 import { UserType } from './DmConversation';
+import Message from './Message';
 
 interface ConversationProps {
   channel: ChannelType;
