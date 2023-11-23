@@ -11,7 +11,6 @@ const navigation = [
   { name: 'Game', href: '/game' },
   { name: 'Profile', href: '/profile' },
   { name: 'Chat', href: '/chat' },
-  { name: 'Friends', href: '/friends' },
   { name: '2FA', href: '/2fa' },
 ];
 

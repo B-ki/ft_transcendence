@@ -17,6 +17,7 @@ import Message from './Message';
 
 interface ConversationProps {
   channel: ChannelType;
+  me: userDto | undefined;
   socket: Socket;
 }
 
@@ -32,22 +33,25 @@ export interface MessageType {
   id: number;
   creadtedAt: string;
   content: string;
-  user: UserType;
+  user: userDto;
 }
 
-const Conversation = ({ channel, socket }: ConversationProps) => {
+const Conversation = ({ channel, socket, me }: ConversationProps) => {
   const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [message, setMessage] = useState<string>('');
   const [blockedUsers, setBlockedUsers] = useState<UserType[]>([]);
   const bottomEl = useRef<HTMLDivElement>(null);
+<<<<<<< HEAD
   const blockedUsersRef = useRef<UserType[]>([]);
   const {
     data: infos,
     isError,
     isLoading,
   } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
+=======
+>>>>>>> efcf72d (remi la salope)
 
   useEffect(() => {
     socket.on('message', (data: MessageType) => {
@@ -124,7 +128,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             setShowModal={setShowEditModal}
             socket={socket}
             channelName={channel.name}
-            currentUserLogin={infos.login}
+            currentUserLogin={me?.login}
           />
         </ChatModal>
       )}
@@ -161,7 +165,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             <Message
               key={idx}
               text={m.content}
-              send_by_user={m.user.login === infos?.login}
+              send_by_user={m.user.login === me?.login}
               sender={m.user}
             />
           );

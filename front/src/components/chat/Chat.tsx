@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_join from '@/assets/chat/join-channel.svg';
+import chat_add from '@/assets/chat/Group_add_light.png';
 import chat_channel from '@/assets/chat/Chat.svg';
 import chat_DM from '@/assets/chat/comment.svg';
 
@@ -12,7 +13,12 @@ import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
 import JoinChannel from './JoinChannel';
-import { Button } from '../Button';
+import DmChannel from './DmChannel';
+import { UseQueryResult } from 'react-query';
+import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
+import DmConversation from './DmConversation';
+import DmList from './DmList';
 
 export interface Channel {
   name: string;
@@ -25,18 +31,30 @@ export interface ChannelType {
   id: number;
   name: string;
   type: 'PUBLIC' | 'PROTECTED' | 'PRIVATE';
+  isDM: boolean;
 }
 
 const Chat = () => {
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [showJoinModal, setShowJoinModal] = useState<boolean>(false);
+  const [showDmModal, setShowDmModal] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket>();
   const localToken = localStorage.getItem('token');
   const token: string = localToken ? localToken : '';
   const [loading, setLoading] = useState<boolean>(true);
   const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
   const [currentChannel, setCurrentChannel] = useState<ChannelType | null>(null);
+  const [currentUser, setCurrentUser] = useState<userDto | null>(null);
   const [show, setShow] = useState<boolean>(false);
+  let me: userDto | undefined;
+
+  const { data: user } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
+
+  const {
+    data: users,
+    isLoading,
+    isError,
+  } = useApi().get('get all users', 'user/all') as UseQueryResult<userDto[]>;
 
   useEffect(() => {
     setLoading(true);
@@ -77,6 +95,18 @@ const Chat = () => {
   }, []);
   if (loading) return <div>loading</div>;
   if (!socket) return <div>socket not initialized</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error...</div>;
+  }
+  me = user;
+
+  const handleShowDm = (boolean: boolean) => {
+    setCurrentChannel(null);
+    setShow(boolean);
+  };
 
   return (
     <div className="flex max-h-full min-h-[75%] w-full rounded-lg bg-white-1 md:w-auto">
@@ -94,6 +124,16 @@ const Chat = () => {
           />
         </ChatModal>
       )}
+      {showDmModal && (
+        <ChatModal>
+          <DmChannel
+            setCurrentChannel={setCurrentChannel}
+            setShowModal={setShowDmModal}
+            socket={socket}
+            users={users?.filter((user) => user.login !== me?.login)}
+          />
+        </ChatModal>
+      )}
       {show ? (
         <div className="flex w-[35%] flex-col md:w-auto">
           <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
@@ -102,7 +142,7 @@ const Chat = () => {
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Go to direct messages"
-                onClick={() => setShow(false)}
+                onClick={() => handleShowDm(false)}
               >
                 <img className="w-5 md:w-6" src={chat_channel} alt="Direct messages" />
               </button>
@@ -123,7 +163,7 @@ const Chat = () => {
             </div>
           </div>
           <ChatList
-            joinedChannels={joinedChannels}
+            joinedChannels={joinedChannels.filter((c) => c.isDM === false)}
             setCurrentChannel={setCurrentChannel}
             currentChannel={currentChannel}
           />
@@ -136,34 +176,30 @@ const Chat = () => {
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Go to channels"
-                onClick={() => setShow(true)}
+                onClick={() => handleShowDm(true)}
               >
                 <img className="w-5 md:w-6" src={chat_DM} alt="Channels" />
               </button>
               <button
                 className="rounded-full p-1 hover:bg-white-3"
-                title="Join a channel"
-                onClick={() => setShowJoinModal(true)}
+                title="Find someone"
+                onClick={() => setShowDmModal(true)}
               >
-                <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
-              </button>
-              <button
-                title="Create a channel"
-                onClick={() => setShowCreateModal(true)}
-                className="rounded-full p-1 hover:bg-white-3"
-              >
-                <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
+                <img className="w-5 md:w-6" src={chat_add} alt="Find someone" />
               </button>
             </div>
           </div>
-          <ChatList
-            joinedChannels={joinedChannels}
+          <DmList
+            allUsers={users?.filter((user) => user.login !== me?.login)}
+            joinedChannels={joinedChannels.filter((c) => c.isDM === true)}
             setCurrentChannel={setCurrentChannel}
             currentChannel={currentChannel}
           />
         </div>
       )}
-      {currentChannel && <Conversation socket={socket} channel={currentChannel} />}
+      {show
+        ? currentChannel && <Conversation me={me} socket={socket} channel={currentChannel} />
+        : currentChannel && <DmConversation me={me} socket={socket} channel={currentChannel} />}
     </div>
   );
 };
