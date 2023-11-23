@@ -111,14 +111,20 @@ export class Game {
   }
 
   placePickOnLeft() {
-    this.pick1.y = Math.random() * (h_screen - this.pick1.height);
+    const value = Math.random() * ((h_screen - this.pick1.height) / 3);
+
+    if (this.pick1.y > h_screen / 2) this.pick1.y = value;
+    else this.pick1.y = h_screen - this.pick1.height - value;
 
     this.player1.socket.emit(GameEvent.LeftPick, this.pick1);
     this.player2.socket.emit(GameEvent.RightPick, reverse_position(this.pick1));
   }
 
   placePickOnRight() {
-    this.pick2.y = Math.random() * (h_screen - this.pick2.height);
+    const value = Math.random() * ((h_screen - this.pick2.height) / 3);
+
+    if (this.pick2.y > h_screen / 2) this.pick2.y = value;
+    else this.pick2.y = h_screen - this.pick2.height - value;
 
     this.player1.socket.emit(GameEvent.RightPick, this.pick2);
     this.player2.socket.emit(GameEvent.LeftPick, reverse_position(this.pick2));
