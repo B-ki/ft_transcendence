@@ -1,6 +1,7 @@
 import { UseQueryResult } from 'react-query';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
+import loadingGif from '@/assets/loading.gif';
 import { tokenDto } from '@/dto/tokenDto';
 import { useApi } from '@/hooks/useApi';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,20 +9,23 @@ import { useAuth } from '@/hooks/useAuth';
 export default function OauthCallback() {
   const queryParameters = new URLSearchParams(window.location.search);
   const code = queryParameters.get('code');
-  const { setLogin, setToken } = useAuth();
+  const { setToken } = useAuth();
 
   if (!code) {
     return <div>No code given</div>; // TO DO : Create pop up error, then redirect to '/'
   }
 
-  const { data, isLoading, isError, status, error } = useApi().get(
-    'send oauth code',
-    '/auth/42/login',
-    { params: { code }, options: { enabled: !!code } },
-  ) as UseQueryResult<tokenDto>;
+  const { data, isLoading, isError } = useApi().get('send oauth code', '/auth/42/login', {
+    params: { code },
+    options: { enabled: !!code },
+  }) as UseQueryResult<tokenDto>;
 
   if (isLoading) {
-    return <div>Loading...</div>; // TO DO : Create loading button
+    return (
+      <div className="flex h-screen w-full scale-150 items-center justify-center">
+        <img src={loadingGif} alt="Loading ..."></img>
+      </div>
+    );
   } else if (isError) {
     return <div>Is error...</div>;
   } else if (data && data.require2FA) {
