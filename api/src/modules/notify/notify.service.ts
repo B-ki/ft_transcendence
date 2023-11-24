@@ -3,14 +3,15 @@ import { User, UserStatus } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { Socket } from 'socket.io';
 
-import { FriendService } from '../user';
+import { FriendService, UserService } from '../user';
 
 @Injectable()
 export class NotifyService {
-  public sockets: Map<string, Socket>;
+  public sockets: Map<string, Socket[]>;
 
   constructor(
     private friendService: FriendService,
+    private userService: UserService,
     private prisma: PrismaService,
   ) {}
 
@@ -18,9 +19,8 @@ export class NotifyService {
     const friends = await this.friendService.getFriendList(user, true);
 
     for (const friend of friends) {
-      const socket = this.sockets.get(friend.login);
-
-      if (socket) {
+      const sockets = this.sockets?.get(friend.login) || [];
+      for (const socket of sockets) {
         socket.emit('notify', { user: user, status: status });
       }
     }
@@ -35,6 +35,10 @@ export class NotifyService {
         status: status,
       },
     });
+  }
+
+  async getStatus(user: User): Promise<UserStatus> {
+    return (await this.userService.getUnique(user.login)).status;
   }
 
   async online(user: User) {

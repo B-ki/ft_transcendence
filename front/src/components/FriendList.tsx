@@ -115,7 +115,7 @@ const FriendList = () => {
 
   return (
     <div
-      className="flex min-h-[65%]  w-60 flex-col gap-2 overflow-y-auto rounded-lg bg-white-2 p-2"
+      className="flex min-h-[65%]  w-64 flex-col gap-2 overflow-y-auto rounded-lg bg-white-2 p-2"
       style={{ maxHeight: '600px' }}
     >
       <div className="flex items-center justify-around">
@@ -132,7 +132,9 @@ const FriendList = () => {
           <img className="w-5 md:w-6" src={close_icon} alt="remove friend" />
         </button>
       </div>
-      {allFriends?.map((user, index) => <FriendListElem key={index} currentFriend={user} />)}
+      <div className="flex flex-col items-center justify-center gap-2">
+        {allFriends?.map((user, index) => <FriendListElem key={index} currentFriend={user} />)}
+      </div>
     </div>
   );
 };

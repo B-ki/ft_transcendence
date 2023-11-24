@@ -15,6 +15,7 @@ import { privateGuard } from '@/utils/privateGuard';
 
 import Main from './components/Main';
 import ChatPage from './pages/ChatPage';
+import Friends from './pages/Friends';
 import OauthCallback from './pages/OauthCallback';
 import TwoFaActivation from './pages/TwoFaActivation';
 import TwoFaLogin from './pages/TwoFaLogin';
@@ -31,37 +32,36 @@ const router = createBrowserRouter([
     children: [
       {
         element: <Main />,
+        loader: privateGuard,
         children: [
           {
             path: '/',
             element: <Home />,
-            loader: privateGuard,
           },
 
           {
             path: '/profile',
             element: <Profile />,
-            loader: privateGuard,
           },
           {
             path: '/chat',
             element: <ChatPage />,
-            loader: privateGuard,
           },
           {
             path: '/game',
             element: <Game />,
-            loader: privateGuard,
           },
           {
             path: '/2fa',
             element: <TwoFaActivation />,
-            loader: privateGuard,
           },
           {
             path: '/user/:login',
             element: <User />,
-            loader: privateGuard,
+          },
+          {
+            path: '/friends',
+            element: <Friends />,
           },
         ],
       },
