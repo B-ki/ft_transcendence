@@ -42,7 +42,12 @@ export const TwoFaLoginInput = (props: any) => {
   return (
     <>
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <input type="test" name="2FAcode" onChange={handleCodeChange} />
+        <input
+          className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
+          type="test"
+          name="2FAcode"
+          onChange={handleCodeChange}
+        />
       </form>
       <Button size="small" type="primary" onClick={() => mutation.mutateAsync({ code: code })}>
         Submit
