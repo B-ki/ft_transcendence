@@ -12,7 +12,7 @@ import mute_icon from '@/assets/chat/mute.svg';
 import unblock_icon from '@/assets/chat/unblock.svg';
 
 import ChatModal from './ChatModal';
-import { UserType } from './Conversation';
+import { UserType } from './DmConversation';
 
 interface ChatInfosProps {
   setShowModal: (show: boolean) => void;
@@ -133,8 +133,12 @@ const ChatInfos = ({
             <div key={user.id} className="flex items-center justify-between gap-4">
               <Link to={'/user/' + user.login}>
                 <div className="flex items-center gap-2">
-                  <img className="w-8 rounded-full" src={user.intraImageURL} alt="user" />
-                  <h3 className="text-lg">{user.login}</h3>
+                  <img
+                    className="w-8 rounded-full"
+                    src={user.imagePath ? user.imagePath : user.intraImageURL}
+                    alt="user"
+                  />
+                  <h3 className="text-lg">{user.displayName ? user.displayName : user.login}</h3>
                 </div>
               </Link>
               <div className="flex gap-2">

@@ -31,7 +31,6 @@ export class NotifyGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   afterInit(server: Server) {
     const authMiddleware = WSAuthMiddleware(this.jwtService, this.userService);
     server.use(authMiddleware);
-
     this.notifyService.sockets = this.sockets;
   }
 

@@ -13,29 +13,17 @@ import { ChannelType } from './Chat';
 import ChatEdit from './ChatEdit';
 import ChatInfos from './ChatInfos';
 import ChatModal from './ChatModal';
+import { MessageType } from './DmConversation';
+import { UserType } from './DmConversation';
 import Message from './Message';
 
 interface ConversationProps {
   channel: ChannelType;
+  me: userDto | undefined;
   socket: Socket;
 }
 
-export interface UserType {
-  id: number;
-  login: string;
-  status: string;
-  intraImageURL: string;
-  role: string;
-}
-
-export interface MessageType {
-  id: number;
-  creadtedAt: string;
-  content: string;
-  user: UserType;
-}
-
-const Conversation = ({ channel, socket }: ConversationProps) => {
+const Conversation = ({ channel, socket, me }: ConversationProps) => {
   const [showInfoModal, setShowInfoModal] = React.useState<boolean>(false);
   const [showEditModal, setShowEditModal] = React.useState<boolean>(false);
   const [messages, setMessages] = useState<MessageType[]>([]);
@@ -124,7 +112,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             setShowModal={setShowEditModal}
             socket={socket}
             channelName={channel.name}
-            currentUserLogin={infos.login}
+            currentUserLogin={me?.login}
           />
         </ChatModal>
       )}
@@ -161,7 +149,7 @@ const Conversation = ({ channel, socket }: ConversationProps) => {
             <Message
               key={idx}
               text={m.content}
-              send_by_user={m.user.login === infos?.login}
+              send_by_user={m.user.login === me?.login}
               sender={m.user}
             />
           );

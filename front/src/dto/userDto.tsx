@@ -1,3 +1,5 @@
+import { ChannelType } from '@/components/chat/Chat';
+
 export interface userDto {
   login: string;
   first_name: string;
