@@ -75,6 +75,7 @@ const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) =>
   };
 
   function findUserInfos(chatName: string) {
+    if (!chatName) return '';
     chatName = chatName.substring(1);
     const names = chatName.split('_');
     if (names[0] === me?.login) {

@@ -15,8 +15,8 @@ import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
-import DmChannel from './DmChannel';
 import DmConversation from './DmConversation';
+import DmCreate from './DmCreate';
 import DmList from './DmList';
 import JoinChannel from './JoinChannel';
 
@@ -35,17 +35,16 @@ export interface ChannelType {
 }
 
 const Chat = () => {
-  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-  const [showJoinModal, setShowJoinModal] = useState<boolean>(false);
-  const [showDmModal, setShowDmModal] = useState<boolean>(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState<boolean>(false);
+  const [showJoinChannelModal, setShowJoinChannelModal] = useState<boolean>(false);
+  const [showDmSomeoneModal, setShowDmSomeoneModal] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket>();
   const localToken = localStorage.getItem('token');
   const token: string = localToken ? localToken : '';
   const [loading, setLoading] = useState<boolean>(true);
   const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
   const [currentChannel, setCurrentChannel] = useState<ChannelType | null>(null);
-  const [currentUser, setCurrentUser] = useState<userDto | null>(null);
-  const [show, setShow] = useState<boolean>(false);
+  const [showChannels, setShowChannels] = useState<boolean>(false);
   let me: userDto | undefined;
 
   const { data: user } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
@@ -70,14 +69,7 @@ const Chat = () => {
       tmpSocket.on('youJoined', (data: ChannelType) => {
         setCurrentChannel(data);
         setJoinedChannels((prev) => [...prev, data]);
-      });
-
-      tmpSocket.on('youLeft', (data: any) => {
-        setCurrentChannel(null);
-        setJoinedChannels(joinedChannels.filter((c) => c.name !== data.channel));
-        if (!data.reason.includes('disconnected')) {
-          alert(`You left ${data.channel}, ${data.reason}`);
-        }
+        console.log('youJoined - channel list :', joinedChannels);
       });
 
       tmpSocket.on('exception', (data) => {
@@ -90,9 +82,26 @@ const Chat = () => {
     });
 
     return () => {
+      socket?.off('youJoined');
+      socket?.off('exception');
       socket?.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    socket?.on('youLeft', (data: any) => {
+      setCurrentChannel(null);
+      setJoinedChannels(joinedChannels.filter((c) => c.name !== data.channel));
+      if (!data.reason.includes('disconnected')) {
+        alert(`You left ${data.channel}, ${data.reason}`);
+      }
+    });
+
+    return () => {
+      socket?.off('youLeft');
+    };
+  }, [joinedChannels]);
+
   if (loading) return <div>loading</div>;
   if (!socket) return <div>socket not initialized</div>;
   if (isLoading) {
@@ -103,38 +112,38 @@ const Chat = () => {
   }
   me = user;
 
-  const handleShowDm = (boolean: boolean) => {
+  const handleShowChannels = (boolean: boolean) => {
     setCurrentChannel(null);
-    setShow(boolean);
+    setShowChannels(boolean);
   };
 
   return (
     <div className="flex max-h-full min-h-[65%] w-full rounded-lg bg-white-1 md:w-auto">
-      {showCreateModal && (
+      {showCreateChannelModal && (
         <ChatModal>
-          <CreateChannel setShowModal={setShowCreateModal} socket={socket} />
+          <CreateChannel setShowModal={setShowCreateChannelModal} socket={socket} />
         </ChatModal>
       )}
-      {showJoinModal && (
+      {showJoinChannelModal && (
         <ChatModal>
           <JoinChannel
-            setShowModal={setShowJoinModal}
+            setShowModal={setShowJoinChannelModal}
             socket={socket}
             joinedChannels={joinedChannels}
           />
         </ChatModal>
       )}
-      {showDmModal && (
+      {showDmSomeoneModal && (
         <ChatModal>
-          <DmChannel
+          <DmCreate
             setCurrentChannel={setCurrentChannel}
-            setShowModal={setShowDmModal}
+            setShowModal={setShowDmSomeoneModal}
             socket={socket}
             users={users?.filter((user) => user.login !== me?.login)}
           />
         </ChatModal>
       )}
-      {show ? (
+      {showChannels ? (
         <div className="flex w-[35%] flex-col md:w-auto">
           <div className="flex  justify-between px-1 py-3  md:gap-2 md:p-3">
             <h2 className="text-base md:text-xl">Channels</h2>
@@ -142,20 +151,20 @@ const Chat = () => {
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Go to direct messages"
-                onClick={() => handleShowDm(false)}
+                onClick={() => handleShowChannels(false)}
               >
                 <img className="w-5 md:w-6" src={chat_channel} alt="Direct messages" />
               </button>
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Join a channel"
-                onClick={() => setShowJoinModal(true)}
+                onClick={() => setShowJoinChannelModal(true)}
               >
                 <img className="w-5 md:w-6" src={chat_join} alt="join channel" />
               </button>
               <button
                 title="Create a channel"
-                onClick={() => setShowCreateModal(true)}
+                onClick={() => setShowCreateChannelModal(true)}
                 className="rounded-full p-1 hover:bg-white-3"
               >
                 <img className="w-5 md:w-6" src={chat_plus} alt="create channel" />
@@ -176,14 +185,14 @@ const Chat = () => {
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Go to channels"
-                onClick={() => handleShowDm(true)}
+                onClick={() => handleShowChannels(true)}
               >
                 <img className="w-5 md:w-6" src={chat_DM} alt="Channels" />
               </button>
               <button
                 className="rounded-full p-1 hover:bg-white-3"
                 title="Find someone"
-                onClick={() => setShowDmModal(true)}
+                onClick={() => setShowDmSomeoneModal(true)}
               >
                 <img className="w-5 md:w-6" src={chat_add} alt="Find someone" />
               </button>
@@ -198,7 +207,7 @@ const Chat = () => {
           />
         </div>
       )}
-      {show
+      {showChannels
         ? currentChannel && <Conversation me={me} socket={socket} channel={currentChannel} />
         : currentChannel && (
             <DmConversation

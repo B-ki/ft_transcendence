@@ -21,13 +21,10 @@ const ChatListElem = ({ chatInfos, setCurrentChannel, currentChannel }: ChatList
       }`}
       disabled={currentChannel?.name === chatInfos.name}
     >
-      {/* <img src={chatInfos.profilePicture} alt="conversation" className="h-14 w-14 rounded-full" /> */}
       <div className="flex flex-col">
         <div className="flex items-center gap-1">
           <h3 className="font-bold">{chatInfos.name}</h3>
-          {/* <h3 className="text-sm">@{chatInfos.login}</h3> */}
         </div>
-        {/* <span className="text-sm">{chatInfos.lastMessage}</span> */}
       </div>
     </button>
   );

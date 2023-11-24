@@ -13,7 +13,7 @@ interface DmChannelProps {
   setCurrentChannel: (channel: ChannelType) => void;
 }
 
-const DmChannel = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelProps) => {
+const DmCreate = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelProps) => {
   const [searchUser, setSearchUser] = useState<string>('');
   const [userSelected, setUserSelected] = useState<HTMLButtonElement | null>(null);
   const [userName, setUserName] = useState<string>('');
@@ -106,4 +106,4 @@ const DmChannel = ({ setShowModal, socket, users, setCurrentChannel }: DmChannel
   );
 };
 
-export default DmChannel;
+export default DmCreate;

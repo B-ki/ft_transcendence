@@ -1,9 +1,0 @@
-{
-  "ignore": [
-    ".+.svg",
-    ".+/bower_components/.+",
-    ".+/node_modules/.+",
-    ".+/__libs__/.+"
-  ],
-  "csv_seperator": ", "
-}

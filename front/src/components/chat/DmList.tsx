@@ -24,7 +24,7 @@ const DmListElem = ({
   };
   let user;
 
-  function findUserInfos(chatName: string) {
+  const findUserInfos = (chatName: string) => {
     chatName = chatName.substring(1);
     const names = chatName.split('_');
     if (names[0] === me?.login) {
@@ -35,7 +35,7 @@ const DmListElem = ({
       if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
     }
     return '';
-  }
+  };
 
   return (
     <button
