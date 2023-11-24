@@ -1,11 +1,12 @@
 // import logo from '@/assets/logo.svg';
 
-import React, { FormEvent, useRef } from 'react';
+import { HTTPError } from 'ky';
+import React, { useRef } from 'react';
 import { useMutation, UseQueryResult } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
+import close_icon from '@/assets/chat/close.svg';
 import chat_add from '@/assets/chat/Group_add_light.png';
-import background from '@/assets/low-poly-grid-haikei.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 import { queryClient } from '@/main';
@@ -13,10 +14,9 @@ import { api } from '@/utils/api';
 
 interface FriendListElemProps {
   currentFriend: userDto;
-  me: userDto | undefined;
 }
 
-const FriendListElem = ({ me, currentFriend }: FriendListElemProps) => {
+const FriendListElem = ({ currentFriend }: FriendListElemProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
     navigate(`/user/${currentFriend.login}`);
@@ -25,13 +25,14 @@ const FriendListElem = ({ me, currentFriend }: FriendListElemProps) => {
   return (
     <button
       onClick={handleClick}
-      className={`text-black-3 enabled:hover:bg-white flex w-56 cursor-pointer rounded-lg border border-dark-1 bg-white-2 p-3 enabled:hover:opacity-60 `}
+      className={`flex w-56 cursor-pointer rounded-lg border border-dark-1 bg-white-2 p-3 enabled:hover:opacity-60 `}
     >
       <div className="flex flex-col">
         <div className="flex items-center gap-5">
           <img
             className="flex h-16 w-16 rounded-full "
             src={currentFriend.imagePath ? currentFriend.imagePath : currentFriend.intraImageURL}
+            alt="profile"
           />
           <div>
             <h3 className="font-bold">
@@ -67,58 +68,73 @@ const FriendListElem = ({ me, currentFriend }: FriendListElemProps) => {
 const FriendList = () => {
   const nameRef = useRef<HTMLInputElement>(null);
 
-  const mutation = useMutation({
+  const addFriendMutation = useMutation({
     mutationFn: (login: string) => {
-      return api.post('user/friends/add', { json: login });
+      return api.post('user/friends/add', { json: { login: login } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get friend list'] });
     },
+    onError: async (err: HTTPError) => {
+      const response = await err.response.json();
+      alert(response.message);
+    },
   });
 
-  const {
-    data: me,
-    isLoading,
-    isError,
-  } = useApi().get('get me user', 'user/me') as UseQueryResult<userDto>;
-  const { data: allUsers } = useApi().get('get all users', 'user/all') as UseQueryResult<userDto[]>;
+  const removeFriendMutation = useMutation({
+    mutationFn: (login: string) => {
+      return api.post('user/friends/remove', { json: { login: login } });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['get friend list'] });
+    },
+    onError: async (err: HTTPError) => {
+      const response = await err.response.json();
+      alert(response.message);
+    },
+  });
 
   const { data: allFriends } = useApi().get(
     'get friend list',
     'user/friends/friendlist',
   ) as UseQueryResult<userDto[]>;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const userLogin = allUsers?.filter((user) => user.login === nameRef.current?.value);
-    const userDisplayname = allUsers?.filter((user) => user.displayName === nameRef.current?.value);
-    console.log('test');
-    if (userLogin) mutation.mutate(userLogin[0].login);
-    else if (userDisplayname) mutation.mutate(userDisplayname[0].login);
-    else alert('No user with this name exists');
+  const addFriend = () => {
+    const userLogin = nameRef.current?.value;
+    if (userLogin) {
+      addFriendMutation.mutate(userLogin);
+    }
+  };
+
+  const removeFriend = () => {
+    const userLogin = nameRef.current?.value;
+    if (userLogin) {
+      removeFriendMutation.mutate(userLogin);
+    }
   };
 
   return (
     <div
-      className="flex min-h-[65%]  w-60 flex-col gap-2 overflow-y-auto rounded-lg bg-white-2 p-2"
+      className="flex min-h-[65%]  w-64 flex-col gap-2 overflow-y-auto rounded-lg bg-white-2 p-2"
       style={{ maxHeight: '600px' }}
     >
-      <form onSubmit={handleSubmit}>
-        <div className="flex items-center justify-around">
-          <input
-            className="w-40 rounded-lg border-2 border-white-3 p-2"
-            type="text"
-            placeholder="Search a friend"
-            ref={nameRef}
-          ></input>
-          <button className="rounded-full p-1 hover:bg-dark-3">
-            <img className="w-5 md:w-6" src={chat_add} />
-          </button>
-        </div>
-      </form>
-      {allFriends?.map((user, index) => (
-        <FriendListElem me={me} key={index} currentFriend={user} />
-      ))}
+      <div className="flex items-center justify-around">
+        <input
+          className="w-40 rounded-lg border-2 border-white-3 p-2"
+          type="text"
+          placeholder="Search a friend"
+          ref={nameRef}
+        ></input>
+        <button className="rounded-full p-1 hover:bg-dark-3" onClick={addFriend}>
+          <img className="w-5 md:w-6" src={chat_add} alt="add friend" />
+        </button>
+        <button className="rounded-full p-1 hover:bg-dark-3" onClick={removeFriend}>
+          <img className="w-5 md:w-6" src={close_icon} alt="remove friend" />
+        </button>
+      </div>
+      <div className="flex flex-col items-center justify-center gap-2">
+        {allFriends?.map((user, index) => <FriendListElem key={index} currentFriend={user} />)}
+      </div>
     </div>
   );
 };
