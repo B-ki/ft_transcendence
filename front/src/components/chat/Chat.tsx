@@ -15,8 +15,8 @@ import ChatList from './ChatList';
 import ChatModal from './ChatModal';
 import Conversation from './Conversation';
 import CreateChannel from './CreateChannel';
-import DmCreate from './DmCreate';
 import DmConversation from './DmConversation';
+import DmCreate from './DmCreate';
 import DmList from './DmList';
 import JoinChannel from './JoinChannel';
 
