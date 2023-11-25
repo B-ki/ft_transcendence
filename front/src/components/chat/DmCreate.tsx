@@ -59,7 +59,7 @@ const DmCreate = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelP
             placeholder="Filter users"
             onChange={(e) => setSearchUser(e.target.value)}
           />
-          <button className="rounded-lg border-2 border-white-3 p-2 hover:bg-red hover:text-white-1">
+          <button className="rounded-lg border-2 border-white-3 p-2 hover:bg-red hover:text-white-1" onClick={() => {setShowModal(false)}}>
             Cancel
           </button>
         </div>

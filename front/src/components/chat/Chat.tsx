@@ -6,7 +6,7 @@ import { io, Socket } from 'socket.io-client';
 import chat_channel from '@/assets/chat/Chat.svg';
 import chat_plus from '@/assets/chat/chat_plus.svg';
 import chat_DM from '@/assets/chat/comment.svg';
-import chat_add from '@/assets/chat/Group_add_light.png';
+import find_someone from '@/assets/chat/find_someone.png';
 import chat_join from '@/assets/chat/join-channel.svg';
 import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
@@ -194,7 +194,7 @@ const Chat = () => {
                 title="Find someone"
                 onClick={() => setShowDmSomeoneModal(true)}
               >
-                <img className="w-5 md:w-6" src={chat_add} alt="Find someone" />
+                <img className="w-5 md:w-6" src={find_someone} alt="Find someone" />
               </button>
             </div>
           </div>
