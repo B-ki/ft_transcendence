@@ -23,7 +23,6 @@ function Profile() {
 
   const mutation1 = useMutation({
     mutationFn: (userInfos: any) => {
-      console.log('ProfilePage - login');
       return api.patch('user/me', { json: userInfos });
     },
     onSuccess: () => {
