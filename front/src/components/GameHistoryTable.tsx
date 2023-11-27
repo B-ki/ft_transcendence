@@ -20,7 +20,7 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
     data: games,
     isLoading,
     isError,
-  } = useApi().get('get games', `game/all/${login}`) as UseQueryResult<gameDto[]>;
+  } = useApi().get(`get games of ${login}`, `game/all/${login}`) as UseQueryResult<gameDto[]>;
 
   if (isLoading) {
     return <div>Loading...</div>;
