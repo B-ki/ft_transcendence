@@ -8,21 +8,19 @@ import { userDto } from '@/dto/userDto';
 import { useApi } from '@/hooks/useApi';
 
 function User() {
-  const routeParams = useParams();
+  const { login } = useParams();
 
-  const { data: games } = useApi().get(
-    'get user win',
-    `game/all/${routeParams.login}`,
-  ) as UseQueryResult<gameDto[]>;
+  const {
+    data: games,
+    isLoading: load,
+    isError: error,
+  } = useApi().get('get user win', `game/all/${login}`) as UseQueryResult<gameDto[]>;
 
   const {
     data: user,
     isLoading,
     isError,
-  } = useApi().get(
-    'get user profile',
-    `user/profile/${routeParams.login}`,
-  ) as UseQueryResult<userDto>;
+  } = useApi().get('get user profile', `user/profile/${login}`) as UseQueryResult<userDto>;
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -30,9 +28,15 @@ function User() {
   if (isError) {
     return <div>Error...</div>;
   }
+  if (load) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Error...</div>;
+  }
 
-  const win = games?.filter((g) => g.winner.login === routeParams.login).length;
-  const lose = games?.filter((g) => g.loser.login === routeParams.login).length;
+  const win = games?.filter((g) => g.winner.login === login).length;
+  const lose = games?.filter((g) => g.loser.login === login).length;
 
   return (
     <>
