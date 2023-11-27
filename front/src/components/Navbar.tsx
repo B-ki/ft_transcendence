@@ -37,7 +37,7 @@ export const Navbar = () => {
             Our Pong
           </span>
         </button>
-        <div className="hidden space-x-4 sm:flex sm:items-center sm:justify-center">
+        <div className="hidden space-x-4 sm:items-center sm:justify-center md:flex">
           {navigation.map((item) => (
             <NavLink
               key={item.name}
@@ -56,12 +56,12 @@ export const Navbar = () => {
           ))}
         </div>
       </div>
-      <div className="hidden items-center justify-end sm:flex ">
+      <div className="hidden items-center justify-end md:flex ">
         <Button size="small" type="primary" onClick={() => handleLogoutClick()}>
           logout
         </Button>
       </div>
-      <div className="flex sm:hidden">
+      <div className="flex md:hidden">
         <Dropdown />
       </div>
     </div>
