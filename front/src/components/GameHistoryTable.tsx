@@ -11,7 +11,6 @@ const PAGE_SIZE = 5; // Number of records per page
 
 interface HistoryProps {
   login: string | undefined;
-  games: gameDto[];
 }
 
 export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
