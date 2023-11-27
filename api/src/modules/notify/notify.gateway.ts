@@ -43,7 +43,9 @@ export class NotifyGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     existingSockets.push(socket);
     this.sockets.set(login, existingSockets);
 
-    await this.notifyService.online(socket.data.user);
+    setTimeout(async () => {
+      await this.notifyService.online(socket.data.user);
+    }, 100);
   }
 
   async handleDisconnect(socket: Socket) {
@@ -62,7 +64,7 @@ export class NotifyGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
       setTimeout(async () => {
         await this.notifyService.offline(socket.data.user);
-      }, 100);
+      }, 10);
     }
   }
 }
