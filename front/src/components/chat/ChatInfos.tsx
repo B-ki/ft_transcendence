@@ -40,6 +40,7 @@ const ChatInfos = ({
   const [users, setUsers] = useState<UserType[]>([]);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [showMuteModal, setShowMuteModal] = useState<boolean>(false);
+  const [muteUserState, setMuteUser] = useState<UserType>();
   const muteDurationRef = useRef<HTMLInputElement>(null);
   const muteReasonRef = useRef<HTMLInputElement>(null);
 
@@ -95,12 +96,12 @@ const ChatInfos = ({
     setBlockedUsers(blockedUsers.filter((u) => u.id !== user.id));
   };
 
-  const muteUser = (e: React.FormEvent<HTMLFormElement>, user: UserType) => {
+  const muteUser = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const muteData = {
       channel: channelName,
-      login: user.login,
+      login: muteUserState?.login,
       reason: muteReasonRef.current?.value,
       duration: Number(muteDurationRef.current?.value),
     };
@@ -188,7 +189,10 @@ const ChatInfos = ({
                   className="rounded-full p-1 enabled:hover:bg-red disabled:cursor-not-allowed"
                   title={isAdmin ? 'Mute user' : "Can't mute user because you are not admin"}
                   disabled={!isAdmin}
-                  onClick={() => setShowMuteModal(true)}
+                  onClick={() => {
+                    setShowMuteModal(true);
+                    setMuteUser(user);
+                  }}
                 >
                   <img className="w-6" src={mute_icon} alt="mute" />
                 </button>
@@ -214,7 +218,7 @@ const ChatInfos = ({
                     <div className="flex flex-col gap-2 rounded-lg bg-white-1 p-4">
                       <div className="flex flex-col items-center justify-between gap-4">
                         <h2 className="text-2xl">Mute user</h2>
-                        <form className="flex flex-col gap-2" onSubmit={(e) => muteUser(e, user)}>
+                        <form className="flex flex-col gap-2" onSubmit={(e) => muteUser(e)}>
                           <input
                             className="rounded-lg border-2 border-white-3 p-2"
                             placeholder="Mute duration in seconds"

@@ -1,6 +1,11 @@
 // import logo from '@/assets/logo.svg';
 
+import { Dispatch, SetStateAction, useEffect } from 'react';
+import { UseQueryResult } from 'react-query';
+import { Socket } from 'socket.io-client';
+
 import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './Chat';
 
@@ -24,18 +29,28 @@ const DmListElem = ({
   };
   let user;
 
-  const findUserInfos = (chatName: string) => {
-    chatName = chatName.substring(1);
-    const names = chatName.split('_');
+  function findUserInfos(chatName: string) {
+    if (!chatName) return '';
+
+    const { data: users } = useApi().get('get all users', 'user/all') as UseQueryResult<userDto[]>;
+
+    const names = chatName.substring(1).split('_');
     if (names[0] === me?.login) {
-      user = allUsers?.filter((user) => user.login === names[1]);
-      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+      const user = users?.filter((user) => user.login === names[1]);
+      if (user?.length) {
+        return user[0].displayName ? user[0].displayName : user[0]?.login;
+      } else {
+        return names[1];
+      }
     } else {
-      user = allUsers?.filter((user) => user.login === names[0]);
-      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+      const user = users?.filter((user) => user.login === names[0]);
+      if (user?.length) {
+        return user[0].displayName ? user[0].displayName : user[0]?.login;
+      } else {
+        return names[0];
+      }
     }
-    return '';
-  };
+  }
 
   return (
     <button
@@ -63,6 +78,8 @@ interface DmListProps {
   currentChannel: ChannelType | null;
   setCurrentChannel: (channel: ChannelType) => void;
   me: userDto | undefined;
+  socket: Socket;
+  setJoinedChannels: Dispatch<SetStateAction<ChannelType[]>>;
 }
 
 const DmList = ({
@@ -71,6 +88,8 @@ const DmList = ({
   setCurrentChannel,
   allUsers,
   me,
+  socket,
+  setJoinedChannels,
 }: DmListProps) => {
   return (
     <div className="h-full w-full overflow-y-auto" style={{ maxHeight: '600px' }}>

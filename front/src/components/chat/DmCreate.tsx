@@ -1,7 +1,6 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Socket } from 'socket.io-client';
 
-import lock from '@/assets/chat/lock.svg';
 import { userDto } from '@/dto/userDto';
 
 import { ChannelType } from './Chat';
@@ -17,12 +16,6 @@ const DmCreate = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelP
   const [searchUser, setSearchUser] = useState<string>('');
   const [userButtonSelected, setUserButtonSelected] = useState<HTMLButtonElement | null>(null);
   const [selectedLogin, setSelectedLogin] = useState<string>('');
-
-  useEffect(() => {
-    socket.on('dm', (data) => {
-      setCurrentChannel(data.channel);
-    });
-  }, []);
 
   const useSetLogin = (displayName: string): void => {
     const selectedUser = users?.find((user) => user.displayName == displayName);

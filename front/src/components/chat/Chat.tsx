@@ -44,7 +44,7 @@ const Chat = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [joinedChannels, setJoinedChannels] = useState<ChannelType[]>([]);
   const [currentChannel, setCurrentChannel] = useState<ChannelType | null>(null);
-  const [showChannels, setShowChannels] = useState<boolean>(false);
+  const [showChannels, setShowChannels] = useState<boolean>(true);
   let me: userDto | undefined;
 
   const { data: user } = useApi().get('get user infos', '/user/me') as UseQueryResult<userDto>;
@@ -72,6 +72,17 @@ const Chat = () => {
         console.log('youJoined - channel list :', joinedChannels);
       });
 
+      tmpSocket.on('dm', (data) => {
+        setCurrentChannel(data.channel);
+        setJoinedChannels((prev) => {
+          if (!prev.some((c) => c.name === data.channel.name)) {
+            return [...prev, data.channel];
+          }
+          return prev;
+        });
+        setShowChannels(false);
+      });
+
       tmpSocket.on('exception', (data) => {
         if (Array.isArray(data.message)) {
           alert(data.message.join('\n'));
@@ -84,6 +95,7 @@ const Chat = () => {
     return () => {
       socket?.off('youJoined');
       socket?.off('exception');
+      socket?.off('dm');
       socket?.disconnect();
     };
   }, []);
@@ -204,6 +216,8 @@ const Chat = () => {
             joinedChannels={joinedChannels.filter((c) => c.isDM === true)}
             setCurrentChannel={setCurrentChannel}
             currentChannel={currentChannel}
+            socket={socket}
+            setJoinedChannels={setJoinedChannels}
           />
         </div>
       )}
