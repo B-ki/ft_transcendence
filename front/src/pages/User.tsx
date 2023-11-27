@@ -9,10 +9,6 @@ import { useApi } from '@/hooks/useApi';
 
 function User() {
   const routeParams = useParams();
-  const [username, setUsername] = useState('');
-  const [description, setDescription] = useState('');
-  const [File, setFile] = useState<File | null>(null);
-  const [banner, setBanner] = useState<File | null>(null);
 
   const { data: games } = useApi().get(
     'get user win',

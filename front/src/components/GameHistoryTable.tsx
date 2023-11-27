@@ -11,6 +11,7 @@ const PAGE_SIZE = 5; // Number of records per page
 
 interface HistoryProps {
   login: string | undefined;
+  games: gameDto[];
 }
 
 export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
@@ -20,7 +21,7 @@ export const GameHistoryTable: FC<HistoryProps> = ({ login }) => {
     data: games,
     isLoading,
     isError,
-  } = useApi().get('get games', `game/all/${login}`) as UseQueryResult<gameDto[]>;
+  } = useApi().get(`get games of ${login}`, `game/all/${login}`) as UseQueryResult<gameDto[]>;
 
   if (isLoading) {
     return <div>Loading...</div>;
