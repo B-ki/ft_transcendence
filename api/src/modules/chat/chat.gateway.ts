@@ -211,7 +211,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onDirectMessageUser(@MessageBody() dm: SendDmDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.sendDM(dm, client.data.user);
 
-    const sockets = this.socketsID.get(client.data.user.login) || [];
+    const sockets = this.socketsID.get(dm.login) || [];
     for (const socket of sockets) {
       this.io.to(socket.id).emit(ChatEvent.DirectMessage, data);
     }
