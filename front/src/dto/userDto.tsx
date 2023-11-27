@@ -1,6 +1,7 @@
 import { ChannelType } from '@/components/chat/Chat';
 
 export interface userDto {
+  id: number;
   login: string;
   first_name: string;
   last_name: string;
@@ -15,6 +16,7 @@ export interface userDto {
 }
 
 export const dummyUserDto: userDto = {
+  id: 621458,
   login: 'rmorel',
   first_name: 'romain',
   last_name: 'morel',

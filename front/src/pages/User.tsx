@@ -9,6 +9,7 @@ import { useApi } from '@/hooks/useApi';
 
 function User() {
   const { login } = useParams();
+  console.log(login);
 
   const {
     data: games,
@@ -35,8 +36,8 @@ function User() {
     return <div>Error...</div>;
   }
 
-  const win = games?.filter((g) => g.winner.login === login).length;
-  const lose = games?.filter((g) => g.loser.login === login).length;
+  const win = games?.filter((g) => g.winnerId === user?.id).length;
+  const lose = games?.filter((g) => g.looserId === user?.id).length;
 
   return (
     <>
