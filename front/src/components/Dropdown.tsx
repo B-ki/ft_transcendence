@@ -9,8 +9,9 @@ import { Button } from './Button';
 const navigation = [
   { id: '0', name: 'Game', href: '/game' },
   { id: '1', name: 'Profile', href: '/profile' },
-  { id: '2', name: 'Friends', href: '/friends' },
-  { id: '3', name: '2FA', href: '/2fa' },
+  { id: '2', name: 'Chat', href: '/chat' },
+  { id: '3', name: 'Friends', href: '/friends' },
+  { id: '4', name: '2FA', href: '/2fa' },
 ];
 
 export const Dropdown = () => {

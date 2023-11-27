@@ -125,10 +125,18 @@ const FriendList = () => {
           placeholder="Search a friend"
           ref={nameRef}
         ></input>
-        <button className="rounded-full p-1 hover:bg-dark-3" onClick={addFriend}>
+        <button
+          className="rounded-full p-1 hover:bg-white-3"
+          title="Add friend"
+          onClick={addFriend}
+        >
           <img className="w-5 md:w-6" src={chat_add} alt="add friend" />
         </button>
-        <button className="rounded-full p-1 hover:bg-dark-3" onClick={removeFriend}>
+        <button
+          className="rounded-full p-1 hover:bg-white-3"
+          title="Remove friend"
+          onClick={removeFriend}
+        >
           <img className="w-5 md:w-6" src={close_icon} alt="remove friend" />
         </button>
       </div>
