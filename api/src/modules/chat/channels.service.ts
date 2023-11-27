@@ -622,12 +622,12 @@ export class ChannelsService {
     }
 
     const channelName = this.getDmChannelName(user.login, dm.login);
-    const channel = await this.prisma.channel.findUnique({
+    let channel = await this.prisma.channel.findUnique({
       where: { name: channelName },
     });
 
     if (!channel) {
-      await this.prisma.channel.create({
+      channel = await this.prisma.channel.create({
         data: {
           name: channelName,
           type: ChannelType.PRIVATE,
@@ -662,7 +662,7 @@ export class ChannelsService {
     return {
       createdAt: created.createdAt,
       content: created.content,
-      channel: channelName,
+      channel: channel,
       user: {
         ...created.author,
         role: ChannelRole.USER,

@@ -7,7 +7,7 @@ export class UserLoginDto {
 }
 
 export class UpdateUserDto {
-  @MaxLength(20)
+  @MaxLength(14)
   @IsString()
   @IsOptional()
   displayName: string;

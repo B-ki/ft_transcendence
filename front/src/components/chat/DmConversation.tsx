@@ -5,6 +5,7 @@ import { Socket } from 'socket.io-client';
 import info_icon from '@/assets/chat/info.svg';
 import send_icon from '@/assets/chat/send.svg';
 import { userDto } from '@/dto/userDto';
+import { useApi } from '@/hooks/useApi';
 
 import { ChannelType } from './Chat';
 import ChatModal from './ChatModal';
@@ -42,7 +43,7 @@ const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) =>
   const bottomEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    socket.on('message', (data: MessageType) => {
+    socket.on('dm', (data: MessageType) => {
       setMessages((messages) => [...messages, data]);
     });
 
@@ -54,10 +55,6 @@ const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) =>
       },
     );
 
-    socket.on('mute', (data) => {
-      alert(`Channel ${channel.name}, ${data.reason}`);
-    });
-
     return () => {
       socket.off('message');
     };
@@ -67,25 +64,37 @@ const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) =>
     bottomEl?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendMessage = (e: React.FormEvent<HTMLFormElement>, channelName: string) => {
     e.preventDefault();
     if (!message) return;
-    socket.emit('message', { channel: channel.name, content: message });
+    const names = channelName.substring(1).split('_');
+    const otherLogin = names[0] === me?.login ? names[1] : names[0];
+    socket.emit('dm', { login: otherLogin, content: message });
     setMessage('');
   };
 
   function findUserInfos(chatName: string) {
     if (!chatName) return '';
-    chatName = chatName.substring(1);
-    const names = chatName.split('_');
+
+    const { data: users } = useApi().get('get all users', 'user/all') as UseQueryResult<userDto[]>;
+    allUsers = users;
+
+    const names = chatName.substring(1).split('_');
     if (names[0] === me?.login) {
       const user = allUsers?.filter((user) => user.login === names[1]);
-      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+      if (user?.length) {
+        return user[0].displayName ? user[0].displayName : user[0]?.login;
+      } else {
+        return names[1];
+      }
     } else {
       const user = allUsers?.filter((user) => user.login === names[0]);
-      if (user) return user[0].displayName ? user[0].displayName : user[0]?.login;
+      if (user?.length) {
+        return user[0].displayName ? user[0].displayName : user[0]?.login;
+      } else {
+        return names[0];
+      }
     }
-    return '';
   }
 
   return (
@@ -131,7 +140,7 @@ const DmConversation = ({ channel, socket, me, allUsers }: ConversationProps) =>
       <div className="border-t border-t-white-3">
         <form
           className="m-2 flex gap-3 rounded-2xl bg-white-3 p-2"
-          onSubmit={(e) => sendMessage(e)}
+          onSubmit={(e) => sendMessage(e, channel.name)}
         >
           <input
             className="w-full bg-white-3 outline-none"
