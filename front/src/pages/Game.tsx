@@ -243,7 +243,8 @@ export class Pong extends Component {
   }
 
   componentWillUnmount(): void {
-    this.app.destroy(true, { children: false, texture: true, baseTexture: true });
+    this.app.renderer.destroy();
+    this.app.destroy(true, { children: true, texture: true, baseTexture: true });
     this.socket.disconnect();
     window.onresize = () => {};
   }
