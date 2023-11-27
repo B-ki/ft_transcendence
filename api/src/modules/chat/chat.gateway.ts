@@ -179,7 +179,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onKickUser(@MessageBody() kick: KickUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.kickUser(kick, client.data.user);
 
-    const sockets = this.socketsID.get(client.data.user.login) || [];
+    const sockets = this.socketsID.get(kick.login) || [];
     for (const socket of sockets) {
       socket.leave(kick.channel);
       socket.emit('youLeft', data);
@@ -192,7 +192,7 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async onBanUser(@MessageBody() ban: BanUserDTO, @ConnectedSocket() client: Socket) {
     const data = await this.channelsService.banUser(ban, client.data.user);
 
-    const sockets = this.socketsID.get(client.data.user.login) || [];
+    const sockets = this.socketsID.get(ban.login) || [];
     for (const socket of sockets) {
       socket.leave(ban.channel);
       socket.emit('youLeft', data);
