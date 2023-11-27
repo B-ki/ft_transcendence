@@ -40,7 +40,11 @@ export const TwoFACode: React.FC<TwoFACodeProps> = ({ setShowInvalidate }) => {
   };
 
   return (
+<<<<<<< HEAD
     <form onSubmit={() => mutation.mutate(code)} className="flex flex-col items-center">
+=======
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-3">
+>>>>>>> ab9c2a9930dbef316658c0a5f3478bbb3d8ab605
       <input
         className="rounded-md border border-dark-3 bg-white-3 p-1 invalid:border-red focus:border-blue focus:outline-none"
         name="2FAcode"
