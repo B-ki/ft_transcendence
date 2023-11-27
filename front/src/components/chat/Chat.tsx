@@ -69,7 +69,6 @@ const Chat = () => {
       tmpSocket.on('youJoined', (data: ChannelType) => {
         setCurrentChannel(data);
         setJoinedChannels((prev) => [...prev, data]);
-        console.log('youJoined - channel list :', joinedChannels);
       });
 
       tmpSocket.on('dm', (data) => {
