@@ -14,6 +14,8 @@ function User() {
   const [File, setFile] = useState<File | null>(null);
   const [banner, setBanner] = useState<File | null>(null);
 
+  console.log(`${routeParams.login}`);
+
   const { data: games } = useApi().get(
     'get user win',
     `game/all/${routeParams.login}`,

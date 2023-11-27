@@ -15,8 +15,8 @@ interface DmChannelProps {
 
 const DmCreate = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelProps) => {
   const [searchUser, setSearchUser] = useState<string>('');
-  const [userSelected, setUserSelected] = useState<HTMLButtonElement | null>(null);
-  const [userName, setUserName] = useState<string>('');
+  const [userButtonSelected, setUserButtonSelected] = useState<HTMLButtonElement | null>(null);
+  const [selectedLogin, setSelectedLogin] = useState<string>('');
 
   useEffect(() => {
     socket.on('dm', (data) => {
@@ -24,27 +24,31 @@ const DmCreate = ({ setShowModal, socket, users, setCurrentChannel }: DmChannelP
     });
   }, []);
 
+  const useSetLogin = (displayName: string): void => {
+    const selectedUser = users?.find((user) => user.displayName == displayName);
+    setSelectedLogin(selectedUser?.login || '');
+    return;
+  };
+
   const selectUser = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setUserName(e.currentTarget.firstChild?.textContent || '');
-    if (e.currentTarget !== userSelected) {
-      if (userSelected) {
-        userSelected.style.backgroundColor = '#FFFFFF';
-        userSelected.style.color = '#000000';
+    useSetLogin(e.currentTarget.firstChild?.textContent || '');
+    if (e.currentTarget !== userButtonSelected) {
+      if (userButtonSelected) {
+        userButtonSelected.style.backgroundColor = '#FFFFFF';
+        userButtonSelected.style.color = '#000000';
       }
       e.currentTarget.style.backgroundColor = '#37626D';
       e.currentTarget.style.color = '#FFFFFF';
-      setUserSelected(e.currentTarget);
+      setUserButtonSelected(e.currentTarget);
     }
   };
 
   const handleDirectMessage = () => {
-    //Need to be replace by socker.emit('createDM', {login: username})
     const message = document.querySelector<HTMLButtonElement>('#firstMessage')?.value;
-    socket.emit('dm', { login: userName, content: message });
+    socket.emit('dm', { login: selectedLogin, content: message });
     socket.on('dm', (data) => {
       setCurrentChannel(data.channel);
     });
-    // TODO send notification if error
     setShowModal(false);
   };
 
